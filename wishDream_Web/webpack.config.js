@@ -8,15 +8,20 @@ module.exports = {
     },
     devtool: 'sourcemaps',
     output: {
-        path: path.resolve(__dirname, 'src/main/webapp'),
+        path: path.resolve(__dirname, 'src/main/webapp/js'),
         filenmae: 'js/[name].bundle.js'
     },
     mode: 'none',
     module: {
         rules: [
             { 
+                enforce: 'pre',
                 test: /\.js?$/,
-                exclude: /(node_modules)/,
+                exclude: /node_modules/,
+                loader: 'eslint-loader'
+             },{ 
+                test: /\.js?$/,
+                exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -37,5 +42,12 @@ module.exports = {
                      ] 
              }
         ]
+    },
+    extends: "airbnb-base",
+    plugins: [
+        "import"
+    ],
+    env: {
+      browser: true
     }
 };

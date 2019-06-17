@@ -3,11 +3,18 @@ plugins {
 	id 'java'
 }
 
+ext {
+	buildVersion = '0.0.1-SNAPSHOT'
+}
+
+apply plugin: 'idea'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'kr.co.wishDream'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+version = buildVersion
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configurations {
 	developmentOnly
@@ -30,4 +37,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+}
+
+
+test {
+    ignoreFailures = true
 }

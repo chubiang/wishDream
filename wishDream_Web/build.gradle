@@ -4,10 +4,17 @@ plugins {
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
 
 group = 'kr.co.wishDream'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+bootJar {
+  mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
+}
 
 configurations {
 	developmentOnly
@@ -26,8 +33,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+	compile project(':wishDream_Core')
+}
+
+test {
+    ignoreFailures = true
 }

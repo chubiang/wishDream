@@ -1,33 +1,38 @@
-plugins {
-	id 'org.springframework.boot' version '2.1.5.RELEASE'
-	id 'java'
+allprojects {
+	apply plugin: 'java'
+
+	group 'kr.co.wishDream'
+	version '0.0.1-SNAPSHOT'
+	
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 }
 
-apply plugin: 'io.spring.dependency-management'
-
-group = 'kr.co.wishDream'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-configurations {
-	developmentOnly
-	runtimeClasspath {
-		extendsFrom developmentOnly
+subprojects {
+	apply plugin: 'idea'
+	
+	repositories {
+		mavenCentral()
 	}
-	compileOnly {
-		extendsFrom annotationProcessor
+	
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-webflux'
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testCompileOnly 'org.projectlombok:lombok'
+		testAnnotationProcessor 'org.projectlombok:lombok'
+		
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'io.projectreactor:reactor-test'
 	}
+	
+	jar {
+        manifest.attributes provider: 'gradle'
+    }
+    
 }
 
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.projectreactor:reactor-test'
+task run {
+    dependsOn gradle.includedBuilds*.task(':run')
 }
