@@ -4,8 +4,8 @@ allprojects {
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
 	
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+	sourceCompatibility = '11'
+	targetCompatibility = '11'
 }
 
 subprojects {
@@ -17,6 +17,9 @@ subprojects {
 	
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker'
+		compile group: 'com.github.davidmoten', name: 'rxjava-jdbc', version: '0.7.16'
+		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
 		testCompileOnly 'org.projectlombok:lombok'
