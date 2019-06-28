@@ -1,20 +1,39 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'org.springframework.boot' version '2.1.6.RELEASE'
 	id 'java'
 }
 
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'idea'
 
 group = 'kr.co.wishDream'
 version = '0.0.1-SNAPSHOT'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = '11'
 
 bootJar {
   mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
 }
+
+springBoot {
+	mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
+	buildInfo {
+		properties {
+			artifact = 'wishDream-app'
+			version = '0.0.1'
+			group = 'kr.co.wishDream'
+			name = 'WishDream Application'
+		}
+	}
+}
+
+dependencyManagement {
+	imports {
+		mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+	}
+}
+
 
 configurations {
 	developmentOnly
@@ -33,7 +52,6 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	compileOnly 'org.projectlombok:lombok'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker'
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'

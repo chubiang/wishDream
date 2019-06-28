@@ -1,24 +1,52 @@
 allprojects {
 	apply plugin: 'java'
-
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
 	
 	sourceCompatibility = '11'
 	targetCompatibility = '11'
+	
+	compileJava {
+	   sourceCompatibility = '11'
+	   targetCompatibility = '11'
+	}
+	
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+	
 }
 
 subprojects {
 	apply plugin: 'idea'
 	
+	sourceSets {
+	    main {
+	        java {
+	            srcDirs = ['src/main/java']
+	            java.outputDir = file('out/main')
+	            output.resourcesDir = file('out/main')
+	        }
+	        resources {
+	            srcDirs = ['src/main/resources']
+	        }
+	    }
+	    test {
+	    	java {
+	    		srcDirs = ['src/test/java']
+	    	}
+	    	resources {
+	    		srcDirs = ['src/test/resources']
+	    	}
+	    }
+	}
+	
 	repositories {
 		mavenCentral()
 	}
 	
+	
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
-		compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker'
-		compile group: 'com.github.davidmoten', name: 'rxjava-jdbc', version: '0.7.16'
+		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
 		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
@@ -32,10 +60,22 @@ subprojects {
 	
 	jar {
         manifest.attributes provider: 'gradle'
+        version = '0.0.1'
     }
     
 }
 
+
+
 task run {
-    dependsOn gradle.includedBuilds*.task(':run')
+	println "java-version : ${sourceCompatibility}"
+    println "project-version : ${version}"
+	println "======== All project cleaning start ========"
+	dependsOn gradle.includedBuilds*.task(':clean')
+	println "========  All project cleaned done  ========"
+	println "======== All project building start ========"
+    dependsOn gradle.includedBuilds*.task(':build')
+    println "========  All project builded done  ========"
 }
+
+defaultTasks('run')

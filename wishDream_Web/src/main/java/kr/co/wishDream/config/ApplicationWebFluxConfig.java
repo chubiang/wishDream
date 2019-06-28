@@ -80,21 +80,12 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	}
 	
 	@Bean
-	public FreeMarkerConfigurer freeMarkerConfigurer() {
+	public FreeMarkerConfigurer freeMarkerConfig() {
 		FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        configurer.setTemplateLoaderPaths("classpath:/resources/static/");
+        
 		return configurer;
 	}
 	
-	@Bean
-	public FreeMarkerViewResolver freeMarkerViewResolver() {
-		FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
-		resolver.setApplicationContext(this.context);
-		resolver.setPrefix("");
-		resolver.setSuffix(".ftl"); 
-		return resolver;
-	}
-
 	@Override
 	public void configureContentTypeResolver(RequestedContentTypeResolverBuilder builder) {
 		builder.fixedResolver(MediaType.ALL);
@@ -128,7 +119,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
-		registry.freeMarker();
+
 		Jackson2JsonEncoder encoder = new Jackson2JsonEncoder();
 		registry.defaultViews(new HttpMessageWriterView(encoder));
 	}
