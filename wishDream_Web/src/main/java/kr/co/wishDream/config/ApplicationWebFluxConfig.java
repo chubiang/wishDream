@@ -31,6 +31,8 @@ import org.springframework.web.reactive.resource.VersionResourceResolver;
 import org.springframework.web.reactive.result.view.HttpMessageWriterView;
 import org.springframework.web.reactive.result.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.reactive.result.view.freemarker.FreeMarkerViewResolver;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -51,13 +53,13 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	private ApplicationContext context;
+	private ApplicationContext applicationContext;
 	
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		// TODO Auto-generated method stub
-		this.context = applicationContext;
+		this.applicationContext = applicationContext;
 	}
 	
 	
@@ -78,20 +80,6 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	  messageSource.setDefaultEncoding("UTF-8");
 	  return messageSource;
 	}
-	
-	@Bean
-	public FreeMarkerConfigurer freeMarkerConfig() {
-		FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        
-		return configurer;
-	}
-	
-	@Override
-	public void configureContentTypeResolver(RequestedContentTypeResolverBuilder builder) {
-		builder.fixedResolver(MediaType.ALL);
-		builder.parameterResolver();
-		builder.headerResolver();
-	}
 
 	@Override
 	public void configurePathMatching(PathMatchConfigurer configurer) {
@@ -105,7 +93,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
 			.addResourceHandler("/**")
-			.addResourceLocations("classpath:/resources/", "classpath:/resources/static/","/public/")
+			.addResourceLocations("classpath:/static/","file:/public/")
 			.setCacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
 			.resourceChain(true)
 			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
@@ -114,7 +102,6 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Override
 	public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
 		configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper));
-		configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper));
 	}
 	
 	@Override

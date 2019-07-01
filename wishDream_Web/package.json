@@ -1,12 +1,12 @@
 {
   "name": "wishDream_Web",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "build:production": "webpack --progress -p --config webpack.config.js"
+  },
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "private": true,
-  "workspace": [
-    "wishDream_Core"
-  ],
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
@@ -27,5 +27,8 @@
     "webpack": "^4.33.0",
     "webpack-dev-server": "^3.7.1",
     "wepack-cli": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }
