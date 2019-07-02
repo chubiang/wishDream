@@ -1,6 +1,8 @@
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const path = require('path');
 const Fiber = require('fibers');
+const sass = require("sass");
+const PolyfillInjectorPlugin = require('webpack-polyfill-injector');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -10,41 +12,86 @@ module.exports = {
     cache: false,
     context: path.resolve(__dirname, 'public'),
     entry: {
-        app: './app.js'
+        /*
+        polyfills: `webpack-polyfill-injector?$(JSON.stringify({
+            modules: [
+                './services/polyfills.js'
+            ]
+        })!`,
+        */
+        app: './app.js',
+        
+        
     },
     devtool: 'sourcemaps',
     output: {
         path: path.resolve(__dirname, 'src/main/webapp/js'),
         filename: '[name].bundle.js'
     },
+    plugins: [
+    	new HtmlWebpackPlugin({
+            template: 'index.html',
+            filename: 'index.html',
+	    	inject: true,
+	    	sourceMep: true
+        }),
+        /*
+        new PolyfillInjectorPlugin({
+            polyfills: [
+                'Promise',
+                'Array.prototype.find',
+                'Array.prototype.flat',
+                'Element.prototype.closest'
+            ]
+        })
+        */
+    ],
     module: {
-        eslint: {
-          configFile: './.eslintrc',
-          emitWarning: true
-        },
         rules: [
             {
               enforce: 'pre',
               test: /\.(js|jsx)$/,
               exclude: /node_modules/,
-              use: [
-                { loader: "eslint-loader" },
-                { loader: "babel-loader" }
-              ]
+              use: (info) => ([
+                  {
+                    loader: "babel-loader",
+                    options: {
+                        presets: [
+                            // TODO: browserslist 적용해야됨.
+                            '@babel/preset-env', {
+                                targets: { 
+                                    node: 'current', 
+                                    chrome: "58",
+                                    ie: "11" 
+                                },
+                                modules: 'false'
+                        }]
+                    }
+                    }
+                ]),
             },
            {
-             test: /\.scss$/,
-             use: [ { loader: 'style-loader' },
-                    { loader: 'css-loader'   },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            implementation: require("sass"),
-                            fiber: Fiber
-                        }
+                test: /\.scss$/,
+                use: [{
+                    loader: 'sass-loader',
+                    options: {
+                        implementation: sass,
+                        fiber: Fiber
                     }
-                 ]
-             }
+                }]
+            },
+            {   // TODO
+                test: /\.css$/i,
+                loader: 'css-loader',
+                options: {
+                    url: (url, resourcePath) => {
+                        if (url.includes('.png')) return false;
+                        return true;
+                    },
+                    sourceMap: true,
+                    import: true,
+                }
+            }
         ]
     },
     optimization: {
@@ -61,11 +108,5 @@ module.exports = {
         			sourceMap: true
         	})
         ],
-    },
-    plugins: [
-    	new HtmlWebpackPlugin({
-	    	template: 'public/index.html',
-	    	inject: true,
-	    	sourceMep: true
-    })]
+    }
 };
