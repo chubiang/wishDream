@@ -5,6 +5,9 @@ const sass = require("sass");
 const PolyfillInjectorPlugin = require('webpack-polyfill-injector');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const devMode = process.env.NODE_ENV !== 'production';
 
 module.exports = {
 	// production 모드로 하면 웹팩4는 기본으로 optimization & minification 해줌
@@ -32,9 +35,14 @@ module.exports = {
     	new HtmlWebpackPlugin({
             template: 'index.html',
             filename: 'index.html',
-	    	inject: true,
+            inject: true,
+            minimize: true,
 	    	sourceMep: true
         }),
+        new MiniCssExtractPlugin({
+            filename: devMode ? '[name].css' : '[name].[hash].css',
+            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+        })
         /*
         new PolyfillInjectorPlugin({
             polyfills: [
@@ -57,40 +65,51 @@ module.exports = {
                     loader: "babel-loader",
                     options: {
                         presets: [
-                            // TODO: browserslist 적용해야됨.
-                            '@babel/preset-env', {
+                            ['@babel/preset-env', {
                                 targets: { 
-                                    node: 'current', 
-                                    chrome: "58",
-                                    ie: "11" 
+                                    browsers: "> 0.2%"  
                                 },
-                                modules: 'false'
-                        }]
-                    }
+                                modules: 'false',
+                                useBuiltIns: 'entry'
+                            }],
+                            '@babel/preset-react',
+                            '@babel/plugin-transform-runtime'
+                        ]}
                     }
                 ]),
             },
-           {
-                test: /\.scss$/,
-                use: [{
-                    loader: 'sass-loader',
-                    options: {
-                        implementation: sass,
-                        fiber: Fiber
-                    }
-                }]
-            },
-            {   // TODO
-                test: /\.css$/i,
-                loader: 'css-loader',
-                options: {
-                    url: (url, resourcePath) => {
-                        if (url.includes('.png')) return false;
-                        return true;
+            {  
+                test: /\.(sa|sc|c)ss$/,
+                use: [
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: (url, resourcePath) => {
+                                if (url.includes('.png')) return false;
+                                return true;
+                            },
+                            minimize: true,
+                            sourceMap: true,
+                        }
+                    }, 
+                    {
+                        loader: 'postcss-loader'
+                    }, 
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: sass,
+                            fiber: Fiber
+                        }
                     },
-                    sourceMap: true,
-                    import: true,
-                }
+                    {   
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '/styles/',
+                            hmr: process.env.NODE_ENV === 'development',
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -104,7 +123,6 @@ module.exports = {
 	    			},
 	    			exclude: /\/node_modules/,
 	    			cache: true,
-        			parallel: true,
         			sourceMap: true
         	})
         ],
