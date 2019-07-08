@@ -33,11 +33,15 @@ module.exports = {
     },
     plugins: [
     	new HtmlWebpackPlugin({
-            template: 'index.html',
-            filename: 'index.html',
-            inject: true,
-            minimize: true,
-	    	sourceMep: true
+            title: 'wishDream',
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+            },
         }),
         new MiniCssExtractPlugin({
             filename: devMode ? '[name].css' : '[name].[hash].css',
