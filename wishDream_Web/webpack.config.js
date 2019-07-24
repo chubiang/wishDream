@@ -23,8 +23,8 @@ module.exports = {
         })!`,
         */
         app: './app.js',
-        
-        
+
+
     },
     devtool: 'sourcemaps',
     output: {
@@ -67,22 +67,23 @@ module.exports = {
               use: (info) => ([
                   {
                     loader: "babel-loader",
+                    /*
                     options: {
                         presets: [
                             ['@babel/preset-env', {
-                                targets: { 
-                                    browsers: "> 0.2%"  
+                                targets: {
+                                    browsers: "> 0.2%"
                                 },
                                 modules: 'false',
                                 useBuiltIns: 'entry'
                             }],
-                            '@babel/preset-react',
-                            '@babel/plugin-transform-runtime'
+                            '@babel/preset-react'
                         ]}
+                    */
                     }
                 ]),
             },
-            {  
+            {
                 test: /\.(sa|sc|c)ss$/,
                 use: [
                     {
@@ -95,10 +96,10 @@ module.exports = {
                             minimize: true,
                             sourceMap: true,
                         }
-                    }, 
+                    },
                     {
                         loader: 'postcss-loader'
-                    }, 
+                    },
                     {
                         loader: 'sass-loader',
                         options: {
@@ -106,7 +107,7 @@ module.exports = {
                             fiber: Fiber
                         }
                     },
-                    {   
+                    {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             publicPath: '/styles/',
