@@ -1,1 +1,2 @@
-import "@babel/polyfill";
+import "babel-polyfill";
+import "./styles/app.scss"

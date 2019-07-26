@@ -1,11 +1,15 @@
 // const webpack = require('webpack');
 const path = require('path');
 const Fiber = require('fibers');
-const sass = require("sass");
+const sass = require("node-sass");
 const PolyfillInjectorPlugin = require('webpack-polyfill-injector');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MediaQueryPlugin = require('media-query-plugin');
+const CleanWebpackPlugin   = require('clean-webpack-plugin').CleanWebpackPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const devMode = process.env.NODE_ENV !== 'production';
 
@@ -31,39 +35,12 @@ module.exports = {
         path: path.resolve(__dirname, 'src/main/webapp/js'),
         filename: '[name].bundle.js'
     },
-    plugins: [
-    	new HtmlWebpackPlugin({
-            title: 'wishDream',
-            minify: {
-                collapseWhitespace: true,
-                removeComments: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: true
-            },
-        }),
-        new MiniCssExtractPlugin({
-            filename: devMode ? '[name].css' : '[name].[hash].css',
-            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-        })
-        /*
-        new PolyfillInjectorPlugin({
-            polyfills: [
-                'Promise',
-                'Array.prototype.find',
-                'Array.prototype.flat',
-                'Element.prototype.closest'
-            ]
-        })
-        */
-    ],
     module: {
         rules: [
             {
               enforce: 'pre',
               test: /\.(js|jsx)$/,
-              exclude: /node_modules/,
+              exclude: /(node_modules)/,
               use: (info) => ([
                   {
                     loader: "babel-loader",
@@ -80,44 +57,107 @@ module.exports = {
                             '@babel/preset-react'
                         ]}
                     */
-                    }
+                  },
+                  { loader: 'astroturf/loader'}
                 ]),
             },
             {
-                test: /\.(sa|sc|c)ss$/,
+              test: /\.(sa|sc|c)ss$/,
+              exclude: /fonts/,
+              use: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
                 use: [
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            url: (url, resourcePath) => {
-                                if (url.includes('.png')) return false;
-                                return true;
-                            },
-                            minimize: true,
-                            sourceMap: true,
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader'
-                    },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            implementation: sass,
-                            fiber: Fiber
-                        }
-                    },
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            publicPath: '/styles/',
-                            hmr: process.env.NODE_ENV === 'development',
-                        }
+                  {
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                      publicPath: 'styles',
+                      sourceMap: true
                     }
+                  },
+                  {
+                    loader: 'sass-loader',
+                    options: {
+                        implementation: sass,
+                        includePaths: [path.resolve(__dirname, '/node_modules'), path.resolve(__dirname, '/styles')],
+                        fiber: Fiber,
+                        sourceMap: true
+                    }
+                  },
+                  {
+                    loader: 'css-loader',
+                    options: {
+                        sourceMap: true,
+                        importLoaders: 2,
+                    }
+                  },
+                  {
+                    loader: 'postcss-loader',
+                    options: {
+                      sourceMap: true
+                    }
+                  },
+                  {
+                    loader: MediaQueryPlugin.loader,
+                  },
                 ]
-            }
+              })
+            },
+           {
+    				test: /\.(eot|ttf|woff2?|otf)$/,
+    				use: 'url-loader?limit=1024&name=fonts/[name].[ext]'
+  			   },{
+    				test: /\.(jpe?g|png|gif|svg)$/,
+    				include: /public/,
+    				use: 'url-loader?limit=5000&name=assets/img/[name].[ext]'
+  			   },{
+    				test: /\.(mp4)$/,
+    				use: 'url-loader?limit=500000&name=assets/video/[name].[ext]'
+  			   }
         ]
     },
+    plugins: [
+       new CleanWebpackPlugin(),
+    	 new HtmlWebpackPlugin({
+            title: 'wishDream',
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+            },
+        }),
+        new MiniCssExtractPlugin({
+            filename: devMode ? '[name].css' : '[name].[hash].css',
+            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+            ignoreOrder: true,
+        }),
+        new MediaQueryPlugin({
+            include: [
+                //'exampleFile'
+            ],
+            queries: {
+                'print, screen and (min-width: 75em)': 'desktop'
+            }
+        }),
+        new CopyWebpackPlugin([
+          {
+            from: 'images', to: '../images'
+          }
+        ]),
+        new ExtractTextPlugin("[name].css"),
+        /*
+        new PolyfillInjectorPlugin({
+            polyfills: [
+                'Promise',
+                'Array.prototype.find',
+                'Array.prototype.flat',
+                'Element.prototype.closest'
+            ]
+        })
+        */
+    ],
     optimization: {
         minimizer: [
         	new UglifyJsPlugin({
@@ -126,7 +166,7 @@ module.exports = {
 	    				ecma: 6,
 	    				mangle: true
 	    			},
-	    			exclude: /\/node_modules/,
+	    			exclude: /(\/node_modules)/,
 	    			cache: true,
         			sourceMap: true
         	})
