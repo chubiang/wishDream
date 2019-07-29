@@ -11,6 +11,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const MediaQueryPlugin = require('media-query-plugin');
 const CleanWebpackPlugin   = require('clean-webpack-plugin').CleanWebpackPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const devMode = process.env.NODE_ENV !== 'production';
 
@@ -99,14 +100,14 @@ module.exports = {
                 {
                   loader: 'resolve-url-loader',
                   options: {
-                    engine: 'postcss',
-                    sourceMap: true,
+                      engine: 'postcss',
+                      sourceMap: true,
                   }
                 },
                 {
                   loader: 'postcss-loader',
                   options: {
-                    sourceMap: true
+                      sourceMap: true
                   }
                 }
               ]
@@ -147,7 +148,8 @@ module.exports = {
           {
             from: 'images', to: '../images'
           }
-        ])
+        ]),
+        new BundleAnalyzerPlugin()
         /*
         new PolyfillInjectorPlugin({
             polyfills: [
@@ -173,5 +175,20 @@ module.exports = {
         	}),
           new OptimizeCSSAssetsPlugin({})
         ],
+        splitChunks: {
+          cacheGroups: {
+            node_vendors: {
+                test: /[\\/]node_modules[\\/]/,
+                chunks: 'async',
+                priority: 1
+            },
+            css_vendors: {
+                name: 'styles',
+                test:/\.(sass|scss)$/,
+                chunks: 'all',
+                enforce: true,
+            }
+          }
+        }
     }
 };
