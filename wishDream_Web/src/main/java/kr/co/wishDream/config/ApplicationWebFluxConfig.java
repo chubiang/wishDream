@@ -111,6 +111,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		registry.defaultViews(new HttpMessageWriterView(encoder));
 	}
 
+	// 데이터베이스
 	
 	
 	

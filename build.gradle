@@ -1,18 +1,33 @@
+plugins {
+	id "org.flywaydb.flyway" version "5.2.4"
+}
+ext {
+	flyway = [
+		url: 'jdbc:postgresql://localhost:5430/wishDream',
+		user: 'wishDream',
+		password: 'nana',
+		driver: 'org.postgresql.Driver',
+		schemas: 'public'
+	]
+}
+
+
 allprojects {
 	apply plugin: 'java'
+	apply plugin: 'org.flywaydb.flyway'
+	
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
 	
-	sourceCompatibility = '11'
-	targetCompatibility = '11'
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 	
 	compileJava {
-	   sourceCompatibility = '11'
-	   targetCompatibility = '11'
+	   sourceCompatibility = 1.8
+	   targetCompatibility = 1.8
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-	
 }
 
 subprojects {
@@ -40,13 +55,20 @@ subprojects {
 	}
 	
 	repositories {
+		jcenter()
 		mavenCentral()
 	}
 	
 	
+	
+	
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
+		implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
+		// database
 		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
+		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+		
 		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'

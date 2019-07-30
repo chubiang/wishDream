@@ -16,7 +16,7 @@ public class CustomWebFilter implements WebFilter{
 											exchange
 												.getRequest()
 												.mutate()
-												.path("/index")
+												.path("/app")
 												.build()
 									).build()
 								);

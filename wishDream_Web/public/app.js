@@ -10,11 +10,11 @@ class App extends Component {
 
 
     return (
-      <Fragment>
-        <div className="App">
+      <div className="App">
+        <Container>
 
-        </div>
-      </Fragment>
+        </Container>
+      </div>
     );
   }
 }

@@ -10,7 +10,7 @@ apply plugin: 'idea'
 group = 'kr.co.wishDream'
 version = '0.0.1-SNAPSHOT'
 
-sourceCompatibility = '11'
+sourceCompatibility = 1.8
 
 bootJar {
   mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
@@ -46,6 +46,7 @@ configurations {
 }
 
 repositories {
+    jcenter()
 	mavenCentral()
 }
 
@@ -67,3 +68,15 @@ dependencies {
 test {
     ignoreFailures = true
 }
+
+flyway {
+    url = project.flyway.url
+    user = project.flyway.user
+    password = project.flyway.password
+    driver = project.flyway.driver
+    schemas = project.flyway.schemas
+    //locations = [ 'classpath:/db/migration' ]
+}
+
+clean.dependsOn(flywayClean)
+build.dependsOn(flywayMigrate)

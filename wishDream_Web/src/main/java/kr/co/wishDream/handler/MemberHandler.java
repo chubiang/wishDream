@@ -14,7 +14,8 @@ import reactor.core.publisher.Mono;
 public class MemberHandler {
 	
 	public Mono<ServerResponse> findByUserName(ServerRequest request) {
-		Member member = new Member("nana", "nana@gmail.com", "My name is nana.", new Date());
-		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(member), Member.class);
+		final Mono<Member> member = Mono.just(new Member("nana", "nana@gmail.com", "My name is nana.", new Date(), new Date(), null));
+		System.out.println(member.toString());
+		return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(member, Member.class);
 	}
 }
