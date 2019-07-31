@@ -7,11 +7,6 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'idea'
 
-group = 'kr.co.wishDream'
-version = '0.0.1-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
 bootJar {
   mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
 }
@@ -45,11 +40,6 @@ configurations {
 	}
 }
 
-repositories {
-    jcenter()
-	mavenCentral()
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	compileOnly 'org.projectlombok:lombok'
@@ -69,14 +59,3 @@ test {
     ignoreFailures = true
 }
 
-flyway {
-    url = project.flyway.url
-    user = project.flyway.user
-    password = project.flyway.password
-    driver = project.flyway.driver
-    schemas = project.flyway.schemas
-    //locations = [ 'classpath:/db/migration' ]
-}
-
-clean.dependsOn(flywayClean)
-build.dependsOn(flywayMigrate)

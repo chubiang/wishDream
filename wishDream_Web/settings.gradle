@@ -3,6 +3,4 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-rootProject.name = 'wishDream'
-
-include ':wishDream_Core'
+rootProject.name = 'wishDream_Web'

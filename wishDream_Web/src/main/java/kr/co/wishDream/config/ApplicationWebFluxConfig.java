@@ -39,7 +39,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
- * TODO : 설정 하다 말음, 화면 띄우는 작업 해야함
  * db : rxjava2-jdbc & postgresql or mssql
  * @author jyKim
  *
@@ -111,7 +110,6 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		registry.defaultViews(new HttpMessageWriterView(encoder));
 	}
 
-	// 데이터베이스
 	
 	
 	

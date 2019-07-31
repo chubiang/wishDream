@@ -1,20 +1,20 @@
 plugins {
 	id "org.flywaydb.flyway" version "5.2.4"
+		id 'java'
 }
+
 ext {
 	flyway = [
 		url: 'jdbc:postgresql://localhost:5430/wishDream',
 		user: 'wishDream',
-		password: 'nana',
+		password: 'wishDream',
 		driver: 'org.postgresql.Driver',
 		schemas: 'public'
 	]
 }
 
-
 allprojects {
 	apply plugin: 'java'
-	apply plugin: 'org.flywaydb.flyway'
 	
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
@@ -27,11 +27,21 @@ allprojects {
 	   targetCompatibility = 1.8
 	}
 	
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+	
+	dependencies {
+		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
+	}
+	
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
 
 subprojects {
 	apply plugin: 'idea'
+	apply plugin: 'org.flywaydb.flyway'
 	
 	sourceSets {
 	    main {
@@ -54,20 +64,12 @@ subprojects {
 	    }
 	}
 	
-	repositories {
-		jcenter()
-		mavenCentral()
-	}
-	
-	
-	
 	
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
 		implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
 		// database
 		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
-		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 		
 		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 		compileOnly 'org.projectlombok:lombok'
@@ -86,18 +88,36 @@ subprojects {
     }
     
 }
-
+ 
+flyway {
+    url = project.flyway.url
+    user = project.flyway.user
+    password = project.flyway.password
+    driver = project.flyway.driver
+    schemas = project.flyway.schemas
+    //locations = [ 'classpath:/db/migration' ]
+}
 
 
 task run {
 	println "java-version : ${sourceCompatibility}"
     println "project-version : ${version}"
-	println "======== All project cleaning start ========"
 	dependsOn gradle.includedBuilds*.task(':clean')
-	println "========  All project cleaned done  ========"
-	println "======== All project building start ========"
+	println "####################################################"
+	println	""
+	println "        All project completed the clean tasks       "
+	println	""
+	println "####################################################"
     dependsOn gradle.includedBuilds*.task(':build')
-    println "========  All project builded done  ========"
+    println	""
+    println "        All project completed the build tasks       "
+    println	""
+    println "####################################################"
+    dependsOn(':flywayMigrate')
+    println	""
+    println "            flywayMigrate completed                 "
+    println	""
+    println "####################################################"
 }
 
-defaultTasks('run')
+defaultTasks 'run'
