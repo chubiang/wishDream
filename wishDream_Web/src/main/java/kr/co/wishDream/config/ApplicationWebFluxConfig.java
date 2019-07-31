@@ -13,15 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.validation.MessageCodesResolver;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerTypePredicate;
-import org.springframework.web.reactive.accept.RequestedContentTypeResolverBuilder;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.PathMatchConfigurer;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
@@ -29,10 +25,6 @@ import org.springframework.web.reactive.config.ViewResolverRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.resource.VersionResourceResolver;
 import org.springframework.web.reactive.result.view.HttpMessageWriterView;
-import org.springframework.web.reactive.result.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.reactive.result.view.freemarker.FreeMarkerViewResolver;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -52,6 +44,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Autowired
 	private ObjectMapper objectMapper;
 	
+	@SuppressWarnings("unused")
 	private ApplicationContext applicationContext;
 	
 	
@@ -109,8 +102,5 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		Jackson2JsonEncoder encoder = new Jackson2JsonEncoder();
 		registry.defaultViews(new HttpMessageWriterView(encoder));
 	}
-
-	
-	
 	
 }

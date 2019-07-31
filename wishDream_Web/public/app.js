@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import "babel-polyfill";
 import "./styles/app.scss"
@@ -10,11 +11,12 @@ class App extends Component {
 
 
     return (
-      <div className="App">
-        <Container>
-
+      <Router>
+        <Container className="App">
+          
+          {/* <Route component={{} />*/}
         </Container>
-      </div>
+      </Router>
     );
   }
 }

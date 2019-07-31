@@ -1,7 +1,7 @@
 {
   "name": "wishDream_Web",
   "scripts": {
-    "dev": "webpack --config webpack.config.js --mode development",
+    "dev": "webpack --config webpack.config.js --mode development --watch",
     "build": "webpack --progress -p --config webpack.config.js --mode production"
   },
   "version": "1.0.0",

@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 import kr.co.wishDream.config.ApplicationWebFluxConfig;
+import kr.co.wishDream.config.LocaleConfig;
 
 @SpringBootApplication
-@Import({ApplicationWebFluxConfig.class})
+@Import({ApplicationWebFluxConfig.class, LocaleConfig.class})
 public class WishDreamWebApplication {
 	
 	public static void main(String[] args) {
