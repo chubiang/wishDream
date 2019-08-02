@@ -1,0 +1,36 @@
+logging:
+  level:
+    org:
+      hibernate: DEBUG
+      springframework:
+        data:
+          r2dbc: DEBUG
+        web: DEBUG
+    root: WARN
+    tomcat: INFO
+server:
+  error:
+    include-exception: true
+    include-stacktrace: never
+  port: 8080
+spring:
+  application:
+    name: WishDream
+  thymeleaf:
+    cache: 'false'
+    check-template-location: true
+    encoding: UTF-8
+    prefix: classpath:/static/
+    suffix: .html
+    template-resolver-order: 0
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5430/wishDream
+    username: wishDream
+    password: wishDream
+wishDream:
+  database:
+    database: wishDream
+    host: localhost
+    password: wishDream
+    port: 5430
+    user: wishDream

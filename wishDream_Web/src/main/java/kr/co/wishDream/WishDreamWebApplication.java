@@ -3,12 +3,15 @@ package kr.co.wishDream;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 
 import kr.co.wishDream.config.ApplicationWebFluxConfig;
+import kr.co.wishDream.config.DatabaseConfig;
 import kr.co.wishDream.config.LocaleConfig;
 
 @SpringBootApplication
-@Import({ApplicationWebFluxConfig.class, LocaleConfig.class})
+@EnableR2dbcRepositories
+@Import({ ApplicationWebFluxConfig.class, LocaleConfig.class, DatabaseConfig.class })
 public class WishDreamWebApplication {
 	
 	public static void main(String[] args) {

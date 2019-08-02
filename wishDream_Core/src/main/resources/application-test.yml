@@ -1,0 +1,11 @@
+wishDream:
+  database:
+    database: wishDream
+    host: localhost
+    password: wishDream
+    port: 5430
+    user: wishDream
+spring:
+  r2dbc:
+    url: r2dbc:pool:postgresql://localhost:5430/wishDream    username: wishDream
+    password: wishDream    

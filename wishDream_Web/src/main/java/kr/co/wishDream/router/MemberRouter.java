@@ -20,6 +20,6 @@ public class MemberRouter {
 	@Bean
 	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) {
 		
-		return RouterFunctions.route(GET("/member/{name}").and(accept(MediaType.APPLICATION_JSON_UTF8)), handler::findByUserName);
+		return RouterFunctions.route(GET("/member/{email}").and(accept(MediaType.APPLICATION_JSON_UTF8)), handler::findByUserName);
 	}
 }

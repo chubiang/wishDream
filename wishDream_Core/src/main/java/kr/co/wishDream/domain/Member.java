@@ -4,9 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Synchronized;
 
-@Table("member")
 @NoArgsConstructor
 @Data(staticConstructor = "of")
 public class Member {
@@ -22,7 +18,7 @@ public class Member {
 	@Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
 	private DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
 
-	@Id private String email;
+	private String email;
 	private String username;
 	private String etc;
 	private Date birth;

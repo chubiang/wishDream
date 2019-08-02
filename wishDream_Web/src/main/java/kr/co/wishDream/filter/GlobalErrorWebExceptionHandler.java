@@ -2,6 +2,7 @@ package kr.co.wishDream.filter;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -9,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RequestPredicates;
@@ -24,12 +26,18 @@ import reactor.core.publisher.Mono;
 @Order(-2)
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
-
+	
 	public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties,
-			ApplicationContext applicationContext) {
+			final ApplicationContext applicationContext, final ServerCodecConfigurer serverCodecConfigurer) {
 		super(errorAttributes, resourceProperties, applicationContext);
-		// TODO Auto-generated constructor stub
+		super.setMessageReaders(serverCodecConfigurer.getReaders());
+		super.setMessageWriters(serverCodecConfigurer.getWriters());
 	}
+
+	@Autowired
+	ApplicationContext context;
+	
+	
 
 	@Override
 	protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
@@ -45,5 +53,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
          .contentType(MediaType.APPLICATION_JSON_UTF8)
          .body(BodyInserters.fromObject(errorPropertiesMap));
     }
+	
+	
 
 }

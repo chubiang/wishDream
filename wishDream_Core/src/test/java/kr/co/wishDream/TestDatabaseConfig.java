@@ -1,11 +1,11 @@
-package kr.co.wishDream.config;
+package kr.co.wishDream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
-import org.springframework.data.r2dbc.core.DatabaseClient;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
@@ -13,7 +13,8 @@ import io.r2dbc.spi.ConnectionFactory;
 
 @Configuration
 @EnableConfigurationProperties
-public class DatabaseConfig extends AbstractR2dbcConfiguration {
+@EnableR2dbcRepositories
+public class TestDatabaseConfig extends AbstractR2dbcConfiguration {
 	
 	@Value("${wishDream.database.host:localhost}")
 	private String DB_HOST;
@@ -38,10 +39,11 @@ public class DatabaseConfig extends AbstractR2dbcConfiguration {
 				.build());
 	}
 	
+
+	/*
 	@Bean
-	public DatabaseClient databaseClient() {
-		return DatabaseClient.builder().connectionFactory(connectionFactory()).build();
-	}
-	
-	
+	public MemberRepository memberRepository(R2dbcRepositoryFactory factory) {
+		return factory.getRepository(MemberRepository.class);
+	}*/
+
 }
