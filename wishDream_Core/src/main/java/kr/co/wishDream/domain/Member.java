@@ -7,11 +7,9 @@ import java.util.Date;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Synchronized;
 
-@NoArgsConstructor
 @Data(staticConstructor = "of")
 public class Member {
 	
@@ -39,6 +37,10 @@ public class Member {
 		this.birth = birth;
 		this.joinDate = joinDate;
 		this.leaveDate = leaveDate;
+	}
+	
+	public Member() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

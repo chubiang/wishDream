@@ -23,12 +23,9 @@ spring:
     prefix: classpath:/static/
     suffix: .html
     template-resolver-order: 0
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5430/wishDream
-    username: wishDream
-    password: wishDream
 wishDream:
   database:
+    url: jdbc:postgresql://localhost:5430/wishDream
     database: wishDream
     host: localhost
     password: wishDream

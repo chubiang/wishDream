@@ -1,126 +1,39 @@
 package kr.co.wishDream.repository;
 
-import org.reactivestreams.Publisher;
+import org.davidmoten.rx.jdbc.Database;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.r2dbc.core.DatabaseClient;
-import org.springframework.data.r2dbc.query.Criteria;
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
+import io.reactivex.Flowable;
+import kr.co.wishDream.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Repository
-@Transactional
-public class MemberRepository implements R2dbcRepository<Member, String> {
+@Component
+public class MemberRepository {
 
+	private Database db;
+	
 	@Autowired
-	private DatabaseClient client;
-
-	@Override
-	public Mono<Member> findById(String id) {
-		return client.select()
-				.from(Member.class)
-				.matching(Criteria.where("email").is(id))
-				.as(Member.class).one();
+	private DatabaseConnect connect;
+	
+	public MemberRepository() throws Exception {
+		this.db = connect.database();
 	}
-
-	@Override
-	public Mono<Member> findById(Publisher<String> id) {
-		// TODO Auto-generated method stub
+	
+	Mono<Member> findByEmail(String email) {
+		String sql = "SELECT * FROM MEMBER WHERE EMAIL = ?";
+		/*
+		Flowable<Member> memberFlowable =
+				db.select(sql)
+					.parameter(email)
+					.get(
+						rs -> {
+							Member member = new Member();
+						});
+						*/
 		return null;
+		
 	}
-
-	@Override
-	public <S extends Member> Mono<S> save(S entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends Member> Flux<S> saveAll(Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends Member> Flux<S> saveAll(Publisher<S> entityStream) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Boolean> existsById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Boolean> existsById(Publisher<String> id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Flux<Member> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Flux<Member> findAllById(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Flux<Member> findAllById(Publisher<String> idStream) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Long> count() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> deleteById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> deleteById(Publisher<String> id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> delete(Member entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> deleteAll(Iterable<? extends Member> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> deleteAll(Publisher<? extends Member> entityStream) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<Void> deleteAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }

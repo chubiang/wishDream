@@ -72,17 +72,7 @@ subprojects {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
 		implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
 		// database
-		//compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
-		compile group: 'io.r2dbc', name: 'r2dbc-postgresql', version: '0.8.0.M8'
-		compile group: 'org.springframework', name: 'spring-tx', version: '5.1.8.RELEASE'
-		
-		compile group: 'io.r2dbc', name: 'r2dbc-bom', version: 'Arabba-M8', ext: 'pom'
-		compile group: 'io.r2dbc', name: 'r2dbc-pool', version: '0.8.0.M8'
-		//compile group: 'org.springframework.data', name: 'spring-data-r2dbc', version: '1.0.0.M2'
-		
-		compile group: 'org.springframework.boot.experimental', name: 'spring-boot-starter-data-r2dbc', version: '0.1.0.M1'
-		compile group: 'org.springframework.boot.experimental', name: 'spring-boot-actuator-autoconfigure-r2dbc', version: '0.1.0.M1'
-		
+		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
 		
 		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 		compileOnly 'org.projectlombok:lombok'
