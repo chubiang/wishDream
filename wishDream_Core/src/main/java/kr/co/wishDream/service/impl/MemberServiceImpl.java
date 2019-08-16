@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class MemberServiceImpl implements MemberService {
 
 	@Autowired
-	private MemberRepository repository;
+	private MemberRepository memberRepository;
 
 	
 	@Override

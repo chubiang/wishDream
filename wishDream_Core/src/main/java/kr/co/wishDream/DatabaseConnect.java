@@ -6,10 +6,11 @@ import org.davidmoten.rx.jdbc.ConnectionProvider;
 import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.DatabaseType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 @PropertySource("application.yml")
 public class DatabaseConnect {
 
@@ -26,7 +27,7 @@ public class DatabaseConnect {
 	@Value("${wishDream.database.password:wishDream}")
 	private String DB_PASSWORD;
 
-
+	@Bean(destroyMethod = "destory")
 	public Database database() throws Exception{
 		return Database
 				  .nonBlocking()

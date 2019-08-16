@@ -5,12 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Synchronized;
 
-@Data(staticConstructor = "of")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 	
 	@Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
@@ -37,10 +41,6 @@ public class Member {
 		this.birth = birth;
 		this.joinDate = joinDate;
 		this.leaveDate = leaveDate;
-	}
-	
-	public Member() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
