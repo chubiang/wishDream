@@ -37,6 +37,7 @@ allprojects {
 	
 	dependencies {
 		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
+		
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

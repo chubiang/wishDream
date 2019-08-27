@@ -27,7 +27,7 @@ public class DatabaseConnect {
 	@Value("${wishDream.database.password:wishDream}")
 	private String DB_PASSWORD;
 
-	@Bean(destroyMethod = "destory")
+	@Bean
 	public Database database() throws Exception{
 		return Database
 				  .nonBlocking()

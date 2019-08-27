@@ -11,17 +11,16 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class MemberRepository {
-
-	private Database db;
 	
 	@Autowired
 	private DatabaseConnect databaseConnect;
+
+	private Database db;
 	
-	public MemberRepository() throws Exception {
+	
+	public Mono<Member> findByEmail(String email) throws Exception {
 		this.db = databaseConnect.database();
-	}
-	
-	Mono<Member> findByEmail(String email) {
+		
 		String sql = "SELECT * FROM MEMBER WHERE EMAIL = ?";
 		
 		Flowable<Member> memberFlowable =
