@@ -1,6 +1,7 @@
 HELP.md
 .gradle
 /build/
+/bin/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -31,3 +32,12 @@ HELP.md
 
 ### yarn ###
 yarn-error.log
+yarn.lock
+
+
+### js build ###
+/src/main/webapp/
+/src/main/images/
+
+### spring build ###
+/src/main/java/META-INF/*-metadata.json
