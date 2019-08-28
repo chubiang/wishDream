@@ -15,20 +15,21 @@ public class MemberRepository {
 	@Autowired
 	private DatabaseConnect databaseConnect;
 
-	private Database db;
+	private Database database;
 	
 	
 	public Mono<Member> findByEmail(String email) throws Exception {
-		this.db = databaseConnect.database();
+		this.setDatabase(Database.from(databaseConnect.pool()));
 		
-		String sql = "SELECT * FROM MEMBER WHERE EMAIL = ?";
+		String sql = "SELECT * FROM \"Member\" WHERE EMAIL = ?";
 		
 		Flowable<Member> memberFlowable =
-				db.select(sql)
+				database.select(sql)
 					.parameter(email)
 					.get(
 						rs -> {
 							Member member = new Member();
+							member.setUsername(rs.getString("username"));
 							member.setEmail(rs.getString("email"));
 							member.setBirth(rs.getDate("birth"));
 							member.setJoinDate(rs.getDate("joinDate"));
@@ -40,6 +41,11 @@ public class MemberRepository {
 					
 		return Mono.from(memberFlowable);
 		
+	}
+
+
+	public void setDatabase(Database database) {
+		this.database = database;
 	}
 	
 }

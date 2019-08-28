@@ -3,10 +3,10 @@ package kr.co.wishDream;
 import java.util.concurrent.TimeUnit;
 
 import org.davidmoten.rx.jdbc.ConnectionProvider;
-import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.DatabaseType;
+import org.davidmoten.rx.jdbc.pool.NonBlockingConnectionPool;
+import org.davidmoten.rx.jdbc.pool.Pools;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("application.yml")
 public class DatabaseConnect {
 
-	@Value("${wishDream.database.url:wishDream}")
+	@Value("${wishDream.database.url:jdbc:postgresql://localhost:5430/wishDream}")
 	private String DB_URL;
 	@Value("${wishDream.database.host:localhost}")
 	private String DB_HOST;
@@ -22,14 +22,13 @@ public class DatabaseConnect {
 	private Integer DB_PORT;
 	@Value("${wishDream.database.database:wishDream}")
 	private String DB_DATABASE;
-	@Value("${wishDream.database.user:wishDream}")
+	@Value("${wishDream.database.user:wishdream}")
 	private String DB_USER;
-	@Value("${wishDream.database.password:wishDream}")
+	@Value("${wishDream.database.password:wishdream}")
 	private String DB_PASSWORD;
 
-	@Bean
-	public Database database() throws Exception{
-		return Database
+	public NonBlockingConnectionPool pool() throws Exception{
+		return Pools
 				  .nonBlocking()
 				  // the jdbc url of the connections to be placed in the pool
 				  .connectionProvider(ConnectionProvider.from(DB_URL, DB_USER, DB_PASSWORD))
