@@ -21,7 +21,7 @@ public class MemberRepository {
 	public Mono<Member> findByEmail(String email) throws Exception {
 		this.setDatabase(Database.from(databaseConnect.pool()));
 		
-		String sql = "SELECT * FROM \"Member\" WHERE EMAIL = ?";
+		String sql = "SELECT * FROM member WHERE EMAIL = ?";
 		
 		Flowable<Member> memberFlowable =
 				database.select(sql)

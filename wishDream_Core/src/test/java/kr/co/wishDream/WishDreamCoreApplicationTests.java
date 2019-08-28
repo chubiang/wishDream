@@ -27,7 +27,7 @@ public class WishDreamCoreApplicationTests {
 	public void findByEmail(String email) throws Exception {
 		this.setDatabase(Database.from(testDatabaseConnect.pool()));
 		
-		String sql = "SELECT * FROM \"Member\" WHERE EMAIL = ?";
+		String sql = "SELECT * FROM member WHERE EMAIL = ?";
 		
 		database.select(sql)
 				.parameter(email)
@@ -44,7 +44,6 @@ public class WishDreamCoreApplicationTests {
 							return member;
 						})
 				.blockingSubscribe(System.out::println);
-			
 		
 	}
 

@@ -1,4 +1,4 @@
-CREATE TABLE "Member"
+CREATE TABLE "member"
 (
     username character varying(30) COLLATE pg_catalog."default" NOT NULL,
     email character varying(100) COLLATE pg_catalog."default" NOT NULL,

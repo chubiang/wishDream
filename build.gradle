@@ -6,8 +6,8 @@ plugins {
 ext {
 	flyway = [
 		url: 'jdbc:postgresql://localhost:5430/wishDream',
-		user: 'wishDream',
-		password: 'wishDream',
+		user: 'wishdream',
+		password: 'wishdream',
 		driver: 'org.postgresql.Driver',
 		schemas: ['public']
 	]
@@ -71,7 +71,7 @@ subprojects {
 	
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-webflux'
-		implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
+		
 		// database
 		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.4'
 		
