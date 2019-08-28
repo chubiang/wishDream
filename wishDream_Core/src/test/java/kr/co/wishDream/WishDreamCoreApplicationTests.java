@@ -4,39 +4,37 @@ import org.davidmoten.rx.jdbc.Database;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import io.reactivex.Flowable;
 import kr.co.wishDream.domain.Member;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TestDatabaseConnect.class})
+@ContextConfiguration(classes = {ApplicationWebFluxConfig.class,
+					 TestDatabaseConnect.class})
 public class WishDreamCoreApplicationTests {
 	
 	@Autowired
 	private TestDatabaseConnect testDatabaseConnect;
 	
-	private Database db;
-	
+	private Database database;
+
 	@Test
 	public void contextLoads() throws Exception {
-		Flowable<Member> mem = findByEmail("nana@gmail.com");
-		mem.subscribe(System.out::println);
-		
+		findByEmail("nana@gmail.com");
 	}
 
-	public Flowable<Member> findByEmail(String email) throws Exception {
-		this.db = testDatabaseConnect.database();
+	public void findByEmail(String email) throws Exception {
+		this.setDatabase(Database.from(testDatabaseConnect.pool()));
 		
-		String sql = "SELECT * FROM MEMBER WHERE EMAIL = ?";
+		String sql = "SELECT * FROM \"Member\" WHERE EMAIL = ?";
 		
-		Flowable<Member> memberFlowable =
-				db.select(sql)
-					.parameter(email)
-					.get(
+		database.select(sql)
+				.parameter(email)
+				.get(
 						rs -> {
 							Member member = new Member();
+							member.setUsername(rs.getString("username"));
 							member.setEmail(rs.getString("email"));
 							member.setBirth(rs.getDate("birth"));
 							member.setJoinDate(rs.getDate("joinDate"));
@@ -44,9 +42,13 @@ public class WishDreamCoreApplicationTests {
 							member.setEtc(rs.getString("etc"));
 							
 							return member;
-						});
+						})
+				.blockingSubscribe(System.out::println);
 			
-		return memberFlowable;
 		
+	}
+
+	public void setDatabase(Database database) {
+		this.database = database;
 	}
 }
