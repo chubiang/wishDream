@@ -35,8 +35,8 @@ module.exports = {
     },
     devtool: 'sourcemaps',
     output: {
-        path: path.resolve(__dirname, 'src/main/webapp'),
-        publicPath:'/webapp',
+        path: path.resolve(__dirname, 'src/main/resources/static'),
+        publicPath:'/static',
         filename: '[name].bundle.js'
     },
     module: {
@@ -44,7 +44,7 @@ module.exports = {
             {
               enforce: 'pre',
               test: /\.(js|jsx)$/,
-              exclude: /(node_modules)|(webapp)/,
+              exclude: /(node_modules)|(static)/,
               use: (info) => ([
                   {
                     loader: "babel-loader",
@@ -67,7 +67,7 @@ module.exports = {
             },
             {
               test: /\.(sass|scss)$/,
-              exclude: /(webapp)|(node_modules)/,
+              exclude: /(static)|(node_modules)/,
               use: [
                 {
                   loader: MiniCssExtractPlugin.loader,

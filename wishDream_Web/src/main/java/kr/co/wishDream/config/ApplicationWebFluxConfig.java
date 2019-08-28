@@ -85,7 +85,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
 			.addResourceHandler("/**")
-			.addResourceLocations("classpath:/static/","file:/public/")
+			.addResourceLocations("classpath:/static/")
 			.setCacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
 			.resourceChain(true)
 			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
