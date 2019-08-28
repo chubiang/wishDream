@@ -1,6 +1,7 @@
 HELP.md
 .gradle
 /build/
+/bin/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -28,3 +29,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+### spring build ###
+/src/main/java/META-INF/*-metadata.json
