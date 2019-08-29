@@ -22,7 +22,6 @@ public class MemberHandler {
 	private MemberService memberService;
 	
 	public Mono<ServerResponse> findByUserName(ServerRequest request) {
-		log.info("REQ PARAM = "+request.pathVariable("email"));
 		Mono<String> fallback = Mono.error(new Throwable("Not exsit member"));
 		return ServerResponse
 				.ok()

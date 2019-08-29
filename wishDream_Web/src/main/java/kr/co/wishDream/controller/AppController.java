@@ -1,9 +1,15 @@
 package kr.co.wishDream.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController
+@Controller
 public class AppController {
 
+	@RequestMapping("/")
+	public String index(final Model model) {
 
+		return "index";
+	}
 }

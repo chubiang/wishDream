@@ -14,15 +14,13 @@ server:
     include-stacktrace: never
   port: 8080
 spring:
+  webflux:
+    static-path-pattern: "/static/**"
+  resources:
+    static-locations:
+    - "classpath:/static/"
   application:
     name: WishDream
-  thymeleaf:
-    cache: 'false'
-    check-template-location: true
-    encoding: UTF-8
-    prefix: classpath:/static/
-    suffix: .html
-    template-resolver-order: 0
 wishDream:
   database:
     url: jdbc:postgresql://localhost:5430/wishDream

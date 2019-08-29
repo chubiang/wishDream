@@ -16,7 +16,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.PathMatchConfigurer;
@@ -25,6 +25,12 @@ import org.springframework.web.reactive.config.ViewResolverRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.resource.VersionResourceResolver;
 import org.springframework.web.reactive.result.view.HttpMessageWriterView;
+import org.thymeleaf.spring5.ISpringWebFluxTemplateEngine;
+import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.reactive.ThymeleafReactiveViewResolver;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -44,16 +50,13 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	@SuppressWarnings("unused")
 	private ApplicationContext applicationContext;
 	
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		// TODO Auto-generated method stub
 		this.applicationContext = applicationContext;
 	}
-	
 	
 	@Bean
 	@Primary
@@ -78,22 +81,48 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		configurer
 			.setUseCaseSensitiveMatch(true)
 			.setUseTrailingSlashMatch(false)
-			.addPathPrefix("/", HandlerTypePredicate.forAnnotation(RestController.class));
+			.addPathPrefix("/", HandlerTypePredicate.forAnnotation(Controller.class));
 	}
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
-			.addResourceHandler("/**")
-			.addResourceLocations("classpath:/static/")
+			.addResourceHandler("/static/**")
+			.addResourceLocations("/public","classpath:/static/")
 			.setCacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
 			.resourceChain(true)
 			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
 	}
-
+	
 	@Override
 	public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
 		configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper));
+	}
+	
+	@Bean
+	public ITemplateResolver thymeleafTemplateResolver() {
+	  final SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+	  resolver.setApplicationContext(this.applicationContext);
+	  resolver.setPrefix("classpath:static/");
+	  resolver.setSuffix(".html");
+	  resolver.setTemplateMode(TemplateMode.HTML);
+	  resolver.setCacheable(false);
+	  resolver.setCheckExistence(false);
+	  return resolver;
+	}
+
+	@Bean
+	public ISpringWebFluxTemplateEngine thymeleafTemplateEngine() {
+	  SpringWebFluxTemplateEngine templateEngine = new SpringWebFluxTemplateEngine();
+	  templateEngine.setTemplateResolver(thymeleafTemplateResolver());
+	  return templateEngine;
+	}
+
+	@Bean
+	public ThymeleafReactiveViewResolver thymeleafReactiveViewResolver() {
+	  ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
+	  viewResolver.setTemplateEngine(thymeleafTemplateEngine());
+	  return viewResolver;
 	}
 	
 	@Override
@@ -101,6 +130,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 
 		Jackson2JsonEncoder encoder = new Jackson2JsonEncoder();
 		registry.defaultViews(new HttpMessageWriterView(encoder));
+		registry.viewResolver(thymeleafReactiveViewResolver());
 	}
 	
 }

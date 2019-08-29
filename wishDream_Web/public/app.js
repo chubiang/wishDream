@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <Router>
         <Container className="App">
-          
+          Hi man
           {/* <Route component={{} />*/}
         </Container>
       </Router>
