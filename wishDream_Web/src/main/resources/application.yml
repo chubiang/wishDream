@@ -26,8 +26,8 @@ spring:
 wishDream:
   database:
     url: jdbc:postgresql://localhost:5430/wishDream
+    user: wishdream
+    password: wishdream
     database: wishDream
     host: localhost
-    password: wishDream
     port: 5430
-    user: wishDream

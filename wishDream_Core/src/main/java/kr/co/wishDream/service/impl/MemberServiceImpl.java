@@ -17,7 +17,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	public Mono<Member> findOneByEmail(String email) {
-		return null;
+		return memberRepository.findByEmail(email);
 	}
 
 }

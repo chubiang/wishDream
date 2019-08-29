@@ -3,6 +3,6 @@ wishDream:
     url: jdbc:postgresql://localhost:5430/wishDream
     database: wishDream
     host: localhost
-    password: wishDream
+    password: wishdream
     port: 5430
-    user: wishDream
+    user: wishdream
