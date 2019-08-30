@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const Fiber = require('fibers');
 const sass = require("sass");
-const PolyfillInjectorPlugin = require('webpack-polyfill-injector');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -12,6 +11,7 @@ const MediaQueryPlugin = require('media-query-plugin');
 const CleanWebpackPlugin   = require('clean-webpack-plugin').CleanWebpackPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const DirectoryNamedWebpackPlugin = require("directory-named-webpack-plugin");//디렉토리 이름과 같은 파일 연결
 
 const devMode = process.env.NODE_ENV !== 'production';
 
@@ -21,23 +21,20 @@ module.exports = {
     cache: false,
     context: path.resolve(__dirname, 'public'),
     entry: {
-        /*
-        polyfills: `webpack-polyfill-injector?$(JSON.stringify({
-            modules: [
-                './services/polyfills.js'
-            ]
-        })!`,
-        */
-        app: './app.js',
         index: './index.js'
-
-
     },
     devtool: 'sourcemaps',
     output: {
         path: path.resolve(__dirname, 'src/main/resources/static'),
         publicPath:'/static',
         filename: '[name].bundle.js'
+    },
+    node: {
+      global: true
+    },
+    resolve: {
+      modules: [ path.resolve(__dirname, 'public'), 'node_modules'],
+      plugins: [ new DirectoryNamedWebpackPlugin() ]
     },
     module: {
         rules: [
@@ -46,22 +43,7 @@ module.exports = {
               test: /\.(js|jsx)$/,
               exclude: /(node_modules)|(static)/,
               use: (info) => ([
-                  {
-                    loader: "babel-loader",
-                    /*
-                    options: {
-                        presets: [
-                            ['@babel/preset-env', {
-                                targets: {
-                                    browsers: "> 0.2%"
-                                },
-                                modules: 'false',
-                                useBuiltIns: 'entry'
-                            }],
-                            '@babel/preset-react'
-                        ]}
-                    */
-                  },
+                  { loader: "babel-loader" },
                   { loader: 'astroturf/loader'}
                 ]),
             },
@@ -130,6 +112,7 @@ module.exports = {
        new CleanWebpackPlugin(),
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
+            inject : false,
             minify: {
                 collapseWhitespace: true,
                 removeComments: true,
@@ -145,24 +128,13 @@ module.exports = {
             ignoreOrder: true,
         }),
         new CopyWebpackPlugin([
-          {
-            from: 'images', to: '../images'
-          }
+          { from: 'images', to: '../images' },
+          { from: 'icon', to:'./' }
         ]),
         new BundleAnalyzerPlugin()
-        /*
-        new PolyfillInjectorPlugin({
-            polyfills: [
-                'Promise',
-                'Array.prototype.find',
-                'Array.prototype.flat',
-                'Element.prototype.closest'
-            ]
-        })
-        */
     ],
     optimization: {
-        minimizer: [
+        minimizer: [// dev겸 연습겸
         	new UglifyJsPlugin({
 	    			uglifyOptions: {
 	    				compress:false,
@@ -170,8 +142,8 @@ module.exports = {
 	    				mangle: true
 	    			},
 	    			exclude: /(\/node_modules)/,
-	    			cache: true,
-        			sourceMap: true
+	    			// cache: true,
+        		sourceMap: true
         	}),
           new OptimizeCSSAssetsPlugin({})
         ],

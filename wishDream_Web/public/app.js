@@ -1,22 +1,12 @@
-import React, { Component, Fragment } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
-import "babel-polyfill";
-import "./styles/app.scss"
-
+import "styles/app.scss"
+import NavRouter from "Component/NavRouter";
 
 class App extends Component {
   render() {
-
-
-
     return (
-      <Router>
-        <Container className="App">
-          Hi man
-          {/* <Route component={{} />*/}
-        </Container>
-      </Router>
+      <Container className="App">
+        <NavRouter />
+      </Container>
     );
   }
 }

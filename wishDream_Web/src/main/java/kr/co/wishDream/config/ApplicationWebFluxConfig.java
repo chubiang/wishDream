@@ -87,7 +87,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
-			.addResourceHandler("/static/**")
+			.addResourceHandler("/static/**","/*.ico")
 			.addResourceLocations("/public","classpath:/static/")
 			.setCacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
 			.resourceChain(true)
