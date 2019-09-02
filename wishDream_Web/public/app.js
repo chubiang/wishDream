@@ -1,12 +1,14 @@
-import "styles/app.scss"
+// module "app.js"
+import React, { Component, Fragment } from 'react';
 import NavRouter from "Component/NavRouter";
+import "styles/app.scss"
 
 class App extends Component {
   render() {
     return (
-      <Container className="App">
+      <div className="App">
         <NavRouter />
-      </Container>
+      </div>
     );
   }
 }

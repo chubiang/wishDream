@@ -112,14 +112,17 @@ module.exports = {
        new CleanWebpackPlugin(),
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
-            inject : false,
+            inject: 'body',
+            hash: true,
+            template: 'index.html',
+            filename: './index.html',
             minify: {
-                collapseWhitespace: true,
-                removeComments: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: true
+              collapseWhitespace: true,
+              removeComments: true,
+              removeRedundantAttributes: true,
+              removeScriptTypeAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              useShortDoctype: true
             },
         }),
         new MiniCssExtractPlugin({

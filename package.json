@@ -6,10 +6,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/register": "^7.5.5",
-    "@babel/runtime-corejs3": "^7.5.5",
     "autoprefixer": "^9.6.1",
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
@@ -31,7 +31,6 @@
     "wepack-cli": "^0.0.1-security"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-syntax-jsx": "^7.2.0",

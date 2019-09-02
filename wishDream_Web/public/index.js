@@ -1,7 +1,5 @@
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
-import "core-js-pure";
-import "regenerator-runtime/runtime";
+import App from 'app';
 
 ReactDOM.render(<App />, document.getElementById('root'));
