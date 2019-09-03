@@ -94,17 +94,43 @@ module.exports = {
                 }
               ]
             },
-           {
-    				test: /\.(eot|ttf|woff2?|otf)$/,
-    				use: 'url-loader?limit=1024&name=fonts/[name].[ext]'
-  			   },{
-    				test: /\.(jpe?g|png|gif|svg)$/,
-    				include: /public/,
-    				use: 'url-loader?limit=5000&name=assets/img/[name].[ext]'
-  			   },{
-    				test: /\.(mp4)$/,
-    				use: 'url-loader?limit=500000&name=assets/video/[name].[ext]'
-  			   }
+            {
+              test: /\.css$/,
+              exclude: /(static)|(node_modules)/,
+              use: [
+                {
+                  loader: 'style-loader',
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                      modules: true,
+                      sourceMap: true
+                  }
+                }
+              ],
+            },
+            {
+              test: /\.(html)$/,
+              use: {
+                loader: 'html-loader',
+                options: {
+                  minimize: true
+                  // attrs: [':data-src']
+                }
+              }
+            },
+            {
+              test: /\.(eot|ttf|woff|woff2?|otf)$/,
+    				  use: 'url-loader?limit=100000&name=fonts/[name].[ext]'
+  			    },{
+    				  test: /\.(jpe?g|png|gif|svg)$/,
+    				  include: /public/,
+    				  use: 'url-loader?limit=100000&name=assets/img/[name].[ext]'
+  			    },{
+    				  test: /\.(mp4)$/,
+    				  use: 'url-loader?limit=500000&name=assets/video/[name].[ext]'
+  			    }
         ]
     },
     plugins: [
@@ -113,11 +139,11 @@ module.exports = {
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
             inject: 'body',
+            chunks: [ 'index' ],
             hash: true,
+            filename : 'index.html',
             template: 'index.html',
-            filename: './index.html',
             minify: {
-              collapseWhitespace: true,
               removeComments: true,
               removeRedundantAttributes: true,
               removeScriptTypeAttributes: true,
