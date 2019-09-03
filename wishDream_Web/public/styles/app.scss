@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Do+Hyeon:400');
 
 $default-font: "Do Hyeon", sans-serif;
-
 body {
   margin: 0;
   box-sizing: border-box;
-  font-family: $default-font;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

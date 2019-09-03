@@ -125,7 +125,8 @@ module.exports = {
     },
     plugins: [
        new webpack.ProgressPlugin(),
-       new CleanWebpackPlugin(),
+       new CleanWebpackPlugin({
+       }),
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
             inject: 'body',
@@ -174,9 +175,15 @@ module.exports = {
                 chunks: 'async',
                 priority: 1
             },
-            css_vendors: {
+            scss_vendors: {
                 name: 'styles',
                 test:/\.(sass|scss)$/,
+                chunks: 'all',
+                enforce: true,
+            },
+            css_vendors: {
+                name: 'styles',
+                test:/\.(css)$/,
                 chunks: 'all',
                 enforce: true,
             }
