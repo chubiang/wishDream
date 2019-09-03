@@ -111,16 +111,6 @@ module.exports = {
               ],
             },
             {
-              test: /\.(html)$/,
-              use: {
-                loader: 'html-loader',
-                options: {
-                  minimize: true
-                  // attrs: [':data-src']
-                }
-              }
-            },
-            {
               test: /\.(eot|ttf|woff|woff2?|otf)$/,
     				  use: 'url-loader?limit=100000&name=fonts/[name].[ext]'
   			    },{
@@ -142,7 +132,8 @@ module.exports = {
             chunks: [ 'index' ],
             hash: true,
             filename : 'index.html',
-            template: 'index.html',
+            template: './index.html',
+            xhtml: true,
             minify: {
               removeComments: true,
               removeRedundantAttributes: true,
