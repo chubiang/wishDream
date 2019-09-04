@@ -39,3 +39,7 @@ yarn-error.log
 .yarnrc
 4.0.0
 /YarnCachev4/
+
+### build ###
+*/src/main/resources/static/
+*/src/main/resources/images/

@@ -1,21 +1,32 @@
 // module "app.js"
 import React, { Component, Fragment } from 'react';
-import Layout from "Component/Layout";
-import "styles/app.scss"
-import "styles/material_icon.css"
-import Typography from '@material-ui/core/Typography';
-import { Container, Icon, SvgIcon } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { blue, red } from '@material-ui/core/colors';
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import pink from '@material-ui/core/colors/pink';
+import red from '@material-ui/core/colors/red';
+import BaseLayout from "Component/baseLayout";
+import "styles/app.scss";
+import "styles/material_font_roboto.css";
+import "styles/material_icon.css";
 
-class App extends Component {
-  render() {
-    return (
-      <Container maxWidth="md" className="App">
-        <Layout />
-      </Container>
-    );
-  }
-}
+
+import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
+import { Switch } from 'react-router';
+/*
+let theme = createMuiTheme({
+  palette: {
+    primary: pink,
+    secondary: red,
+  },
+  status: {
+    danger: 'orange',
+  },
+});
+theme = responsiveFontSizes(theme);
+*/
+const App = () => (
+  <BrowserRouter>
+    <BaseLayout />
+  </BrowserRouter>
+);
 
 export default App;

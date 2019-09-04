@@ -126,6 +126,8 @@ module.exports = {
     plugins: [
        new webpack.ProgressPlugin(),
        new CleanWebpackPlugin({
+         dry: true,
+         cleanOnceBeforeBuildPatterns: ['**/*', 'index.html']
        }),
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
@@ -136,6 +138,7 @@ module.exports = {
             template: './index.html',
             xhtml: true,
             minify: {
+              collapseWhitespace: true,
               removeComments: true,
               removeRedundantAttributes: true,
               removeScriptTypeAttributes: true,
@@ -152,7 +155,7 @@ module.exports = {
           { from: 'images', to: '../images' },
           { from: 'icon', to:'./' }
         ]),
-        new BundleAnalyzerPlugin()
+        //new BundleAnalyzerPlugin()
     ],
     optimization: {
         minimizer: [// dev겸 연습겸
