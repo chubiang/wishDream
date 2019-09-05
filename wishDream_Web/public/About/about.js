@@ -4,7 +4,7 @@ import React, { Component, Fragment } from 'react';
 class About extends Component {
   render() {
     return (
-      <h1>About Page</h1>
+        <h1>About Page</h1>
     );
   }
 }

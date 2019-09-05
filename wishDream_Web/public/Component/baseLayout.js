@@ -16,6 +16,7 @@ const BaseLayout = () => (
     <div className="base">
       <Header />
       <Container maxWidth="md" className="App">
+        <main role="main">
         <Switch>
           <Route exact path="/" component={Home} />
           // <Route path="/about" component={About} />
@@ -23,6 +24,7 @@ const BaseLayout = () => (
           {/* Not Found */}
           // <Route component={() => <Redirect to="/" />} />
         </Switch>
+        </main>
       </Container>
     </div>
 );
