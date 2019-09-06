@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,10 +13,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import List from '@material-ui/core/List';
@@ -24,6 +28,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import CustomizedMenus from 'Component/CustomizedMenus';
 import Home from 'Home/home.js';
 import About from 'About/about.js';
 import FindMember from 'FindMember/findMember.js';
@@ -94,6 +99,11 @@ const headerStyles = makeStyles(theme => ({
   },
 }));
 
+const menu = {
+  loginTitle: 'Login',
+  loginStatus: 'true'
+};
+
 export default function Header () {
   const classes = headerStyles();
   const theme = useTheme();
@@ -131,7 +141,7 @@ export default function Header () {
           <Typography variant="h6" className={classes.title} noWrap>
             <Link to="/">Home</Link>
           </Typography>
-          <Button color="inherit">Login</Button>
+          <CustomizedMenus signOn={menu.loginStatus} menuName={menu.loginTitle} />
         </Toolbar>
       </AppBar>
       <Drawer

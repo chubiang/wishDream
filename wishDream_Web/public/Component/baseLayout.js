@@ -1,4 +1,4 @@
-// module "Layout.js"
+// module "baseLayout.js"
 import React, { Component, Fragment } from 'react';
 import { Switch } from 'react-router';
 import { Redirect, Link, Route } from 'react-router-dom';

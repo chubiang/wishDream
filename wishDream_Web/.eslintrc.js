@@ -16,7 +16,8 @@ module.exports = {
     }
   },
   plugins: [
-    "react"
+    "react",
+    "react-hooks"
   ],
   rules: {
     "camelcase": 0,
@@ -42,7 +43,9 @@ module.exports = {
     "no-prototype-builtins": 2,
     "react/prefer-stateless-function": 0,
     "react/jsx-filename-extension": 0,
-    "react/jsx-one-expression-per-line": 0
+    "react/jsx-one-expression-per-line": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   overrides: [
     {

@@ -19,6 +19,7 @@
     "directory-named-webpack-plugin": "^4.0.1",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^5.0.0",
+    "eslint-plugin-react-hooks": "^2.0.1",
     "fibers": "4.0.1",
     "gulp-cli": "^2.2.0",
     "html-webpack-plugin": "^4.0.0-beta.8",
