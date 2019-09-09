@@ -1,39 +1,39 @@
-// module "NavRouter.js"
-import React from 'react';
-import clsx from 'clsx';
+// module "header.js"
+import React from 'react'
+import clsx from 'clsx'
 
-import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
+import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom'
 
-import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles'
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuIcon from '@material-ui/icons/Menu';
-import MailIcon from '@material-ui/icons/Mail';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import Drawer from '@material-ui/core/Drawer'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Divider from '@material-ui/core/Divider'
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import MenuIcon from '@material-ui/icons/Menu'
+import MailIcon from '@material-ui/icons/Mail'
+import IconButton from '@material-ui/core/IconButton'
+import InboxIcon from '@material-ui/icons/MoveToInbox'
+import DraftsIcon from '@material-ui/icons/Drafts'
+import SendIcon from '@material-ui/icons/Send'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
-import CustomizedMenus from 'Component/CustomizedMenus';
-import Home from 'Home/home.js';
-import About from 'About/about.js';
-import FindMember from 'FindMember/findMember.js';
+import CustomizedMenus from 'Component/CustomizedMenus'
+import Home from 'Page/Home'
+import Login from 'Page/Login'
+import About from 'Page/About'
+import FindMember from 'Page/FindMember'
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
 const headerStyles = makeStyles(theme => ({
   root: {
@@ -97,29 +97,28 @@ const headerStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-}));
+}))
 
 const menu = {
   loginTitle: 'Login',
-  loginStatus: 'true'
-};
+  loginStatus: 'false' // true일때 로그인 한 상태.
+}
 
 export default function Header () {
-  const classes = headerStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const classes = headerStyles()
+  const theme = useTheme()
+  const [open, setOpen] = React.useState(false)
 
   function handleDrawerOpen() {
-    setOpen(true);
+    setOpen(true)
   }
 
   function handleDrawerClose() {
-    setOpen(false);
+    setOpen(false)
   }
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
@@ -183,5 +182,5 @@ export default function Header () {
         </List>
       </Drawer>
     </div>
-  );
+  )
 }
