@@ -64,10 +64,6 @@ module.exports = {
                   }
                 },
                 {
-                  loader: 'style-loader',
-                  options: { injectType: 'linkTag' }//lazyStyleTag
-                },
-                {
                   loader: 'css-loader',
                   options: {
                       modules: true,
@@ -109,7 +105,8 @@ module.exports = {
                   loader: 'css-loader',
                   options: {
                       modules: true,
-                      sourceMap: true
+                      sourceMap: true,
+                      onlyLocals: true
                   }
                 }
               ],
