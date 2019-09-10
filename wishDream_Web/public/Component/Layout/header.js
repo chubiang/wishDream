@@ -101,7 +101,9 @@ const headerStyles = makeStyles(theme => ({
 
 const menu = {
   loginTitle: 'Login',
-  loginStatus: 'false' // true일때 로그인 한 상태.
+  menus: [{'id':'mail', 'text':'Sent mail'}
+         ,{'id':'drafts', 'text':'Drafts'}
+         ,{'id':'inbox', 'text':'Inbox'}]
 }
 
 export default function Header () {
@@ -140,7 +142,8 @@ export default function Header () {
           <Typography variant="h6" className={classes.title} noWrap>
             <Link to="/">Home</Link>
           </Typography>
-          <CustomizedMenus signOn={menu.loginStatus} menuName={menu.loginTitle} />
+
+          <CustomizedMenus menus={menu} menuName={menu.loginTitle} />
         </Toolbar>
       </AppBar>
       <Drawer

@@ -44,22 +44,41 @@ export function useCurrentMenu(target) {
   return target
 }
 
+const menuItemIcon = (icons) => {
+  switch (icons) {
+    case 'mail':
+      return <SendIcon />;
+      break
+    case 'drafts':
+      return <DraftsIcon />;
+      break
+    case 'inbox':
+      return <InboxIcon />;
+      break
+    default:
+      break
+  }
+}
+
 export default function CustomizedMenus(props) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null)
 
   function handleMenuClick(event) {
-    if (!props.signOn) {
-      // 로그인 안함
-      return;
-    } else {
-      console.log(event);
-      return setAnchorEl(event.currentTarget);
-    }
+    setAnchorEl(event.currentTarget)
   }
 
   function handleClose() {
-      setAnchorEl(null);
+    setAnchorEl(null)
   }
+
+  const menuItems = props.menus.map((obj, index) => (
+    <StyledMenuItem key={obj.id + index}>
+      <ListItemIcon>
+        {menuItemIcon(obj.id)}
+      </ListItemIcon>
+      <ListItemText primary={obj.text} />
+    </StyledMenuItem>
+  ))
 
   return (
     <>
@@ -79,25 +98,9 @@ export default function CustomizedMenus(props) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem>
-          <ListItemIcon>
-            <SendIcon />
-          </ListItemIcon>
-          <ListItemText primary="Sent mail" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Drafts" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inbox" />
-        </StyledMenuItem>
+        {menuItems}
       </StyledMenu>
     </>
+    
   )
 }
