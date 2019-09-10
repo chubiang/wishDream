@@ -50,8 +50,7 @@ module.exports = {
         "react/jsx-one-expression-per-line": 0,
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
-        "no-extraneous-dependencies": ["import"],
-        "no-unresolved": ["import"]
+        "import/no-unresolved": "off"
     },
     "overrides": {
         "files": ["*-test.js"],
