@@ -29,7 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 
 import CustomizedMenus from 'Component/CustomizedMenus'
 import Home from 'Page/Home'
-import Login from 'Page/Login'
+import SignIn from 'Page/SignIn'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 
@@ -100,13 +100,14 @@ const headerStyles = makeStyles(theme => ({
 }))
 
 const menu = {
-  loginTitle: 'Login',
-  menus: [{'id':'mail', 'text':'Sent mail'}
-         ,{'id':'drafts', 'text':'Drafts'}
-         ,{'id':'inbox', 'text':'Inbox'}]
+  loginTitle: 'SignIn',
+  isSignIn: false,
+  menus: [{'id': 'mail', 'text': 'Sent mail'}
+         ,{'id': 'drafts', 'text': 'Drafts'}
+         ,{'id': 'inbox', 'text': 'Inbox'}]
 }
 
-export default function Header () {
+export default function Header (props) {
   const classes = headerStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
@@ -117,6 +118,13 @@ export default function Header () {
 
   function handleDrawerClose() {
     setOpen(false)
+  }
+
+  function loginButton(obj) {
+    if (obj.isSignIn) {
+      return <CustomizedMenus menus={obj.menus} menuName={obj.loginTitle} />
+    }
+    return <Button color="secondary"><Link to="/login">{obj.loginTitle}</Link></Button>
   }
 
   return (
@@ -142,8 +150,7 @@ export default function Header () {
           <Typography variant="h6" className={classes.title} noWrap>
             <Link to="/">Home</Link>
           </Typography>
-
-          <CustomizedMenus menus={menu} menuName={menu.loginTitle} />
+          {loginButton(menu)}
         </Toolbar>
       </AppBar>
       <Drawer

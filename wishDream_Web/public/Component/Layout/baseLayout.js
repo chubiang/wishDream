@@ -2,7 +2,6 @@
 import React, { Component, Fragment } from 'react'
 import { Switch } from 'react-router'
 import { Redirect, Link, Route } from 'react-router-dom'
-import Typography from '@material-ui/core/Typography'
 import { Container, Icon, SvgIcon } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { blue, red } from '@material-ui/core/colors'
@@ -12,7 +11,7 @@ import layoutStyles from "styles/layout.scss"
 import Header from "Component/Layout/Header"
 import Footer from "Component/Layout/Footer"
 import Home from 'Page/Home'
-import Login from 'Page/Login'
+import SignIn from 'Page/SignIn'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 
@@ -24,7 +23,7 @@ const BaseLayout = () => (
         <CssBaseline />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/login" component={Login} />
+          <Route path="/login" component={SignIn} />
         </Switch>
         <Footer />
       </Container>
