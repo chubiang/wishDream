@@ -5,5 +5,4 @@ pluginManagement {
 }
 rootProject.name = 'wishDream'
 
-include ':wishDream_Core'
-include ':wishDream_Web'
+include ':wishDream_Core', ':wishDream_Web'

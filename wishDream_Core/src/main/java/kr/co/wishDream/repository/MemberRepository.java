@@ -1,11 +1,11 @@
 package kr.co.wishDream.repository;
 
 import org.davidmoten.rx.jdbc.Database;
-import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import kr.co.wishDream.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
 import reactor.core.publisher.Mono;
@@ -17,6 +17,12 @@ public class MemberRepository {
 	private DatabaseConnect databaseConnect;
 
 	private Database database;
+	
+	public Mono<Member> findByEmailAutoMap() {
+		Single<Member> mem = database.select("SELECT * FROM member WHERE EMAIL = ?")
+				.autoMap(Member.class).singleOrError();
+		return Mono.from(mem.toFlowable());
+	}
 	
 	
 	public Mono<Member> findByEmail(String email) {
