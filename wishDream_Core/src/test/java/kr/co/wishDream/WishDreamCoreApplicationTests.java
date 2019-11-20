@@ -4,14 +4,15 @@ import org.davidmoten.rx.jdbc.Database;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import kr.co.wishDream.domain.Member;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {ApplicationWebFluxConfig.class,
-					 TestDatabaseConnect.class})
+@SpringBootTest(classes = {TestDatabaseConnect.class})
+@TestPropertySource(locations = {"classpath:application.yml"})
 public class WishDreamCoreApplicationTests {
 	
 	@Autowired

@@ -25,32 +25,13 @@ allprojects {
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
 	
-	
 	repositories {
-		jcenter()
 		mavenCentral()
 		maven {	url 'https://repo.spring.io/milestone' }
-	 	maven { url "https://repo.spring.io/snapshot" }
-	 	gradlePluginPortal()
-	}
-	
-	configurations {
-		developmentOnly
-		runtimeClasspath {
-			extendsFrom developmentOnly
-		}
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
 	}
 	
 	dependencies {
 		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
-		testCompileOnly 'org.projectlombok:lombok'
-		testAnnotationProcessor 'org.projectlombok:lombok'
-		
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -69,6 +50,16 @@ subprojects {
 	dependencyManagement {
 		imports {
 			mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+		}
+	}
+	
+	configurations {
+		developmentOnly
+		runtimeClasspath {
+			extendsFrom developmentOnly
+		}
+		compileOnly {
+			extendsFrom annotationProcessor
 		}
 	}
 	
@@ -99,19 +90,33 @@ subprojects {
 		compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testCompileOnly 'org.projectlombok:lombok'
+		testAnnotationProcessor 'org.projectlombok:lombok'
+
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testImplementation 'io.projectreactor:reactor-test'
 		
 		// database
 		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.5'
 		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-		
 	}
 	
-	jar {
-        manifest.attributes provider: 'gradle'
-        version = '0.0.1'
-    }
+	task start() {
+		dependsOn 'clean'
+		println "####################################################"
+		println	""
+		println "  "+project.name+" project completed the clean task"
+		println	""
+		println "####################################################"
+		dependsOn 'build'
+		println "####################################################"
+		println	""
+		println "  "+project.name+" project completed the build task"
+		println	""
+		println "####################################################"
+	}
     
 }
  
@@ -124,26 +129,52 @@ flyway {
     locations = [ 'classpath:/db/migration' ] //생성시킬 때
 }
 
+project(':wishDream_Web') {
+	bootJar {
+		//launchScript()
+		mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
+		classifier = 'boot'
+		from('out/main') {
+			into 'static'
+		}
+	}
+	dependencies {
+		compile project(':wishDream_Core')
+	}
+	test {
+	    ignoreFailures = true
+	}
+	
+}
 
-task run {
-	println "java-version : ${sourceCompatibility}"
+project(':wishDream_Core') {
+	bootJar {
+		enabled = false
+	}
+	jar {
+		enabled = true
+	    manifest {
+	    	attributes
+	    } 
+	    baseName = 'wishDream_Core'
+	    version = '0.0.1'
+	    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	}
+	
+	test {
+	    ignoreFailures = true
+	}
+}
+
+task start() {
+    println "java-version : ${sourceCompatibility}"
     println "project-version : ${version}"
-    
-	dependsOn ':wishDream_Web:clean'
-	dependsOn ':wishDream_Core:clean'
-	println "####################################################"
-	println	""
-	println "        All project completed the clean tasks       "
-	println	""
-	println "####################################################"
 
-	dependsOn ':wishDream_Web:build'
-    dependsOn ':wishDream_Core:build'
-    println	""
-    println "        All project completed the build tasks       "
-    println	""
-    println "####################################################"
+    dependsOn ':wishDream_Core:start'
+    dependsOn ':wishDream_Web:start'
+	
     dependsOn(':flywayMigrate')
+    println "####################################################"
     println	""
     println "            flywayMigrate completed                 "
     println	""
@@ -151,4 +182,4 @@ task run {
     
 }
 
-defaultTasks 'run'
+defaultTasks 'start'

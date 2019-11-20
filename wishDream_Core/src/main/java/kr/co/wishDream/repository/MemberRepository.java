@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.Flowable;
-import io.reactivex.Single;
 import kr.co.wishDream.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
 import reactor.core.publisher.Mono;
@@ -19,9 +18,9 @@ public class MemberRepository {
 	private Database database;
 	
 	public Mono<Member> findByEmailAutoMap() {
-		Single<Member> mem = database.select("SELECT * FROM member WHERE EMAIL = ?")
-				.autoMap(Member.class).singleOrError();
-		return Mono.from(mem.toFlowable());
+		Flowable<Member> mem = database.select("SELECT * FROM member WHERE EMAIL = ?")
+				.autoMap(Member.class);
+		return Mono.from(mem);
 	}
 	
 	

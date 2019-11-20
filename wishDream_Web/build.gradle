@@ -14,19 +14,4 @@ springBoot {
 	}
 }
 */
-bootJar {
-	launchScript()
-	mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
-}
-jar {
-	enabled = false
-}
-
-dependencies {
-	compile project(':wishDream_Core')
-}
-
-test {
-    ignoreFailures = true
-}
 
