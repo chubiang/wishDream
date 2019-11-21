@@ -90,6 +90,9 @@ subprojects {
 		compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+		compile "io.projectreactor:reactor-core:3.3.0.RELEASE"
+      	testCompile("io.projectreactor:reactor-test:3.3.0.RELEASE")
+
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
 		testCompileOnly 'org.projectlombok:lombok'
