@@ -21,7 +21,8 @@ module.exports = {
     cache: false,
     context: path.resolve(__dirname, 'public'),
     entry: {
-        index: './index.js'
+        index: './index.js',
+        login: './login.js',
     },
     devtool: 'sourcemaps',
     output: {
@@ -128,7 +129,7 @@ module.exports = {
        new webpack.ProgressPlugin(),
        new CleanWebpackPlugin({
          dry: true,
-         cleanOnceBeforeBuildPatterns: ['**/*', 'index.html']
+         cleanOnceBeforeBuildPatterns: ['**/*', 'index.html', 'login.html']
        }),
     	 new HtmlWebpackPlugin({
             title: 'wishDream',
@@ -137,6 +138,23 @@ module.exports = {
             hash: true,
             filename : 'index.html',
             template: './index.html',
+            xhtml: true,
+            minify: {
+              collapseWhitespace: true,
+              removeComments: true,
+              removeRedundantAttributes: true,
+              removeScriptTypeAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              useShortDoctype: true
+            },
+        }),
+        new HtmlWebpackPlugin({
+            title: 'wishDream',
+            inject: 'body',
+            chunks: [ 'login' ],
+            hash: true,
+            filename : 'login.html',
+            template: './login.html',
             xhtml: true,
             minify: {
               collapseWhitespace: true,

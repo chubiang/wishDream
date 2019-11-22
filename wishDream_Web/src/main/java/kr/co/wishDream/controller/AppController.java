@@ -12,4 +12,9 @@ public class AppController {
 
 		return "index";
 	}
+	
+	@RequestMapping("/login")
+	public String login(final Model model) {
+		return "login";
+	}
 }

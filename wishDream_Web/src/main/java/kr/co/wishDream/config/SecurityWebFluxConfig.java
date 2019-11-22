@@ -69,6 +69,8 @@ public class SecurityWebFluxConfig {
 			.loginPage("/login")
 			.authenticationSuccessHandler(customAuthenticationSuccessHandler)
 			.authenticationFailureHandler(customAuthenticationFailureHandler)
+			.and().logout()
+			.logoutUrl("/logout")
 			.and().build();
 	}
 }
