@@ -3,7 +3,6 @@ package kr.co.wishDream.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -18,7 +17,6 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 
-@Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity(proxyTargetClass = true)
 public class SecurityWebFluxConfig {
@@ -56,11 +54,11 @@ public class SecurityWebFluxConfig {
 				new UserDetailsRepositoryReactiveAuthenticationManager(customUserDetailsService);
 		return authenticationManager;
 	}
-	
+
 	@Bean
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 		return 
-			http.authorizeExchange().pathMatchers("/resources/**", "/favicon.ico", "/styles/**", "/login")
+			http.authorizeExchange().pathMatchers("/resources/**", "/favicon.ico", "/styles/**", "/login", "/static/**")
 			.permitAll()
 			.and().httpBasic()
 			.and().securityContextRepository(securityContextRepository())

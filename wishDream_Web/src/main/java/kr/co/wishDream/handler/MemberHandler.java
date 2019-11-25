@@ -32,6 +32,6 @@ public class MemberHandler {
 					).onErrorResume(e-> ServerResponse
 											.ok()
 											.contentType(MediaType.APPLICATION_JSON)
-											.syncBody(fallback));
+											.bodyValue(fallback));
 	}
 }

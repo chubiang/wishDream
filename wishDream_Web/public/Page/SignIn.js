@@ -18,7 +18,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   paper: {
-    marginTop: theme.spacing(8),
+	width: '480px',
+	paddingTop: '80px',
+  	margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -33,6 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    height: '50px'
   },
 }));
 

@@ -50,8 +50,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
        Map<String, Object> errorPropertiesMap = getErrorAttributes(request, false);
  
        return ServerResponse.status(HttpStatus.BAD_REQUEST)
-         .contentType(MediaType.APPLICATION_JSON_UTF8)
-         .body(BodyInserters.fromObject(errorPropertiesMap));
+         .contentType(MediaType.APPLICATION_JSON)
+         .body(BodyInserters.fromValue(errorPropertiesMap));
     }
 	
 	
