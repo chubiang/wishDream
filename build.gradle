@@ -23,7 +23,6 @@ allprojects {
 	
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
-		
 	
 	repositories {
 		mavenLocal()
@@ -162,7 +161,6 @@ project(':wishDream_Core') {
 	task coreJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
 	    archiveClassifier = 'core'
 	    archiveBaseName = 'wishDream_Core'
-		archiveVersion = '0.0.1'
 		
 		from sourceSets.main.java.outputDir
 		from javadoc.destinationDir
