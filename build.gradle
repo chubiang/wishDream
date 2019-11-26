@@ -107,9 +107,9 @@ subprojects {
 		println	""
 		println "####################################################"
 		if (projectName == "wishDream_Core") {
-			dependsOn 'uberJar'
+			dependsOn 'coreJar'
 			println	""
-			println "  "+projectName+" project uberJar task"
+			println "  "+projectName+" project coreJar task"
 			println	""
 		}
 	}
@@ -159,8 +159,8 @@ project(':wishDream_Core') {
 		enabled = false
 	}
 	
-	task uberJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
-	    archiveClassifier = 'uber'
+	task coreJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
+	    archiveClassifier = 'core'
 	    archiveBaseName = 'wishDream_Core'
 		archiveVersion = '0.0.1'
 		
@@ -172,7 +172,7 @@ project(':wishDream_Core') {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
-	    //from configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+	    //from configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } <- ¿¡·¯ÅÍÁü ¤¾
     }
 	
 	test {
