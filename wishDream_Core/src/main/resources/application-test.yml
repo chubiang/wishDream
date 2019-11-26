@@ -1,8 +1,0 @@
-wishDream:
-  database:
-    url: jdbc:postgresql://localhost:5430/wishDream
-    database: wishDream
-    host: localhost
-    password: wishdream
-    port: 5430
-    user: wishdream

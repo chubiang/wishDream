@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -35,7 +36,11 @@ public class WishDreamWebApplicationTests {
 //		System.out.print("mem = ");
 //		member.subscribe(x -> System.out.println(x));
 		
-		System.out.println(findByUsername(email).blockOptional().get().toString());
+//		System.out.println(findByUsername(email).blockOptional().get().toString());
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		String password = encoder.encode("123");
+		System.out.println(password);
 	}
 	
 	public Mono<UserDetails> findByUsername(String email) {

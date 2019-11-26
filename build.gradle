@@ -2,12 +2,10 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.2.1.RELEASE' apply false
  	id "io.spring.dependency-management" version "1.0.8.RELEASE"
-	id "org.flywaydb.flyway" version "5.2.4"
+	id "org.flywaydb.flyway" version "6.0.8"
 }
 
 ext {
-	springBootVersion = '2.2.1.RELEASE'
-	springDependMng = '1.0.8.RELEASE' 
 	flyway = [
 		url: 'jdbc:postgresql://localhost:5430/wishDream',
 		user: 'wishdream',
@@ -21,23 +19,34 @@ allprojects {
 	apply plugin: 'java'
 	apply plugin: 'idea'
 	apply plugin: 'eclipse'
+	apply plugin: 'maven-publish'
 	
 	group 'kr.co.wishDream'
 	version '0.0.1-SNAPSHOT'
+		
 	
 	repositories {
+		mavenLocal()
 		mavenCentral()
 		maven {	url 'https://repo.spring.io/milestone' }
 	}
 	
+	configurations {
+		developmentOnly
+		runtimeClasspath {
+			extendsFrom developmentOnly
+		}
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+		testImplementation.extendsFrom compileOnly
+	}
+	
 	dependencies {
-		compile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
+		implementation 'org.postgresql:postgresql:42.2.6'
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-	
-	//exclude common-logging
-	[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
 }
 
 subprojects {
@@ -53,72 +62,56 @@ subprojects {
 		}
 	}
 	
-	configurations {
-		developmentOnly
-		runtimeClasspath {
-			extendsFrom developmentOnly
-		}
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
-	
-	sourceSets {
-	    main {
-	        java {
-	            srcDirs = ['src/main/java']
-	            java.outputDir = file('out/main')
-	            output.resourcesDir = file('out/main')
-	        }
-	        resources {
-	            srcDirs = ['src/main/resources']
-	        }
-	    }
-	    test {
-	    	java {
-	    		srcDirs = ['src/test/java']
-	    	}
-	    	resources {
-	    		srcDirs = ['src/test/resources']
-	    	}
-	    }
-	}
-	
-	
 	dependencies {
 		implementation "org.springframework.boot:spring-boot-starter-webflux"
-		compile "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+		implementation "org.springframework.boot:spring-boot-starter-security"
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-		compile "io.projectreactor:reactor-core:3.3.0.RELEASE"
-      	testCompile("io.projectreactor:reactor-test:3.3.0.RELEASE")
+		implementation "io.projectreactor:reactor-core:3.3.0.RELEASE"
+      	testImplementation("io.projectreactor:reactor-test:3.3.0.RELEASE")
 
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
 		testCompileOnly 'org.projectlombok:lombok'
 		testAnnotationProcessor 'org.projectlombok:lombok'
 
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testImplementation 'io.projectreactor:reactor-test'
 		
 		// database
-		compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.2.5'
-		compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+		implementation 'com.github.davidmoten:rxjava2-jdbc:0.2.5'
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	}
 	
+	sourceSets {
+        main {
+	    	java.srcDirs "${project.projectDir}/src/main/java"
+	    	java.outputDir = file('out/java')
+	        output.resourcesDir = file('out/resources')
+        }
+    }
+	
 	task start() {
+		def projectName = project.name
+	
 		dependsOn 'clean'
 		println "####################################################"
 		println	""
-		println "  "+project.name+" project completed the clean task"
+		println "  "+projectName+" project completed the clean task"
 		println	""
-		println "####################################################"
 		dependsOn 'build'
 		println "####################################################"
 		println	""
-		println "  "+project.name+" project completed the build task"
+		println "  "+projectName+" project completed the build task"
 		println	""
 		println "####################################################"
+		if (projectName == "wishDream_Core") {
+			dependsOn 'uberJar'
+			println	""
+			println "  "+projectName+" project uberJar task"
+			println	""
+		}
 	}
     
 }
@@ -129,10 +122,20 @@ flyway {
     password = project.flyway.password
     driver = project.flyway.driver
     schemas = project.flyway.schemas
-    locations = [ 'classpath:/db/migration' ] //생성시킬 때
+    locations = [ 'classpath:/db/migration/postgresql' ] //생성시킬 때
+    encoding = 'UTF-8'
+    outOfOrder = false
+    validateOnMigrate = true
+    cleanDisabled = false
+}
+
+flywayMigrate {
+	// dependsOn flywayClean
+	dependsOn build
 }
 
 project(':wishDream_Web') {
+	def coreJarPath = rootProject.files('wishDream_Core/build/libs')[0].toString()
 	bootJar {
 		//launchScript()
 		mainClassName = 'kr.co.wishDream.WishDreamWebApplication'
@@ -142,7 +145,8 @@ project(':wishDream_Web') {
 		}
 	}
 	dependencies {
-		compile project(':wishDream_Core')
+		//implementation project(':wishDream_Core')
+	 	implementation fileTree(dir: coreJarPath, include: ['*.jar'])
 	}
 	test {
 	    ignoreFailures = true
@@ -154,29 +158,40 @@ project(':wishDream_Core') {
 	bootJar {
 		enabled = false
 	}
-	jar {
-		enabled = true
-	    manifest {
-	    	attributes
-	    } 
-	    baseName = 'wishDream_Core'
-	    version = '0.0.1'
-	    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-	}
+	
+	task uberJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
+	    archiveClassifier = 'uber'
+	    archiveBaseName = 'wishDream_Core'
+		archiveVersion = '0.0.1'
+		
+		from sourceSets.main.java.outputDir
+		from javadoc.destinationDir
+		from configurations.compileClasspath.findAll { it.isDirectory() }.collect { zipTree(it) }
+		
+		exclude "src/main/resources" //if want to exclude resources
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+	    //from configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 	
 	test {
 	    ignoreFailures = true
 	}
 }
 
-task start() {
-    println "java-version : ${sourceCompatibility}"
-    println "project-version : ${version}"
 
+task start() {
+    println "PROJECT INFO"
+    println "java version : ${sourceCompatibility}"
+    println "project version : ${version}"
+	println "root project path : ${project.rootDir}"
+	
     dependsOn ':wishDream_Core:start'
     dependsOn ':wishDream_Web:start'
 	
-    dependsOn(':flywayMigrate')
+    dependsOn ':flywayValidate'
+    dependsOn ':flywayMigrate'
     println "####################################################"
     println	""
     println "            flywayMigrate completed                 "
@@ -184,5 +199,3 @@ task start() {
     println "####################################################"
     
 }
-
-defaultTasks 'start'
