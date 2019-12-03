@@ -1,17 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
-import { Switch } from 'react-router'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import SignIn from './Page/SignIn';
+import LoginPage from './Page/LoginPage'
+import { Provider } from 'react-redux'
+import { createStore, combineReducers } from 'redux';
+import { reducer as reduxFormReducer } from 'redux-form';
 
-const elements = (
-    <BrowserRouter>
-        <CssBaseline />
-        <Switch>
-            <Route exact path="/login" component={SignIn} />
-        </Switch>
-    </BrowserRouter>
-);
 
-ReactDOM.render(elements, document.getElementById('loginPage'));
+const store = (window.devToolsExtension
+    ? window.devToolsExtension()(createStore)
+    : createStore)(combineReducers({
+        form: reduxFormReducer, // mounted under "form"
+      }));
+
+ReactDOM.render(<Provider store={store}><LoginPage /></Provider>, document.getElementById('loginPage'));

@@ -29,7 +29,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 
 import CustomizedMenus from 'Component/CustomizedMenus'
 import Home from 'Page/Home'
-import SignIn from 'Page/SignIn'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 

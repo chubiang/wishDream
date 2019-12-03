@@ -11,7 +11,6 @@ import layoutStyles from "styles/layout.scss"
 import Header from "Component/Layout/Header"
 import Footer from "Component/Layout/Footer"
 import Home from 'Page/Home'
-import SignIn from 'Page/SignIn'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 
@@ -23,7 +22,6 @@ const BaseLayout = () => (
         <CssBaseline />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/login" component={SignIn} />
         </Switch>
         <Footer />
       </Container>

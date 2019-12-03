@@ -1,6 +1,6 @@
 {
   "presets": [
-    [ "@babel/env",
+    [ "@babel/preset-env",
       {
         "useBuiltIns": "usage",
         corejs:  {
@@ -16,6 +16,7 @@
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/transform-arrow-functions",
     "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-syntax-jsx"
+    "@babel/plugin-syntax-jsx",
+    "@babel/plugin-proposal-class-properties"
   ]
 }

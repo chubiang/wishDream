@@ -5,6 +5,29 @@ body {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: whitesmoke;
+
+  .paper {
+    width: 480px;
+    padding-top: 80px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .avatar {
+      margin: 10px;
+      background-color: white;
+    }
+    .login-form {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .submit {
+      margin: 30px 0 20px;
+      height: 50px;
+    }
+  }
 }
 
 * {
