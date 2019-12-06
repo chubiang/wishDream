@@ -5,17 +5,21 @@ import { withStyles } from '@material-ui/core/styles'
 import { pink } from '@material-ui/core/colors';
 
 
-const RendorCheckbox = ({value, label}) => {
+const RenderCheckbox = ({value, label, change}) => {
+    useEffect(() => {
+        console.log(value, label, change);
+        
+    });
 
     return (
         <div>
            <Checkbox
-                checked={value}
                 color="secondary"
+                onChange={change}
                 />
             <span>{label}</span>
         </div>
     )
 }
 
-export default RendorCheckbox
+export default RenderCheckbox

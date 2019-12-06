@@ -1,4 +1,4 @@
-package kr.co.wishDream;
+package kr.co.wishDream.connect;
 
 import java.util.concurrent.TimeUnit;
 
