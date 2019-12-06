@@ -18,16 +18,16 @@ class LoginPage extends Component {
     
     render() {
         return (
-            <CookiesProvider>
-                <BrowserRouter>
-                    <Provider store={store}>
-                        <Switch>
-                            <Route path="/login"
-                            render={ () => (<SignInForm cookies={this.props.cookies} store={store} />)}/>
-                        </Switch>
-                    </Provider>
-                </BrowserRouter>
-            </CookiesProvider>
+            <BrowserRouter>
+                <Provider store={store}>
+                    <CookiesProvider>
+                    <Switch>
+                        <Route path="/login"
+                        render={ () => (<SignInForm cookies={this.props.cookies} store={store} />)}/>
+                    </Switch>
+                    </CookiesProvider>
+                </Provider>
+            </BrowserRouter>
         )
     }
 }
