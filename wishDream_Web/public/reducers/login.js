@@ -6,11 +6,13 @@ export const initSignInForm = {
 };
 
 export const signInReducer = (state = initSignInForm, action) => {
+    var rememberValue = state.remember.value;
     switch(action.type) {
         case REMEMBER_ID: 
+            if (action.remember) rememberValue = action.remember.value;
             return Object.assign({}, state, {
                 remember: { 
-                    value: action.remember.value || state.remember.value, 
+                    value: rememberValue, 
                     lable: state.remember.label
                 },
                 email : action.email,

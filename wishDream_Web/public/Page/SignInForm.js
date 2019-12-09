@@ -12,6 +12,7 @@ import RenderCheckbox  from '../Component/RenderCheckbox'
 import { Field, reduxForm } from 'redux-form'
 import validateSignIn from '../services/validateSignIn'
 import { initSignInForm } from '../reducers/login';
+import { rememberID } from '../actions/login';
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -51,7 +52,14 @@ function SignIn(props) {
 
   useEffect(() => {
       console.log(props, cookies, props.store.getState());
-
+      if (cookies.get('remember')) {
+        props.store.dispatch(rememberID(cookies.get('email'), cookies.get('remember')));
+        state.email = cookies.get('email');
+        state.remember.value = cookies.get('remember');
+      }
+      // 초기값
+      console.log('state', state, props.store.getState().remember.value,cookies.get('remember'));
+      
       // if (cookies.get('remember')) {
         // state.email = cookies.get('emailCookie');
         // state.remember.value = cookies.get('rememberCookie');
@@ -59,11 +67,14 @@ function SignIn(props) {
   });
   
   const checkRemeberID = (event) => {
-    if (state.remember.value && !cookies.get('email')) {
+    state.remember.value = !state.remember.value;
+    if (state.remember.value && cookies.get('email') == undefined) {
       cookies.set('email', state.email, { path: "/login" });
       cookies.set('remember', state.remember.value, { path: "/login" });
-    } else if (state.remember.value && cookies.get('email').length) {
-      props.store.dispatch(rememberID(cookies.get('email'), cookies.get('remember')));
+      console.log('cookies.get(email)',cookies.get('email'));
+    } else if (!state.remember.value && cookies.get('email')) {
+      cookies.remove('email');
+      cookies.remove('remember');
     }
     console.log(props.store.getState().email, cookies, cookies.get('email'));
   }
@@ -72,10 +83,19 @@ function SignIn(props) {
     event.preventDefault();
   }
 
-  const handleChange = name => event => {
-    console.log(name);
+  const handleChange = event => {
+    state.email = event.target.value;
+    props.store.dispatch(rememberID(state));
+    console.log('eventTarget', event.target.value);
     
   }
+
+  const emailField = () => (
+    <TextField id="email" name="email" 
+      label="email" color="secondary" 
+      onChange={handleChange}
+      fullWidth />
+  );
 
   return (
       <div className={classes.paper}>
@@ -88,7 +108,8 @@ function SignIn(props) {
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <Field
             name="email"
-            component={TextField}
+            component={emailField}
+            change
             value={props.store.getState().email}
             placeholder="Email"
           /><br/>
