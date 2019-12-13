@@ -103,8 +103,10 @@ function SignIn(props) {
   const emailField = ({input, label, ref, type, meta: {touched, error}}) => {
     return(
       <div>
-        <TextField 
-          {...input}
+        <TextField
+          id={input.name}
+          name={input.name}
+          defaultValue={signIn[input.name]}
           className={classes.loginText}
           color="secondary" 
           label={label}
