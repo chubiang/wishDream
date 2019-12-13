@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
-import { Switch } from 'react-router'
-import CssBaseline from '@material-ui/core/CssBaseline'
+import { Switch } from 'react-router';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import SignInForm from './SignInForm';
 import { CookiesProvider } from 'react-cookie';
 import { withCookies } from 'react-cookie';

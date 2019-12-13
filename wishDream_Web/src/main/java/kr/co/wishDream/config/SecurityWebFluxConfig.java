@@ -11,11 +11,17 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity(proxyTargetClass = true)
@@ -54,6 +60,12 @@ public class SecurityWebFluxConfig {
 				new UserDetailsRepositoryReactiveAuthenticationManager(customUserDetailsService);
 		return authenticationManager;
 	}
+	@Bean
+	private ServerCsrfTokenRepository csrfTokenRepository() {
+		CookieServerCsrfTokenRepository repository = new CookieServerCsrfTokenRepository();
+		repository.setHeaderName("X-CSRF-TOKEN");
+		return repository;
+	}
 
 	@Bean
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
@@ -63,6 +75,8 @@ public class SecurityWebFluxConfig {
 			.and().httpBasic()
 			.and().securityContextRepository(securityContextRepository())
 			.csrf()
+			.csrfTokenRepository(csrfTokenRepository())
+//			.and().addFilterAfter()
 			.and().formLogin()
 			.loginPage("/login")
 			.authenticationSuccessHandler(customAuthenticationSuccessHandler)

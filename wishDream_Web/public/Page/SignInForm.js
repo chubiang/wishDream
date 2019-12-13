@@ -11,9 +11,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import { Form, Field, reduxForm, propTypes } from 'redux-form'
 import validateSignIn from '../services/validateSignIn'
-import { initSignInForm } from '../reducers/login'
 import { rememberID } from '../actions/login'
 import { connect } from 'react-redux'
+import axios from 'axios'
+import Constants from '../services/constants'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -46,99 +47,91 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const rememberLabel = "Remember ID";
+const inputField = ({input, label, defaultValue, type, meta: {touched, error}}) => {
+  const classes = useStyles();
+  return(
+    <div>
+      <TextField
+        id={input.name}
+        name={input.name}
+        defaultValue={defaultValue}
+        onChange={input.onChange}
+        className={classes.loginText}
+        color="secondary" 
+        label={label}
+        type={type}
+        fullWidth />
+        { touched && (<span>{error}</span>)}
+    </div>
+  )
+};
 function SignIn(props) {
   const classes = useStyles();
   const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
-  const [signIn, setSignIn] = useState({
-    email: props.email, 
-    password: props.password, 
-    rememberValue: props.rememberValue
-  });
-  const [idReference, setIdReference] = useState(() => createRef())
-  const [passwordReferenece, setPasswordReference] = useState(() => createRef())
+
+  let email = props.email;
+  let password = props.password;
+  let rememberValue = props.rememberValue;
   
   useEffect(() => {
       console.log('props', props);
       
       const cookieRemember = Boolean(cookies.get('remember'));
       const cookieEmail = cookies.get('email');
-      if (cookieRemember && !signIn.email) {
-        props.store.dispatch(rememberID(cookieEmail, signIn.password, cookieRemember));
+      if (cookieRemember && !email) {
+        props.store.dispatch(rememberID(cookieEmail, password, cookieRemember));
       }
   });
 
   const handleChange = (event) => {
     if (event.target.id == 'email') {
-      console.log(idReference.current.target.value);
+      email = event.target.value;
     } else {
-      console.log(passwordReferenece.current.target.value);
+      password = event.target.value;
     }
   }
   
   const checkRemeberID = (event) => {
     event.preventDefault();
-    if (!signIn.email) {
+    
+    if (!email) {
       event.target.checked = false;
       return;
     }
-    value = !props.store.getState().rememberValue;
-    if (value && cookies.get('email') == undefined) {
-      cookies.set('email', signIn.email, { path: "/login" });
-      cookies.set('remember', signIn.rememberValue, { path: "/login" });
+    const value = props.store.getState().rememberValue;
+    if (!value && cookies.get('email') == undefined) {
+      cookies.set('email', email, { path: "/login" });
+      cookies.set('remember', !rememberValue, { path: "/login" });
       event.target.checked = true;
-    } else if (!value && cookies.get('email')) {
+    } else if (value && cookies.get('email')) {
       cookies.remove('email', { path: "/login" });
       cookies.remove('remember', { path: "/login" });
       event.target.checked = false;
     }
-    props.store.dispatch(rememberID(signIn.email, signIn.password, value));
-    console.log('check', signIn.email, signIn.rememberValue);
+    props.store.dispatch(rememberID(email, password, value));
+    console.log('check', email, rememberValue);
     
   }
 
   function submit() {
-    console.log('submit state', signIn.email, signIn.rememberValue, props);
+    console.log('submit csrf', cookies.load('X-CSRF-TOKEN'));
+    const sendData = { email: email, password: password};
+    // axios.post(Constants.Url.member.login, sendData,
+    //   {
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     }
+    // }).then((data) => {
+    //   console.log('received data', data);
+      
+    // });
   }
-
-  const emailField = ({input, label, ref, type, meta: {touched, error}}) => {
-    return(
-      <div>
-        <TextField
-          id={input.name}
-          name={input.name}
-          defaultValue={signIn[input.name]}
-          className={classes.loginText}
-          color="secondary" 
-          label={label}
-          type={type}
-          inputRef={ref}
-          fullWidth />
-          { touched && (<span>{error}</span>)}
-      </div>
-    )
-  };
-
-  const passwordField = () => {
-    return(
-      <div>
-        <TextField 
-          id="password"
-          type="password"
-          className={classes.loginText}
-          label="Password" color="secondary" 
-          onChange={handleChange}
-          value={signIn.password}
-          fullWidth />
-          {/* {touched && (error && <span>{error}</span>)} */}
-      </div>
-    );
-  };
 
   const rememberField = () => (
     <RenderCheckbox 
       name="rememberValue"
       label={rememberLabel} 
-      value={signIn.rememberValue}
+      value={rememberValue}
       change={checkRemeberID} />
   );
 
@@ -153,21 +146,17 @@ function SignIn(props) {
         <form className={classes.form} onSubmit={handleSubmit(submit)}>
           <Field
             id="email" name="email" type="email" label="Email"
-            value={signIn.email}
-            component={emailField}
-            ref={idReference}
-            onchange={handleChange}
+            defaultValue={email}
+            component={inputField}
+            onChange={handleChange}
           /><br/>
           <Field
             id="password" name="password" type="password" label="Password"
-            value={signIn.email}
-            component={emailField}
-            ref={passwordReferenece}
-            onchange={handleChange}
-            placeholder="Password"
+            defaultValue ={password}
+            component={inputField}
+            onChange={handleChange}
           />
           <Field name="remeberValue" component={rememberField} />
-          <strong>{error}</strong>
           <Button
             type="submit"
             fullWidth
