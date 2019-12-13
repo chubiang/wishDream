@@ -1,21 +1,18 @@
 import { REMEMBER_ID } from '../actions/login';
 
 export const initSignInForm = {
-    remember: {value: false, label: 'Remember ID'},
-    email : ''
+    email: '',
+    password: '',
+    rememberValue: false
 };
 
 export const signInReducer = (state = initSignInForm, action) => {
-    var rememberValue = state.remember.value;
     switch(action.type) {
         case REMEMBER_ID: 
-            if (action.remember) rememberValue = action.remember.value;
-            return Object.assign({}, state, {
-                remember: { 
-                    value: rememberValue, 
-                    lable: state.remember.label
-                },
-                email : action.email,
+            return Object.assign({}, {
+                email: action.email,
+                password: action.password,
+                rememberValue: action.rememberValue
             });
         default:
             return state;

@@ -5,16 +5,14 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import SignInForm from './SignInForm';
 import { CookiesProvider } from 'react-cookie';
 import { withCookies } from 'react-cookie';
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { signInReducer } from '../reducers/login';
 
-const store = createStore(signInReducer);
+const store = (window.devToolsExtension
+  ? window.devToolsExtension()(createStore)
+  : createStore)(signInReducer);
 class LoginPage extends Component {
-
-    componentDidMount() {
-      console.log(store);
-    }
     
     render() {
         return (

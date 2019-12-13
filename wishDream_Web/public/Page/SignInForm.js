@@ -1,5 +1,5 @@
 // module "SignIn.js"
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Component, Fragment, createRef, useState, useEffect } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import { Button, TextField, FormControl, FormGroup, FormControlLabel } from '@material-ui/core'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -9,10 +9,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import RenderCheckbox  from '../Component/RenderCheckbox'
-import { Field, reduxForm } from 'redux-form'
+import { Form, Field, reduxForm, propTypes } from 'redux-form'
 import validateSignIn from '../services/validateSignIn'
-import { initSignInForm } from '../reducers/login';
-import { rememberID } from '../actions/login';
+import { initSignInForm } from '../reducers/login'
+import { rememberID } from '../actions/login'
+import { connect } from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -40,61 +41,103 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2),
     height: '50px'
   },
+  loginText: {
+    margin: '8px 0'
+  }
 }));
-
+const rememberLabel = "Remember ID";
 function SignIn(props) {
   const classes = useStyles();
-  const [state, setState] = useState(initSignInForm);
-  const [password, setPassword] = useState('');
-  const { cookies } = props;
-
-
-
-  useEffect(() => {
-      console.log(props, cookies, props.store.getState());
-      if (cookies.get('remember')) {
-        props.store.dispatch(rememberID(cookies.get('email'), cookies.get('remember')));
-        state.email = cookies.get('email');
-        state.remember.value = cookies.get('remember');
-      }
-      // 초기값
-      console.log('state', state, props.store.getState().remember.value,cookies.get('remember'));
-      
-      // if (cookies.get('remember')) {
-        // state.email = cookies.get('emailCookie');
-        // state.remember.value = cookies.get('rememberCookie');
-      // }
+  const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
+  const [signIn, setSignIn] = useState({
+    email: props.email, 
+    password: props.password, 
+    rememberValue: props.rememberValue
   });
+  const [idReference, setIdReference] = useState(() => createRef())
+  const [passwordReferenece, setPasswordReference] = useState(() => createRef())
+  
+  useEffect(() => {
+      console.log('props', props);
+      
+      const cookieRemember = Boolean(cookies.get('remember'));
+      const cookieEmail = cookies.get('email');
+      if (cookieRemember && !signIn.email) {
+        props.store.dispatch(rememberID(cookieEmail, signIn.password, cookieRemember));
+      }
+  });
+
+  const handleChange = (event) => {
+    if (event.target.id == 'email') {
+      console.log(idReference.current.target.value);
+    } else {
+      console.log(passwordReferenece.current.target.value);
+    }
+  }
   
   const checkRemeberID = (event) => {
-    state.remember.value = !state.remember.value;
-    if (state.remember.value && cookies.get('email') == undefined) {
-      cookies.set('email', state.email, { path: "/login" });
-      cookies.set('remember', state.remember.value, { path: "/login" });
-      console.log('cookies.get(email)',cookies.get('email'));
-    } else if (!state.remember.value && cookies.get('email')) {
-      cookies.remove('email');
-      cookies.remove('remember');
-    }
-    console.log(props.store.getState().email, cookies, cookies.get('email'));
-  }
-  
-  const handleSubmit = (event) => {
     event.preventDefault();
-  }
-
-  const handleChange = event => {
-    state.email = event.target.value;
-    props.store.dispatch(rememberID(state));
-    console.log('eventTarget', event.target.value);
+    if (!signIn.email) {
+      event.target.checked = false;
+      return;
+    }
+    value = !props.store.getState().rememberValue;
+    if (value && cookies.get('email') == undefined) {
+      cookies.set('email', signIn.email, { path: "/login" });
+      cookies.set('remember', signIn.rememberValue, { path: "/login" });
+      event.target.checked = true;
+    } else if (!value && cookies.get('email')) {
+      cookies.remove('email', { path: "/login" });
+      cookies.remove('remember', { path: "/login" });
+      event.target.checked = false;
+    }
+    props.store.dispatch(rememberID(signIn.email, signIn.password, value));
+    console.log('check', signIn.email, signIn.rememberValue);
     
   }
 
-  const emailField = () => (
-    <TextField id="email" name="email" 
-      label="email" color="secondary" 
-      onChange={handleChange}
-      fullWidth />
+  function submit() {
+    console.log('submit state', signIn.email, signIn.rememberValue, props);
+  }
+
+  const emailField = ({input, label, ref, type, meta: {touched, error}}) => {
+    return(
+      <div>
+        <TextField 
+          {...input}
+          className={classes.loginText}
+          color="secondary" 
+          label={label}
+          type={type}
+          inputRef={ref}
+          fullWidth />
+          { touched && (<span>{error}</span>)}
+      </div>
+    )
+  };
+
+  const passwordField = () => {
+    return(
+      <div>
+        <TextField 
+          id="password"
+          type="password"
+          className={classes.loginText}
+          label="Password" color="secondary" 
+          onChange={handleChange}
+          value={signIn.password}
+          fullWidth />
+          {/* {touched && (error && <span>{error}</span>)} */}
+      </div>
+    );
+  };
+
+  const rememberField = () => (
+    <RenderCheckbox 
+      name="rememberValue"
+      label={rememberLabel} 
+      value={signIn.rememberValue}
+      change={checkRemeberID} />
   );
 
   return (
@@ -105,27 +148,30 @@ function SignIn(props) {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit} noValidate>
+        <form className={classes.form} onSubmit={handleSubmit(submit)}>
           <Field
-            name="email"
+            id="email" name="email" type="email" label="Email"
+            value={signIn.email}
             component={emailField}
-            change
-            value={props.store.getState().email}
-            placeholder="Email"
+            ref={idReference}
+            onchange={handleChange}
           /><br/>
           <Field
-            name="password"
-            component={TextField}
-            value={password}
-            placeholder="password"
+            id="password" name="password" type="password" label="Password"
+            value={signIn.email}
+            component={emailField}
+            ref={passwordReferenece}
+            onchange={handleChange}
+            placeholder="Password"
           />
-          {/* <Field name="remeber" component={} label="Remember" /> */}
-          <RenderCheckbox value={props.store.getState().remember.value} label={props.store.getState().remember.label} change={checkRemeberID}/>
+          <Field name="remeberValue" component={rememberField} />
+          <strong>{error}</strong>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            disabled={submitting}
             className={classes.submit}
           >
             Sign In
@@ -147,9 +193,18 @@ function SignIn(props) {
   )
 }
 
+const mapStateToProps = (state, ownProps) => {
+  console.log('ownProps', ownProps);
+  state.rememberValue = Boolean(ownProps.cookies.get('remember'));
+  state.email = ownProps.cookies.get('email');
+  console.log('mapStateToProps', state);
+  return state;
+};
+
 const SignInForm = reduxForm({
-  form: 'SignIn',
+  form: 'signIn',
+  // initialValues: initSignInForm,
   validateSignIn
 })(SignIn)
 
-export default SignInForm;
+export default connect(mapStateToProps)(SignInForm)
