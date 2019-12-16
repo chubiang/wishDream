@@ -78,6 +78,7 @@ function SignIn(props) {
       
       const cookieRemember = Boolean(cookies.get('remember'));
       const cookieEmail = cookies.get('email');
+      console.log('csrfToken',cookies.get('XSRF-TOKEN'), cookieEmail, cookieRemember);
       if (cookieRemember && !email) {
         props.store.dispatch(rememberID(cookieEmail, password, cookieRemember));
       }
@@ -114,17 +115,18 @@ function SignIn(props) {
   }
 
   function submit() {
-    console.log('submit csrf', cookies.load('X-CSRF-TOKEN'));
     const sendData = { email: email, password: password};
-    // axios.post(Constants.Url.member.login, sendData,
-    //   {
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     }
-    // }).then((data) => {
-    //   console.log('received data', data);
+    axios.post(Constants.Url.member.login, sendData,
+      {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')
+        }
+    }).then((data) => {
+      console.log('received data', data);
       
-    // });
+    });
   }
 
   const rememberField = () => (

@@ -6,7 +6,7 @@ logging:
         data:
           r2dbc: DEBUG
         web: DEBUG
-    root: WARN
+    root: INFO
     tomcat: INFO
 server:
   error:

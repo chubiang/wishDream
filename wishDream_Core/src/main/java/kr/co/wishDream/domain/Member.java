@@ -48,6 +48,13 @@ public class Member implements UserDetails, CredentialsContainer {
 		return dateFormat.format(date);
 	}
 
+	public Member(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+		super();
+		this.email = email;
+		this.password = password;
+		this.authorities = authorities;
+	}
+	
 	public Member(String email, String username, String password, String etc, Date birth, Date joinDate, Date leaveDate) {
 		super();
 		this.email = email;
@@ -101,4 +108,7 @@ public class Member implements UserDetails, CredentialsContainer {
 				+ authorities + "]";
 	}
 
+
+
+	
 }
