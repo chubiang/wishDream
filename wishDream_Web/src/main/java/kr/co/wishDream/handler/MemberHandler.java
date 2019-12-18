@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -33,5 +36,14 @@ public class MemberHandler {
 											.ok()
 											.contentType(MediaType.APPLICATION_JSON)
 											.bodyValue(fallback));
+	}
+	
+	public Mono<ServerResponse> login(ServerRequest request) {
+		return ServerResponse
+			.ok()
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(ReactiveSecurityContextHolder.getContext()
+					.map(SecurityContext::getAuthentication)
+					.map(Authentication::getName), Member.class);
 	}
 }

@@ -1,5 +1,5 @@
 // module "app.js"
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
 import red from '@material-ui/core/colors/red';
@@ -9,8 +9,7 @@ import "styles/material_font_roboto.css";
 import "styles/material_icon.css";
 
 
-import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
-import { Switch } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 /*
 let theme = createMuiTheme({
   palette: {

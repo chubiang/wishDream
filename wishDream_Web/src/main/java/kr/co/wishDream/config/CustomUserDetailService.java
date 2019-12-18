@@ -10,7 +10,7 @@ import kr.co.wishDream.repository.MemberRepository;
 import reactor.core.publisher.Mono;
 
 @Component
-public class CustomUserDetailService implements ReactiveUserDetailsService{
+public class CustomUserDetailService implements ReactiveUserDetailsService {
 
 	@Autowired
 	MemberRepository memberRepository;

@@ -19,7 +19,7 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
 	public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
 		ServerWebExchange exchange = webFilterExchange.getExchange();
 		return webFilterExchange.getChain().filter(exchange).doOnSuccess(ok -> {
-			LOG.debug("[Security] Authentication Success ==== " + authentication);
+			LOG.info("[Security] Authentication Success ==== " + authentication);
 		});
 	}
 

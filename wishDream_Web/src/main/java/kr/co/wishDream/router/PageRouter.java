@@ -1,5 +1,6 @@
 package kr.co.wishDream.router;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RequestPredicates;
@@ -7,8 +8,13 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import kr.co.wishDream.handler.MemberHandler;
+
 @Configuration
 public class PageRouter {
+	
+	@Autowired
+	MemberHandler memberHandler;
 	
 	@Bean
 	public RouterFunction<?> viewRoutes() {
@@ -19,8 +25,17 @@ public class PageRouter {
 								.render("login",
 										req.exchange().getAttributes())
 				)
+				.andRoute(RequestPredicates.POST("/login"),
+						req -> memberHandler.login(req)
+				)
 				.andRoute(RequestPredicates.GET("/logout"),
-						req -> ServerResponse.ok().render("login"));
+						req -> ServerResponse.ok().render("login"))
+				.andRoute(RequestPredicates.GET("/index"),
+						req -> ServerResponse
+								.ok()
+								.render("index",
+										req.exchange().getAttributes())
+				);
 				
 	}
 }

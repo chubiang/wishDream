@@ -32,6 +32,7 @@ public class MemberRepository {
 							rs -> {
 								Member member = new Member();
 								member.setUsername(rs.getString("username"));
+								member.setPassword(rs.getString("password"));
 								member.setEmail(rs.getString("email"));
 								member.setBirth(rs.getDate("birth"));
 								member.setJoinDate(rs.getDate("joinDate"));

@@ -1,20 +1,21 @@
 // module "SignIn.js"
-import React, { Component, Fragment, createRef, useState, useEffect } from 'react'
+import React, { Component, useEffect } from 'react'
 import Avatar from '@material-ui/core/Avatar'
-import { Button, TextField, FormControl, FormGroup, FormControlLabel } from '@material-ui/core'
-import Checkbox from '@material-ui/core/Checkbox'
+import { Button, TextField } from '@material-ui/core'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import RenderCheckbox  from '../Component/RenderCheckbox'
-import { Form, Field, reduxForm, propTypes } from 'redux-form'
+import { Form, Field, reduxForm } from 'redux-form'
 import validateSignIn from '../services/validateSignIn'
 import { rememberID } from '../actions/login'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import Constants from '../services/constants'
+import querystring from 'querystring'
+import { withRouter } from 'react-router'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -74,11 +75,9 @@ function SignIn(props) {
   let rememberValue = props.rememberValue;
   
   useEffect(() => {
-      console.log('props', props);
       
       const cookieRemember = Boolean(cookies.get('remember'));
       const cookieEmail = cookies.get('email');
-      console.log('csrfToken',cookies.get('XSRF-TOKEN'), cookieEmail, cookieRemember);
       if (cookieRemember && !email) {
         props.store.dispatch(rememberID(cookieEmail, password, cookieRemember));
       }
@@ -110,22 +109,21 @@ function SignIn(props) {
       event.target.checked = false;
     }
     props.store.dispatch(rememberID(email, password, value));
-    console.log('check', email, rememberValue);
-    
   }
 
   function submit() {
-    const sendData = { email: email, password: password};
-    axios.post(Constants.Url.member.login, sendData,
-      {
+    const config = {
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
-    }).then((data) => {
-      console.log('received data', data);
-      
+    };
+    const sendData = querystring.stringify({ username: email, password: password, 'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')});
+    
+    axios.post(Constants.Url.member.login, sendData, config)
+      .then((res) => {
+        props.history.push("/");
+ 
     });
   }
 
@@ -187,10 +185,8 @@ function SignIn(props) {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log('ownProps', ownProps);
   state.rememberValue = Boolean(ownProps.cookies.get('remember'));
   state.email = ownProps.cookies.get('email');
-  console.log('mapStateToProps', state);
   return state;
 };
 
@@ -200,4 +196,4 @@ const SignInForm = reduxForm({
   validateSignIn
 })(SignIn)
 
-export default connect(mapStateToProps)(SignInForm)
+export default connect(mapStateToProps)(withRouter(SignInForm))

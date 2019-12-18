@@ -9,6 +9,7 @@ import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { signInReducer } from '../reducers/login';
 
+
 const store = (window.devToolsExtension
   ? window.devToolsExtension()(createStore)
   : createStore)(signInReducer);
@@ -22,6 +23,7 @@ class LoginPage extends Component {
                     <Switch>
                         <Route path="/login"
                         render={ () => (<SignInForm cookies={this.props.cookies} store={store} />)}/>
+                        <Route path="/" component={() => { window.location.href = "/"; return null; }} />>
                     </Switch>
                     </CookiesProvider>
                 </Provider>
