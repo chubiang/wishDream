@@ -1,5 +1,5 @@
 // module "SignIn.js"
-import React, { Component, useEffect } from 'react'
+import React, { Component, useEffect, useState, createContext } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import { Button, TextField } from '@material-ui/core'
 import Link from '@material-ui/core/Link'
@@ -16,6 +16,7 @@ import axios from 'axios'
 import Constants from '../services/constants'
 import querystring from 'querystring'
 import { withRouter } from 'react-router'
+import MessageDialog from '../Component/MessageDialog'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -66,10 +67,20 @@ const inputField = ({input, label, defaultValue, type, meta: {touched, error}}) 
     </div>
   )
 };
+
+export const AlertContext = createContext();
 function SignIn(props) {
   const classes = useStyles();
   const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
-
+  const [open, setOpen] = useState(false);
+  const alertDialog = { 
+    fullWidth: true, 
+    maxWidth:'xs',
+    title: '로그인 실패',
+    content: '아이디나 비밀번호가 틀렸습니다.',
+    buttons: [{color: 'primary', text: 'Close', classes: 'alertBtn'},
+              {color: 'primary', text: 'Ok', classes: 'alertBtn'}]
+  };
   let email = props.email;
   let password = props.password;
   let rememberValue = props.rememberValue;
@@ -90,7 +101,7 @@ function SignIn(props) {
       password = event.target.value;
     }
   }
-  
+
   const checkRemeberID = (event) => {
     event.preventDefault();
     
@@ -119,12 +130,16 @@ function SignIn(props) {
         }
     };
     const sendData = querystring.stringify({ username: email, password: password, 'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')});
-    
-    axios.post(Constants.Url.member.login, sendData, config)
-      .then((res) => {
-        props.history.push("/");
- 
-    });
+    if (email && password) {
+      axios.post(Constants.Url.member.login, sendData, config)
+        .then((res) => {
+          console.log('res', res);
+          // 잠깐 주석처리
+          // props.history.push("/");
+      });
+    } else {
+      setOpen(true);
+    }
   }
 
   const rememberField = () => (
@@ -143,6 +158,15 @@ function SignIn(props) {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
+        <AlertContext.Provider value={open}>
+        <MessageDialog 
+                          fullWidth={alertDialog.fullWidth} 
+                          maxWidth={alertDialog.maxWidth}
+                          title={alertDialog.title} 
+                          content={alertDialog.content}
+                          handleClose={() => {setOpen(false);}}
+                          buttons={alertDialog.buttons}/>
+        </AlertContext.Provider>
         <form className={classes.form} onSubmit={handleSubmit(submit)}>
           <Field
             id="email" name="email" type="email" label="Email"
