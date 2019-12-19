@@ -133,10 +133,10 @@ function SignIn(props) {
     if (email && password) {
       axios.post(Constants.Url.member.login, sendData, config)
         .then((res) => {
-          console.log('res', res);
-          // 잠깐 주석처리
-          // props.history.push("/");
-      });
+          props.history.push("/");
+        }).catch(function(error) {
+          setOpen(true);
+        });
     } else {
       setOpen(true);
     }

@@ -19,12 +19,10 @@ public class CustomAuthenticationFailureHandler implements ServerAuthenticationF
 	@Override
 	public Mono<Void> onAuthenticationFailure(WebFilterExchange webFilterExchange, AuthenticationException exception) {
 		ServerWebExchange exchange = webFilterExchange.getExchange();
-		exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
 		
-		LOG.info("onAuthenticationFailure");
-		// 비밀번호 틀리면 로그인 한적있어도 튕겨내게 해야함 -> url - login?failed 변경 
-		return webFilterExchange.getChain().filter(exchange)
-				.onErrorResume(AuthenticationException.class, err -> Mono.error(err));
+		LOG.info("onAuthenticationFailure "+exception.getMessage());
+		exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+		return exchange.getResponse().setComplete().doOnSuccess(error -> LOG.info(exception.getMessage()));
 	}
 
 }

@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class MemberHandler {
 	
-	private Logger log = LoggerFactory.getLogger(MemberHandler.class);
+	private Logger LOG = LoggerFactory.getLogger(MemberHandler.class);
 
 	
 	@Autowired
