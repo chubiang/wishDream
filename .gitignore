@@ -43,3 +43,4 @@ yarn-error.log
 ### build ###
 */src/main/resources/static/
 */src/main/resources/images/
+*/src/main/resources/json/

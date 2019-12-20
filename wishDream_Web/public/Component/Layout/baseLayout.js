@@ -7,25 +7,36 @@ import { makeStyles } from '@material-ui/core/styles'
 import { blue, red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-import layoutStyles from "styles/layout.scss"
+import AppStyles from "styles/app.scss"
 import Header from "Component/Layout/Header"
 import Footer from "Component/Layout/Footer"
 import Home from 'Page/Home'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 
+const useStyles = makeStyles({
+  app: {
+      marginTop: 80
+  }
+});
 
-const BaseLayout = () => (
-    <div className="base">
-      <Header />
-      <Container maxWidth="md" component="main" className={layoutStyles.App}>
-        <CssBaseline />
-        <Switch>
-          <Route exact path="/" component={Home} />
-        </Switch>
+const BaseLayout = ({cookies}) => {
+  const classes = useStyles();
+  
+  return(
+      <div className="base">
+        <Header cookies={cookies} />
+        <Container maxWidth="md" component="main" className={classes.app}>
+          <CssBaseline />
+          <div className="content">
+            <Switch>
+              <Route exact path="/" component={Home} cookies={cookies} />
+            </Switch>
+          </div>
+        </Container>
         <Footer />
-      </Container>
-    </div>
-)
+      </div>
+  )
+}
 
 export default BaseLayout

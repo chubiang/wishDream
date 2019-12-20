@@ -28,6 +28,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 
 import CustomizedMenus from 'Component/CustomizedMenus'
+import PopUserInfo from 'Component/PopUserInfo'
 import Home from 'Page/Home'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
@@ -98,18 +99,17 @@ const headerStyles = makeStyles(theme => ({
   },
 }))
 
-const menu = {
-  loginTitle: 'SignIn',
-  isSignIn: false,
-  menus: [{'id': 'mail', 'text': 'Sent mail'}
-         ,{'id': 'drafts', 'text': 'Drafts'}
-         ,{'id': 'inbox', 'text': 'Inbox'}]
-}
-
 export default function Header (props) {
   const classes = headerStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
+  const username = props.cookies.get('username');
+
+  const alarmList = {
+    menus: [{'id': 'mail', 'text': 'Sent mail'}
+           ,{'id': 'drafts', 'text': 'Drafts'}
+           ,{'id': 'inbox', 'text': 'Inbox'}]
+  }
 
   function handleDrawerOpen() {
     setOpen(true)
@@ -119,11 +119,11 @@ export default function Header (props) {
     setOpen(false)
   }
 
-  function loginButton(obj) {
-    if (obj.isSignIn) {
-      return <CustomizedMenus menus={obj.menus} menuName={obj.loginTitle} />
-    }
-    return <Button color="secondary"><Link to="/login">{obj.loginTitle}</Link></Button>
+  function alarmButton(list) {
+    return <CustomizedMenus menus={list.menus} menuName={list.loginTitle} />
+  }
+  function popOverUserInfo() {
+    return <PopUserInfo username={username} />
   }
 
   return (
@@ -147,9 +147,10 @@ export default function Header (props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title} noWrap>
-            <Link to="/">Home</Link>
+            <Link to="/">WishDream</Link>
           </Typography>
-          {loginButton(menu)}
+          {alarmButton(alarmList)}
+          {popOverUserInfo()}
         </Toolbar>
       </AppBar>
       <Drawer

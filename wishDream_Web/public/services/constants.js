@@ -7,6 +7,9 @@ const Constants = {
     Url: { 
         member: {
             login: 'login'
+        },
+        tmp: {
+            gridListData: 'json/tmpGridListData.json'
         }
     }
 }

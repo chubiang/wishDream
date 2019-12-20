@@ -68,7 +68,7 @@ public class SecurityWebFluxConfig {
 				.loginPage("/login")
 				.authenticationSuccessHandler(customAuthenticationSuccessHandler)
 				.authenticationFailureHandler(customAuthenticationFailureHandler)
-			.and().logout().logoutUrl("logout")
+			.and().logout().logoutUrl("/logout")
 			.and().authenticationManager(customauthenticationManager())
 				.exceptionHandling()
 				.accessDeniedHandler(customAccessDeniedHandler)

@@ -172,6 +172,7 @@ module.exports = {
         }),
         new CopyWebpackPlugin([
           { from: 'images', to: '../images' },
+          { from: 'json', to: '../json' },
           { from: 'icon', to:'./' }
         ]),
         //new BundleAnalyzerPlugin()

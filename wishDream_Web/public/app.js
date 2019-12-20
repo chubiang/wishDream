@@ -3,6 +3,7 @@ import React from 'react';
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
 import red from '@material-ui/core/colors/red';
+import { CookiesProvider, withCookies } from 'react-cookie';
 import BaseLayout from "Component/Layout/BaseLayout";
 import "styles/app.scss";
 import "styles/material_font_roboto.css";
@@ -22,10 +23,12 @@ let theme = createMuiTheme({
 });
 theme = responsiveFontSizes(theme);
 */
-const App = () => (
+const App = ({cookies}) => (
   <BrowserRouter>
-    <BaseLayout />
+    <CookiesProvider>
+    <BaseLayout cookies={cookies} />
+    </CookiesProvider>
   </BrowserRouter>
 );
 
-export default App;
+export default withCookies(App);

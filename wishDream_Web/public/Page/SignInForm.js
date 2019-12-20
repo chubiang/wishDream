@@ -133,6 +133,7 @@ function SignIn(props) {
     if (email && password) {
       axios.post(Constants.Url.member.login, sendData, config)
         .then((res) => {
+          cookies.set("username", res.data);
           props.history.push("/");
         }).catch(function(error) {
           setOpen(true);

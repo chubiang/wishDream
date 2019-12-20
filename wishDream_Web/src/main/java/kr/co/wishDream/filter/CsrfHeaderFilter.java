@@ -24,7 +24,8 @@ public class CsrfHeaderFilter implements WebFilter {
 		
 		Pattern urlMatcher = Pattern.compile("(login)|(\\.map)|(\\.ico)|(\\.css)|(\\.js)");
 		MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
-		if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()) {
+		if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()
+				&& !csrfCookie.isEmpty()) {
 			exchange.getAttributes().putIfAbsent("_csrf_headerName", CSRF_TOKEN_HEADER);
 			exchange.getAttributes().putIfAbsent("_csrf_token", csrfCookie.get(CSRF_TOKEN_HEADER).iterator().next().getValue());
 			LOG.info("CSRF HEADER FILTER = " + CSRF_TOKEN_HEADER + " : "+csrfCookie.get(CSRF_TOKEN_HEADER).iterator().next().getValue());
