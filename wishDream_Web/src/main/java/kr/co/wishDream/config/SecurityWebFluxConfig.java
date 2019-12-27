@@ -64,6 +64,7 @@ public class SecurityWebFluxConfig {
 				.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 			.and().addFilterAfter(new CsrfHeaderFilter(), SecurityWebFiltersOrder.CSRF)
 			.authorizeExchange().anyExchange().authenticated()
+//			.and().oauth2Login()
 			.and().formLogin()
 				.loginPage("/login")
 				.authenticationSuccessHandler(customAuthenticationSuccessHandler)
