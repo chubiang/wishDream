@@ -12,17 +12,15 @@ const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         overflow: 'hidden'
-    },
-    control: {
-        // padding: theme.spacing(1),
-    },
+    }
 }));
 
-const DailyLifeGridList = () => {
+const DailyLifeGridList = (props) => {
     const [spacing, setSpacing] = React.useState(1);
     const classes = useStyles();
     const theme = useTheme();
     const [tileData, setTailData] = React.useState([]);
+    props.gridListTitle = "Pet boast";
     useEffect(() => {
         if (!tileData.length) {
             getGridData();
@@ -35,7 +33,6 @@ const DailyLifeGridList = () => {
             // TODO: 데이터 비었을 때, 보일 수 있게 틀 만들기
             // TODO: 데이터 보이게 하기
             setTailData(res.data);
-            console.log(res, tileData);
         }).catch(function (error) {
             console.log(error);
         });
@@ -47,7 +44,7 @@ const DailyLifeGridList = () => {
                 <Grid container justify="center" spacing={spacing}>
                     <GridList cellHeight={210} className={classes.gridList}>
                         <GridListTile key="Subheader" cols={5} style={{height: 'auto'}}>
-                            <ListSubheader component="div">December</ListSubheader>
+                            <ListSubheader component="div">{props.gridListTitle}</ListSubheader>
                         </GridListTile>
                         {tileData.map((tile, index) => (
                             <GridListTile key={index}>
@@ -57,7 +54,7 @@ const DailyLifeGridList = () => {
                                     subtitle={<span>by: {tile.author}</span>}
                                     actionIcon={
                                         <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
-                                        <StarBorderRoundedIcon />
+                                        <StarBorderRoundedIcon style={{color: 'rgba(255, 255, 255, 0.80)'}} />
                                         </IconButton>
                                     }
                                 />
