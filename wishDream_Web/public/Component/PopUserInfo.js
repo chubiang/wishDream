@@ -36,8 +36,7 @@ const useStyles = makeStyles({
 export default function PopUserInfo(props) {
     const classes = useStyles();
     const comment = [
-        'How are you today?',
-        'Have a nice day!'
+        'Have a good day!'
     ];
 
     function subContent(subContent) {

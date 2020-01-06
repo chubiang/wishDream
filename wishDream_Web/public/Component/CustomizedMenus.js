@@ -90,7 +90,7 @@ export default function CustomizedMenus(props) {
         variant="contained"
         onClick={handleMenuClick}
       >
-        <NotificationsIcon style={{color: grey[100]}}/>
+        {props.menuIcon}
       </IconButton>
       <StyledMenu
         id="customized-menu"

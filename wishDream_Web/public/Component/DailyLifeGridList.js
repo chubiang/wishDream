@@ -12,7 +12,21 @@ const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         overflow: 'hidden'
-    }
+    },
+    gridList: {
+        padding: '2px'
+    },
+    gridTile: {
+        cursor: 'pointer',
+        '&:after': {
+            content: '',
+
+        },
+        '&:hover': {
+            border: '1px solid rgba(0, 173, 255, 1)',
+            filter: 'opacity(0.8)'
+        }
+    },
 }));
 
 const DailyLifeGridList = (props) => {
@@ -20,7 +34,7 @@ const DailyLifeGridList = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const [tileData, setTailData] = React.useState([]);
-    props.gridListTitle = "Pet boast";
+    let gridListTitle = "Pet boast";
     useEffect(() => {
         if (!tileData.length) {
             getGridData();
@@ -38,16 +52,21 @@ const DailyLifeGridList = (props) => {
         });
     }
 
+    function tileClick() {
+        console.log('click!');
+        
+    }
+
     return (
         <Grid container className={classes.root} spacing={1}>
             <Grid item>
                 <Grid container justify="center" spacing={spacing}>
                     <GridList cellHeight={210} className={classes.gridList}>
                         <GridListTile key="Subheader" cols={5} style={{height: 'auto'}}>
-                            <ListSubheader component="div">{props.gridListTitle}</ListSubheader>
+                            <ListSubheader component="div">{gridListTitle}</ListSubheader>
                         </GridListTile>
                         {tileData.map((tile, index) => (
-                            <GridListTile key={index}>
+                            <GridListTile key={index} onClick={()=> {tileClick()}} className={classes.gridTile}>
                                 <img src={tile.img} alt={tile.title} />
                                 <GridListTileBar
                                     title={tile.title}

@@ -26,6 +26,9 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+import { grey } from '@material-ui/core/colors';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Badge from '@material-ui/core/Badge';
 
 import CustomizedMenus from 'Component/CustomizedMenus'
 import PopUserInfo from 'Component/PopUserInfo'
@@ -98,7 +101,13 @@ const headerStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }))
-
+const NotifyIcon = ({count}) => { 
+  return (
+    <Badge badgeContent={count} color="secondary">
+      <NotificationsIcon style={{color: grey[100]}}/>
+    </Badge>
+  ) 
+};
 export default function Header (props) {
   const classes = headerStyles()
   const theme = useTheme()
@@ -119,8 +128,9 @@ export default function Header (props) {
     setOpen(false)
   }
 
+  
   function alarmButton(list) {
-    return <CustomizedMenus menus={list.menus} menuName={list.loginTitle} />
+    return <CustomizedMenus menus={list.menus} menuIcon={<NotifyIcon count={alarmList.menus.length}/>} />
   }
   function popOverUserInfo() {
     return <PopUserInfo username={username} />
