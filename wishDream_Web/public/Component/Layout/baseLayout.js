@@ -1,5 +1,6 @@
 // module "baseLayout.js"
 import React, { Component, Fragment } from 'react'
+import SockJsClient from 'react-stomp'
 import { Switch } from 'react-router'
 import { Redirect, Link, Route } from 'react-router-dom'
 import { Container, Icon, SvgIcon } from '@material-ui/core'
@@ -25,6 +26,8 @@ const BaseLayout = ({cookies}) => {
   
   return(
       <div className="base">
+        {/* <SockJsClient url='http://localhost:8080/eventEmitter' topics={['/topics/all']}
+            onMessage={(msg) => { console.log(msg); }} /> */}
         <Header cookies={cookies} />
         <Container maxWidth="md" component="main" className={classes.app}>
           <CssBaseline />

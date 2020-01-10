@@ -1,5 +1,6 @@
 // module "header.js"
 import React from 'react'
+import SockJsClient from 'react-stomp'
 import clsx from 'clsx'
 
 import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom'
@@ -130,7 +131,9 @@ export default function Header (props) {
 
   
   function alarmButton(list) {
-    return <CustomizedMenus menus={list.menus} menuIcon={<NotifyIcon count={alarmList.menus.length}/>} />
+    return (
+      <CustomizedMenus menus={list.menus} menuIcon={<NotifyIcon count={alarmList.menus.length}/>} />
+    );
   }
   function popOverUserInfo() {
     return <PopUserInfo username={username} />

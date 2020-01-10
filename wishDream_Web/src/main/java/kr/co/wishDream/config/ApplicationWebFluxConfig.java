@@ -1,9 +1,10 @@
 package kr.co.wishDream.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -12,24 +13,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.core.Ordered;
 import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.security.web.reactive.result.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.method.HandlerTypePredicate;
+import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.PathMatchConfigurer;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.ViewResolverRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.resource.VersionResourceResolver;
-import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 import org.springframework.web.reactive.result.view.HttpMessageWriterView;
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.server.WebSocketService;
+import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
+import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 import org.thymeleaf.spring5.ISpringWebFluxTemplateEngine;
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
@@ -60,6 +65,9 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	
 	private ApplicationContext applicationContext;
 	
+	@Autowired
+	private WebSocketHandler webSocketHandler;
+	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -68,6 +76,25 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Bean
 	public LocaleContextResolver createLocaleContextResolver() {
 		return new LocaleResolver();
+	}
+	@Bean
+	public HandlerMapping handlerMapping() {
+		Map<String, WebSocketHandler> map = new HashMap<>();
+		map.put("/eventEmitter", webSocketHandler);
+		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+		mapping.setUrlMap(map);
+		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return mapping;
+	}
+	
+	@Bean
+	public WebSocketHandlerAdapter handlerAdapter() {
+		return new WebSocketHandlerAdapter(webSocketService());
+	}
+	
+	@Bean
+	public WebSocketService webSocketService() {
+		return new HandshakeWebSocketService(new ReactorNettyRequestUpgradeStrategy());
 	}
 	
 	@Bean

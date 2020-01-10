@@ -63,6 +63,7 @@ subprojects {
 	
 	dependencies {
 		implementation "org.springframework.boot:spring-boot-starter-webflux"
+		implementation 'org.springframework.boot:spring-boot-starter-integration'
 		implementation "org.springframework.boot:spring-boot-starter-security"
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
 		
