@@ -30,11 +30,13 @@ module.exports = {
         publicPath:'/static',
         filename: '[name].bundle.js'
     },
+    externals: ['websocket'],
     node: {
-      global: true
+      global: true,
+      fs: 'empty'
     },
     resolve: {
-      modules: [ path.resolve(__dirname, 'public'), 'node_modules'],
+      modules: [ path.resolve(__dirname, 'public'), '../node_modules'],
       plugins: [ new DirectoryNamedWebpackPlugin() ]
     },
     module: {
