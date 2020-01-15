@@ -1,6 +1,5 @@
 // module "footer.js"
 import React, { Component, Fragment } from 'react'
-import SockJsClient from 'react-stomp'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import Box from '@material-ui/core/Box'

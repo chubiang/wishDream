@@ -1,28 +1,25 @@
 // module "app.js"
 import React from 'react';
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
-import pink from '@material-ui/core/colors/pink';
-import red from '@material-ui/core/colors/red';
 import { CookiesProvider, withCookies } from 'react-cookie';
+import { BrowserRouter } from 'react-router-dom';
+import { createMuiTheme } from '@material-ui/core/styles'
+import purple from '@material-ui/core/colors/purple'
+import pink from '@material-ui/core/colors/pink'
+
 import BaseLayout from "Component/Layout/BaseLayout";
 import "styles/app.scss";
 import "styles/material_font_roboto.css";
 import "styles/material_icon.css";
 
 
-import { BrowserRouter } from 'react-router-dom';
-/*
-let theme = createMuiTheme({
+const theme = createMuiTheme({
   palette: {
-    primary: pink,
-    secondary: red,
-  },
-  status: {
-    danger: 'orange',
-  },
+    primary: purple,
+    secondary: pink
+  }
 });
-theme = responsiveFontSizes(theme);
-*/
+
+
 const App = ({cookies}) => (
   <BrowserRouter>
     <CookiesProvider>

@@ -1,11 +1,14 @@
 // module "SignIn.js"
 import React, { Component, useEffect, useState, createContext } from 'react'
-import Avatar from '@material-ui/core/Avatar'
 import { Button, TextField } from '@material-ui/core'
 import Link from '@material-ui/core/Link'
+import Avatar from '@material-ui/core/Avatar'
 import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
+import { createMuiTheme } from '@material-ui/core/styles'
+import purple from '@material-ui/core/colors/purple'
+import pink from '@material-ui/core/colors/pink'
 import { makeStyles } from '@material-ui/core/styles'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import { Form, Field, reduxForm } from 'redux-form'
@@ -17,6 +20,13 @@ import Constants from '../services/constants'
 import querystring from 'querystring'
 import { withRouter } from 'react-router'
 import MessageDialog from '../Component/MessageDialog'
+
+const theme = createMuiTheme({
+  palette: {
+    primary: purple,
+    secondary: pink
+  }
+});
 
 const useStyles = makeStyles(theme => ({
   '@global': {

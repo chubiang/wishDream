@@ -30,13 +30,11 @@ module.exports = {
         publicPath:'/static',
         filename: '[name].bundle.js'
     },
-    externals: ['websocket'],
     node: {
-      global: true,
       fs: 'empty'
     },
     resolve: {
-      modules: [ path.resolve(__dirname, 'public'), '../node_modules'],
+      modules: [ path.resolve(__dirname, 'public'), 'node_modules' ],
       plugins: [ new DirectoryNamedWebpackPlugin() ]
     },
     module: {
@@ -46,13 +44,12 @@ module.exports = {
               test: /\.(js|jsx)$/,
               exclude: /(node_modules)|(static)/,
               use: (info) => ([
-                  { loader: "babel-loader" },
-                  { loader: 'astroturf/loader'}
-                ]),
+                { loader: "babel-loader" },
+              ]),
             },
             {
-              test: /\.(sass|scss)$/,
-              exclude: /(static)|(node_modules)/,
+              test: /\.(sa|sc|c)ss$/,
+              exclude:/(node_modules)|(static)/,
               use: [
                 {
                   loader: MiniCssExtractPlugin.loader,
@@ -69,8 +66,8 @@ module.exports = {
                 {
                   loader: 'css-loader',
                   options: {
-                      modules: true,
-                      sourceMap: true
+                    importLoaders: 1,
+                    sourceMap: true
                   }
                 },
                 {
@@ -82,37 +79,34 @@ module.exports = {
                       sourceMap: true
                   }
                 },
+                { 
+                  loader: 'postcss-loader', 
+                  options: { 
+                    ident: "embedded",
+                    config: {
+                      path: __dirname + '/postcss.config.js',
+                      ctx: {
+                        parser: 'sugarss',
+                        env: 'development',
+                        map: true
+                      }
+                    },
+                    ident: 'postcss',
+                    plugins: (loader) => [
+                      require('postcss-import')({ root: loader.resourcePath }),
+                      require('postcss-preset-env')(),
+                      require('cssnano')()
+                    ]
+                  },
+                },
                 {
                   loader: 'resolve-url-loader',
                   options: {
                       engine: 'postcss',
                       sourceMap: true,
                   }
-                },
-                {
-                  loader: 'postcss-loader',
-                  options: {
-                      sourceMap: true
-                  }
                 }
               ]
-            },
-            {
-              test: /\.css$/,
-              exclude: /(static)|(node_modules)/,
-              use: [
-                {
-                  loader: 'style-loader',
-                },
-                {
-                  loader: 'css-loader',
-                  options: {
-                      modules: true,
-                      sourceMap: true,
-                      onlyLocals: true
-                  }
-                }
-              ],
             },
             {
               test: /\.(eot|ttf|woff|woff2?|otf)$/,
@@ -129,6 +123,7 @@ module.exports = {
     },
     plugins: [
        new webpack.ProgressPlugin(),
+       new BundleAnalyzerPlugin(),
        new CleanWebpackPlugin({
          dry: true,
          cleanOnceBeforeBuildPatterns: ['**/*', 'index.html', 'login.html']
@@ -168,8 +163,8 @@ module.exports = {
             },
         }),
         new MiniCssExtractPlugin({
-            filename: devMode ? 'styles/[name].css' : 'styles/[name].[hash].css',
-            chunkFilename: devMode ? 'styles/[id].css' : 'styles/[id].[hash].css',
+            filename: devMode ? 'css/[name].css' : 'css/[name].[hash].css',
+            chunkFilename: devMode ? 'css/[id].css' : 'css/[id].[hash].css',
             ignoreOrder: true,
         }),
         new CopyWebpackPlugin([
@@ -184,7 +179,7 @@ module.exports = {
         	new UglifyJsPlugin({
 	    			uglifyOptions: {
 	    				compress:false,
-	    				ecma: 6,
+	    				ecma: 5,
 	    				mangle: true
 	    			},
 	    			exclude: /(\/node_modules)/,
