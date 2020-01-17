@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const Fiber = require('fibers');
 const sass = require("sass");
+const websocket = require("websocket");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -36,6 +37,9 @@ module.exports = {
     resolve: {
       modules: [ path.resolve(__dirname, 'public'), 'node_modules' ],
       plugins: [ new DirectoryNamedWebpackPlugin() ]
+    },
+    externals: {
+      websocket: websocket
     },
     module: {
         rules: [

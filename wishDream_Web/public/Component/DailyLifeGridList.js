@@ -58,7 +58,7 @@ const DailyLifeGridList = (props) => {
     }
 
     return (
-        <Grid container className={classes.root} spacing={1}>
+        <Grid container className={classes.root}>
             <Grid item>
                 <Grid container justify="center" spacing={spacing}>
                     <GridList cellHeight={210} className={classes.gridList}>
