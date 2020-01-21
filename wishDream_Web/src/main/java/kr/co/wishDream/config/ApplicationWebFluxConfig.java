@@ -19,7 +19,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -48,6 +48,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
+import kr.co.wishDream.handler.EventWebSocketHandler;
 
 /**
  * db : rxjava2-jdbc & postgresql or mssql
@@ -65,9 +66,6 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	
 	private ApplicationContext applicationContext;
 	
-	@Autowired
-	private WebSocketHandler webSocketHandler;
-	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -80,7 +78,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Bean
 	public HandlerMapping handlerMapping() {
 		Map<String, WebSocketHandler> map = new HashMap<>();
-		map.put("/eventEmitter", webSocketHandler);
+		map.put("/topic", new EventWebSocketHandler());
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);
 		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -120,7 +118,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		configurer
 			.setUseCaseSensitiveMatch(true)
 			.setUseTrailingSlashMatch(false)
-			.addPathPrefix("/", HandlerTypePredicate.forAnnotation(Controller.class));
+			.addPathPrefix("/index/", HandlerTypePredicate.forAnnotation(RestController.class));
 	}
 
 	@Override

@@ -12,10 +12,14 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import kr.co.wishDream.filter.CsrfHeaderFilter;
 
@@ -54,16 +58,25 @@ public class SecurityWebFluxConfig {
 	}
 	
 	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		return source;
+	}
+	
+	@Bean
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 		return 
 			http.authorizeExchange()
-				.pathMatchers("/resources/**", "/favicon.ico", "/styles/**", "/login", "/logout", "/static/**")
+				.pathMatchers("/resources/**", "/favicon.ico", "/styles/**", "/login", "/logout", "/static/**", "/topic/**")
 				.permitAll()
-			.and().httpBasic().disable()
-			.csrf()
+			.and().httpBasic()
+			.and().cors().configurationSource(corsConfigurationSource())
+			.and().csrf()
 				.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 			.and().addFilterAfter(new CsrfHeaderFilter(), SecurityWebFiltersOrder.CSRF)
-			.authorizeExchange().anyExchange().authenticated()
+			.exceptionHandling().authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
+			.and().authorizeExchange().anyExchange().authenticated()
 //			.and().oauth2Login()
 			.and().formLogin()
 				.loginPage("/login")
