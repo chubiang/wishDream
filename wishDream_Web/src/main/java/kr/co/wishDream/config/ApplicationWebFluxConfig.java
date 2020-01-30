@@ -48,6 +48,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
+import kr.co.wishDream.handler.EventEmitterHandler;
 import kr.co.wishDream.handler.EventWebSocketHandler;
 
 /**
@@ -78,7 +79,8 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Bean
 	public HandlerMapping handlerMapping() {
 		Map<String, WebSocketHandler> map = new HashMap<>();
-		map.put("/topic", new EventWebSocketHandler());
+		map.put("/topic", new EventEmitterHandler());
+		map.put("/topic/alarm", new EventWebSocketHandler());
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);
 		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);

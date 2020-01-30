@@ -1,5 +1,7 @@
 package kr.co.wishDream.filter;
 
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -22,6 +24,10 @@ public class CsrfHeaderFilter implements WebFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 		String currentUrl = exchange.getRequest().getPath().value();
 		
+		for (Map.Entry<String, List<String>> entry : exchange.getRequest().getHeaders().entrySet()) {
+			System.out.println("header = "+entry);
+		}
+
 		Pattern urlMatcher = Pattern.compile("(login)|(\\.map)|(\\.ico)|(\\.css)|(\\.js)");
 		MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
 		if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()
