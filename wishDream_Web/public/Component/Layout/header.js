@@ -2,6 +2,7 @@
 import React from 'react'
 import SockJsClient from 'react-stomp'
 import clsx from 'clsx'
+import axios from 'axios'
 
 import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom'
 
@@ -27,6 +28,7 @@ import { grey } from '@material-ui/core/colors';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Badge from '@material-ui/core/Badge';
 
+import constants from '../../services/constants'
 import CustomizedMenus from 'Component/CustomizedMenus'
 import PopUserInfo from 'Component/PopUserInfo'
 import Home from 'Page/Home'
@@ -105,16 +107,77 @@ const NotifyIcon = ({count}) => {
     </Badge>
   ) 
 };
+
+const url = "ws://localhost:8080/topic/alarm";
+let ws = null;
+
+function onConnect() {
+  ws = new WebSocket(url);
+  ws.onopen = function(e) {
+    console.log(e);
+    console.log('Info: Connection Established.');
+  }
+  
+  ws.onmessage = function(event) {
+    console.log('Info: received Message = '+ event.data);
+  };
+
+  ws.onclose = function(event) {
+    console.log('Info: Closing Connection.');
+      return false;
+  };
+  return true;
+}
+
+ function send() {
+    if (!!ws) {
+      ws.send();
+    }
+ }
+
+function disconnect() 
+{
+    if (ws != null) {
+        ws.close();
+        ws = null;
+    }
+    return false;
+}
+
 export default function Header (props) {
   const classes = headerStyles()
   const theme = useTheme()
+  const [alarmList, setAlarmList] = React.useState([])
   const [open, setOpen] = React.useState(false)
+  const [connected, setConnected] = React.useState(false);
   const username = props.cookies.get('username');
 
-  const alarmList = {
-    menus: [{'id': 'mail', 'text': 'Sent mail'}
-           ,{'id': 'drafts', 'text': 'Drafts'}
-           ,{'id': 'inbox', 'text': 'Inbox'}]
+  React.useEffect(() => {
+    // effect
+    setConnected(onConnect());
+    getAlarmList();
+    return () => {
+      //alarmList
+      setAlarmList([
+      {'id': 'mail', 'title': 'Sent mail'}
+      ,{'id': 'drafts', 'title': 'Drafts'}
+      ,{'id': 'inbox', 'title': 'Inbox'}
+      ,{'id': 'message', 'title': 'Message'}]);
+    };
+  }, [connected]);
+
+  function getAlarmList() {
+    axios.get(constants.Url.socket.alarmList)
+    .then(function(res) {
+      console.log(res);
+      
+      let alarm = [];
+      res.data.forEach(e => {
+        
+      });
+    }).catch(function (error) {
+        console.log(error);
+    });
   }
 
   function handleDrawerOpen() {
@@ -128,7 +191,7 @@ export default function Header (props) {
   
   function alarmButton(list) {
     return (
-      <CustomizedMenus menus={list.menus} menuIcon={<NotifyIcon count={alarmList.menus.length}/>} />
+        <CustomizedMenus menus={list} menuIcon={<NotifyIcon count={list.length}/>} />
     );
   }
   function popOverUserInfo() {
@@ -137,6 +200,11 @@ export default function Header (props) {
 
   return (
     <div className={classes.root}>
+      {/* <SockJsClient url='http://localhost:8080/topic' topics={['/alarm']}
+          onMessage={(msg) => { console.log(msg); }}
+          onConnect={() => { setConnected(true) }}
+          onDisconnect={() => { setConnected(false) }}
+          debug={true} /> */}
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {

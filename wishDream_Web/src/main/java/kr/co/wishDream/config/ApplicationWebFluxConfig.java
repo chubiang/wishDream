@@ -79,7 +79,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	@Bean
 	public HandlerMapping handlerMapping() {
 		Map<String, WebSocketHandler> map = new HashMap<>();
-		map.put("/topic", new EventEmitterHandler());
+		map.put("/topic/info", new EventEmitterHandler());
 		map.put("/topic/alarm", new EventWebSocketHandler());
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);

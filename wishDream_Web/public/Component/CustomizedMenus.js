@@ -4,12 +4,12 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import DraftsIcon from '@material-ui/icons/Drafts'
-import SendIcon from '@material-ui/icons/Send'
-import { grey } from '@material-ui/core/colors';
-import { IconButton } from '@material-ui/core';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+
+import { grey } from '@material-ui/core/colors'
+import { IconButton } from '@material-ui/core'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+
+import NoticeType from '../services/noticeType'
 
 const StyledMenu = withStyles({
   paper: {
@@ -46,22 +46,6 @@ export function useCurrentMenu(target) {
   return target
 }
 
-const menuItemIcon = (icons) => {
-  switch (icons) {
-    case 'mail':
-      return <SendIcon />;
-      break
-    case 'drafts':
-      return <DraftsIcon />;
-      break
-    case 'inbox':
-      return <InboxIcon />;
-      break
-    default:
-      break
-  }
-}
-
 export default function CustomizedMenus(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -73,14 +57,18 @@ export default function CustomizedMenus(props) {
     setAnchorEl(null)
   }
 
-  const menuItems = props.menus.map((obj, index) => (
-    <StyledMenuItem key={obj.id + index}>
-      <ListItemIcon>
-        {menuItemIcon(obj.id)}
-      </ListItemIcon>
-      <ListItemText primary={obj.text} />
-    </StyledMenuItem>
-  ))
+  const iconRef = [];
+  const menuItems = props.menus.map((obj, index) => {
+    // iconRef.push({index:React.useRef()});
+    return ( 
+      <StyledMenuItem key={'alarmItem' + index}>
+        <ListItemIcon>
+          {/* <NoticeType type={obj.noticeType} ref={iconRef[index][index]} /> */}
+        </ListItemIcon>
+        <ListItemText primary={obj.title} />
+      </StyledMenuItem>
+    )
+  })
 
   return (
     <>

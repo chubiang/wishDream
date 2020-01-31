@@ -18,39 +18,9 @@ const useStyles = makeStyles({
       marginTop: 80
   }
 });
-const url = "ws://localhost:8080/topic";
-let ws = null;
-
-function onConnect() {
-  ws = new WebSocket(url);
-  ws.onopen = function() {
-    console.log('Info: Connection Established.');
-  }
-  
-  ws.onclose = function(event) {
-    console.log('Info: Closing Connection.');
-      return false;
-  };
-  return true;
-}
-
-function disconnect() 
-{
-    if (ws != null) {
-        ws.close();
-        ws = null;
-    }
-    return false;
-}
 
 const BaseLayout = ({cookies}) => {
   const classes = useStyles();
-  let connected = false;
-  connected = onConnect();
-  ws.addEventListener('message', function(event) {
-    console.log('message from server: '+ event.data);
-  })
-  
   return(
       <div className="base">
         {/* <SockJsClient url={url} topics={['/topics/all']}

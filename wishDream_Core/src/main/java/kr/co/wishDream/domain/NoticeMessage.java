@@ -2,6 +2,9 @@ package kr.co.wishDream.domain;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class NoticeMessage {
 
 	private String title;

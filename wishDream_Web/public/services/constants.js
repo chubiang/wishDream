@@ -8,6 +8,9 @@ const Constants = {
         member: {
             login: 'login'
         },
+        socket: {
+            alarmList: 'alarmList'
+        },
         tmp: {
             gridListData: 'json/tmpGridListData.json'
         }
