@@ -18,8 +18,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-public class EventWebSocketHandler implements WebSocketHandler {
-	private Logger LOG = LoggerFactory.getLogger(EventWebSocketHandler.class);
+public class AlarmWebSocketHandler implements WebSocketHandler {
+	private Logger LOG = LoggerFactory.getLogger(AlarmWebSocketHandler.class);
 	
 	private ObjectMapper objectMapper;
 	
@@ -27,9 +27,9 @@ public class EventWebSocketHandler implements WebSocketHandler {
 	public Mono<ServerResponse> emitUserMessages() throws JsonProcessingException {
 		ArrayList<NoticeMessage> msgs = new ArrayList<>();
 
-		msgs.add(new NoticeMessage("안녕", "반가워용!", 1L, 2L, "블랙", "오렌지", 2L, 1, null));
-		msgs.add(new NoticeMessage("안녕@", "반가워용!##", 1L, 2L, "화이트", "레몬", 2L, 2, null));
-		msgs.add(new NoticeMessage("안녕$", "반가워용$$!", 1L, 2L, "연두", "보라", 2L, 3, null));
+		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1L, 2L, "블랙", "피칸", 2L, 1, null));
+		msgs.add(new NoticeMessage("안녕@", "하이!##", 1L, 2L, "퍼플", "도넛", 2L, 2, null));
+		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1L, 2L, "화이트", "카카오", 2L, 3, null));
 		
 		return ServerResponse
 				.ok()
@@ -40,9 +40,9 @@ public class EventWebSocketHandler implements WebSocketHandler {
 	public String emitUserMessagesByJson() throws JsonProcessingException {
 		ArrayList<NoticeMessage> msgs = new ArrayList<>();
 
-		msgs.add(new NoticeMessage("안녕", "반가워용!", 1L, 2L, "블랙", "오렌지", 2L, 1, null));
-		msgs.add(new NoticeMessage("안녕@", "반가워용!##", 1L, 2L, "화이트", "레몬", 2L, 2, null));
-		msgs.add(new NoticeMessage("안녕$", "반가워용$$!", 1L, 2L, "연두", "보라", 2L, 3, null));
+		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1L, 2L, "블랙", "피칸", 2L, 1, null));
+		msgs.add(new NoticeMessage("안녕@", "하이!##", 1L, 2L, "퍼플", "도넛", 2L, 2, null));
+		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1L, 2L, "화이트", "카카오", 2L, 3, null));
 		
 		objectMapper = new ObjectMapper();
 		
@@ -58,20 +58,19 @@ public class EventWebSocketHandler implements WebSocketHandler {
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
 		
-		try {
-			return session.send(
-						Mono.just(session.textMessage(emitUserMessagesByJson()))
-					)
-					.then();
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			try {
+				return session.send(
+							Mono.just(session.textMessage(emitUserMessagesByJson()))
+						).then();
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //		return session.send(Flux.interval(Duration.ofSeconds(1))
 //				.zipWith(toMessage(), (x, y) -> x + y)
 //				.map(session::textMessage)
 //				);
-		return null;
+			return null;
 	}
 	
 }

@@ -49,7 +49,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
 import kr.co.wishDream.handler.EventEmitterHandler;
-import kr.co.wishDream.handler.EventWebSocketHandler;
+import kr.co.wishDream.handler.AlarmWebSocketHandler;
 
 /**
  * db : rxjava2-jdbc & postgresql or mssql
@@ -80,7 +80,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	public HandlerMapping handlerMapping() {
 		Map<String, WebSocketHandler> map = new HashMap<>();
 		map.put("/topic/info", new EventEmitterHandler());
-		map.put("/topic/alarm", new EventWebSocketHandler());
+		map.put("/topic/alarm", new AlarmWebSocketHandler());
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);
 		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);

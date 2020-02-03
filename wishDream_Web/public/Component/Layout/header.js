@@ -34,6 +34,7 @@ import PopUserInfo from 'Component/PopUserInfo'
 import Home from 'Page/Home'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
+import RepeatListItem from '../RepeatListItem'
 
 const drawerWidth = 240
 
@@ -118,26 +119,31 @@ export default function Header (props) {
   const [open, setOpen] = React.useState(false)
   const [connected, setConnected] = React.useState(false);
   const username = props.cookies.get('username');
+  const [menus, setMenus] = React.useState([['Inbox', 'Starred', 'Send email', 'Drafts'], ['Inbox', 'Starred', 'Send email']]);
   
   React.useEffect(() => {
     // effect
-    setConnected(onConnect());
     //getAlarmList();
-  }, [connected]);
+    if (!ws) {
+      setConnected(onConnect());
+    }
+  }, [alarmList])
 
   function onConnect() {
     ws = new WebSocket(url);
     ws.onopen = function(e) {
-      console.log('Info: Connection Established. '+e);
+      console.log('Info: Connection Established.')
     }
-    
+    ws.onerror = function(ev) {
+      console.log('Info: Connection Error.')
+    };
     ws.onmessage = function(event) {
-      console.log('Info: received Message = '+ event.data);
-      setAlarmList(JSON.parse(event.data));
+      console.log('Info: received Message = '+ event.data)
+      setAlarmList(JSON.parse(event.data))
     };
   
     ws.onclose = function(event) {
-      console.log('Info: Closing Connection.');
+      console.log('Info: Closing Connection.')
         return false;
     };
     return true;
@@ -145,7 +151,7 @@ export default function Header (props) {
   
    function send() {
       if (!!ws) {
-        ws.send();
+        ws.send('alarm');
       }
    }
   
@@ -155,7 +161,7 @@ export default function Header (props) {
           ws.close();
           ws = null;
       }
-      return false;
+      setConnected(false);
   }
   
 
@@ -239,23 +245,14 @@ export default function Header (props) {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+        {menus.map((items, index) => (
+          <React.Fragment key={'menus'+index}>
+            <List>
+              {RepeatListItem({items: items})}
+            </List>
+            <Divider />
+          </React.Fragment>
+        ))}
       </Drawer>
     </div>
   )

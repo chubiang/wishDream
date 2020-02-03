@@ -9,13 +9,13 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import kr.co.wishDream.handler.EventWebSocketHandler;
+import kr.co.wishDream.handler.AlarmWebSocketHandler;
 
 @Configuration
 public class EventRouter {
 	
 	@Bean
-	public RouterFunction<?> eventRoutes(EventWebSocketHandler handler) {
+	public RouterFunction<?> eventRoutes(AlarmWebSocketHandler handler) {
 		return RouterFunctions
 				.route(RequestPredicates.GET("/alarmList")
 						.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
