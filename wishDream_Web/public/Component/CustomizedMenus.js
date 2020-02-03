@@ -9,7 +9,7 @@ import { grey } from '@material-ui/core/colors'
 import { IconButton } from '@material-ui/core'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 
-import NoticeType from '../services/noticeType'
+import NoticeType from './NoticeType'
 
 const StyledMenu = withStyles({
   paper: {
@@ -57,13 +57,11 @@ export default function CustomizedMenus(props) {
     setAnchorEl(null)
   }
 
-  const iconRef = [];
   const menuItems = props.menus.map((obj, index) => {
-    // iconRef.push({index:React.useRef()});
     return ( 
       <StyledMenuItem key={'alarmItem' + index}>
         <ListItemIcon>
-          {/* <NoticeType type={obj.noticeType} ref={iconRef[index][index]} /> */}
+          <NoticeType type={obj.noticeType} />
         </ListItemIcon>
         <ListItemText primary={obj.title} />
       </StyledMenuItem>

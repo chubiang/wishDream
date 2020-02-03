@@ -111,39 +111,6 @@ const NotifyIcon = ({count}) => {
 const url = "ws://localhost:8080/topic/alarm";
 let ws = null;
 
-function onConnect() {
-  ws = new WebSocket(url);
-  ws.onopen = function(e) {
-    console.log(e);
-    console.log('Info: Connection Established.');
-  }
-  
-  ws.onmessage = function(event) {
-    console.log('Info: received Message = '+ event.data);
-  };
-
-  ws.onclose = function(event) {
-    console.log('Info: Closing Connection.');
-      return false;
-  };
-  return true;
-}
-
- function send() {
-    if (!!ws) {
-      ws.send();
-    }
- }
-
-function disconnect() 
-{
-    if (ws != null) {
-        ws.close();
-        ws = null;
-    }
-    return false;
-}
-
 export default function Header (props) {
   const classes = headerStyles()
   const theme = useTheme()
@@ -151,30 +118,52 @@ export default function Header (props) {
   const [open, setOpen] = React.useState(false)
   const [connected, setConnected] = React.useState(false);
   const username = props.cookies.get('username');
-
+  
   React.useEffect(() => {
     // effect
     setConnected(onConnect());
-    getAlarmList();
-    return () => {
-      //alarmList
-      setAlarmList([
-      {'id': 'mail', 'title': 'Sent mail'}
-      ,{'id': 'drafts', 'title': 'Drafts'}
-      ,{'id': 'inbox', 'title': 'Inbox'}
-      ,{'id': 'message', 'title': 'Message'}]);
-    };
+    //getAlarmList();
   }, [connected]);
+
+  function onConnect() {
+    ws = new WebSocket(url);
+    ws.onopen = function(e) {
+      console.log('Info: Connection Established. '+e);
+    }
+    
+    ws.onmessage = function(event) {
+      console.log('Info: received Message = '+ event.data);
+      setAlarmList(JSON.parse(event.data));
+    };
+  
+    ws.onclose = function(event) {
+      console.log('Info: Closing Connection.');
+        return false;
+    };
+    return true;
+  }
+  
+   function send() {
+      if (!!ws) {
+        ws.send();
+      }
+   }
+  
+  function disconnect() 
+  {
+      if (ws != null) {
+          ws.close();
+          ws = null;
+      }
+      return false;
+  }
+  
 
   function getAlarmList() {
     axios.get(constants.Url.socket.alarmList)
     .then(function(res) {
       console.log(res);
-      
-      let alarm = [];
-      res.data.forEach(e => {
-        
-      });
+      setAlarmList(res.data);
     }).catch(function (error) {
         console.log(error);
     });
@@ -191,7 +180,7 @@ export default function Header (props) {
   
   function alarmButton(list) {
     return (
-        <CustomizedMenus menus={list} menuIcon={<NotifyIcon count={list.length}/>} />
+        <CustomizedMenus menus={list} menuIcon={<NotifyIcon count={list.length} type={list.noticeType}/>} />
     );
   }
   function popOverUserInfo() {
