@@ -8,8 +8,6 @@ import AnnouncementIcon from '@material-ui/icons/Announcement'
 
 const NoticeType = React.forwardRef(({type}, ref) => 
     {
-        console.log('type',type);
-        
         switch (type) {
             case 1:
                 return (<SendIcon ref={ref}/>)

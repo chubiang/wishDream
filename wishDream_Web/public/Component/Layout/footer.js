@@ -12,9 +12,9 @@ const useStyles = makeStyles({
         justifyContent: 'center'
     },
     footerDIV: {
-        position: 'fixed',
-        bottom: 0,
-        marginBottom: 20
+        position: 'relative',
+        margin: 0,
+        padding: '50px'
     }
 });
 
