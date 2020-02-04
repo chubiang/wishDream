@@ -36,7 +36,10 @@ module.exports = {
     },
     resolve: {
       modules: [ path.resolve(__dirname, 'public'), 'node_modules' ],
-      plugins: [ new DirectoryNamedWebpackPlugin() ]
+      plugins: [ new DirectoryNamedWebpackPlugin() ],
+      alias: {
+        '@material-ui/styles': path.resolve(__dirname, 'node_modules', '@material-ui/styles'),
+      }
     },
     externals: {
       websocket: websocket
