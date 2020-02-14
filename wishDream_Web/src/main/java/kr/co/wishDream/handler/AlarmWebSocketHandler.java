@@ -27,9 +27,9 @@ public class AlarmWebSocketHandler implements WebSocketHandler {
 	public Mono<ServerResponse> emitUserMessages() throws JsonProcessingException {
 		ArrayList<NoticeMessage> msgs = new ArrayList<>();
 
-		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1L, 2L, "블랙", "피칸", 2L, 1, null));
-		msgs.add(new NoticeMessage("안녕@", "하이!##", 1L, 2L, "퍼플", "도넛", 2L, 2, null));
-		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1L, 2L, "화이트", "카카오", 2L, 3, null));
+		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1, 2, "블랙", "피칸", 2, 1, null));
+		msgs.add(new NoticeMessage("안녕@", "하이!##", 1, 2, "퍼플", "도넛", 2, 2, null));
+		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1, 2, "화이트", "카카오", 2, 3, null));
 		
 		return ServerResponse
 				.ok()
@@ -40,9 +40,9 @@ public class AlarmWebSocketHandler implements WebSocketHandler {
 	public String emitUserMessagesByJson() throws JsonProcessingException {
 		ArrayList<NoticeMessage> msgs = new ArrayList<>();
 
-		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1L, 2L, "블랙", "피칸", 2L, 1, null));
-		msgs.add(new NoticeMessage("안녕@", "하이!##", 1L, 2L, "퍼플", "도넛", 2L, 2, null));
-		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1L, 2L, "화이트", "카카오", 2L, 3, null));
+		msgs.add(new NoticeMessage("안녕", "안녕 친구들!", 1, 2, "블랙", "피칸", 2, 1, null));
+		msgs.add(new NoticeMessage("안녕@", "하이!##", 1, 2, "퍼플", "도넛", 2, 2, null));
+		msgs.add(new NoticeMessage("안녕$", "반가워요$$!", 1, 2, "화이트", "카카오", 2, 3, null));
 		
 		objectMapper = new ObjectMapper();
 		

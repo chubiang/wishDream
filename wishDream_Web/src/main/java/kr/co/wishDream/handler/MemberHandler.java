@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import kr.co.wishDream.domain.Member;
+import kr.co.wishDream.domain.Menu;
 import kr.co.wishDream.service.MemberService;
 import reactor.core.publisher.Mono;
 
@@ -45,5 +46,12 @@ public class MemberHandler {
 			.body(ReactiveSecurityContextHolder.getContext()
 					.map(SecurityContext::getAuthentication)
 					.map(Authentication::getName), Member.class);
+	}
+	
+	public Mono<ServerResponse> getMenus(ServerRequest request) {
+		return ServerResponse
+				.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(memberService.getMenu(), Menu.class);
 	}
 }

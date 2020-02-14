@@ -24,5 +24,7 @@ public interface Member {
 	@Column("leaveDate")
 	Date leaveDate();
 	
+	@Column("role")
+	String role();
 	
 }

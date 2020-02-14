@@ -1,8 +1,9 @@
+import React, { Component, Fragment, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles, useTheme } from '@material-ui/styles'
 
 
-const Helper = ({menus}) => menus.map((obj, index) => {
+const Helper = ({menu}) => menu.map((obj, index) => {
     return (
         <p>
             <span>menu</span>
@@ -17,7 +18,7 @@ const CategoryHelper = (props) => {
 
     return (
         <div>
-            <Helper menus={props.menus} />
+            <Helper menus={props.menu} />
         </div>
     )
 }

@@ -28,6 +28,15 @@ public class MemberRouter {
 						e.printStackTrace();
 					}
 					return null;
+				})
+				.andRoute(GET("/menu")
+				.and(accept(MediaType.APPLICATION_JSON)), request -> {
+					try {
+						return handler.getMenus(request);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return null;
 				});
 	}
 }

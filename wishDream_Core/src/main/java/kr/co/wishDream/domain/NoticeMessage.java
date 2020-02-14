@@ -16,11 +16,11 @@ public class NoticeMessage {
 
 	private String title;
 	private String message;
-	private Long fromMember;
-	private Long toMember;
+	private Integer fromMember;
+	private Integer toMember;
 	private String fromMemberName;
 	private String toMemberName;
-	private Long noticeId;
+	private Integer noticeId;
 	private Integer noticeType;
 	private Date sendDate;
 	

@@ -28,6 +28,7 @@ public class Member implements UserDetails, CredentialsContainer {
 	private Date birth;
 	private Date joinDate;
 	private Date leaveDate;
+	private String role;
 	
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
@@ -47,9 +48,11 @@ public class Member implements UserDetails, CredentialsContainer {
 		this.password = password;
 		this.authorities = authorities;
 	}
-	
-	public Member(String email, String username, String password, String etc, Date birth, Date joinDate, Date leaveDate) {
+
+	public Member(DateFormat dateFormat, String email, String username, String password, String etc, Date birth,
+			Date joinDate, Date leaveDate, String role) {
 		super();
+		this.dateFormat = dateFormat;
 		this.email = email;
 		this.username = username;
 		this.password = password;
@@ -57,6 +60,7 @@ public class Member implements UserDetails, CredentialsContainer {
 		this.birth = birth;
 		this.joinDate = joinDate;
 		this.leaveDate = leaveDate;
+		this.role = role;
 	}
 
 	public Member(String email, String username, String etc, Date birth, Date joinDate, Date leaveDate,
@@ -125,6 +129,14 @@ public class Member implements UserDetails, CredentialsContainer {
 
 	public void setLeaveDate(Date leaveDate) {
 		this.leaveDate = leaveDate;
+	}
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public void setUsername(String username) {
