@@ -45,6 +45,7 @@ const DailyLifeGridList = (props) => {
     const [loadingBar, setLoadingBar] = React.useState(false)
     const [open, setOpen] = React.useState(false)
     const openRef = React.createRef()
+    let title, author;
 
     let gridListTitle = 'Pet boast'
     useEffect(() => {
@@ -67,8 +68,15 @@ const DailyLifeGridList = (props) => {
         })
     }
 
-    const handleOpen = () => {
+    const handleOpen = (e) => {
         setOpen(true)
+        console.log(e.currentTarget);
+        console.log(e.currentTarget.innerText);
+        let reg =  /[\w+\s]+[\s+\w]/g;
+        let txtArr = e.currentTarget.innerText.match(reg);
+        if (txtArr && txtArr.length) {
+            txtArr[0] = txtArr[0].replace(/(\s)by/, '');
+        }
     }
 
     const handleClose = () => {
@@ -103,7 +111,9 @@ const DailyLifeGridList = (props) => {
                     </Grid>
                 </Grid>
             </Grid>
-            <DailyLifeGridListDialog open={open} close={handleClose} ref={openRef}/>
+            <DailyLifeGridListDialog open={open} close={handleClose} 
+                title={'ModalTitle'} author={'chu'}
+                ref={openRef}/>
         </>
     )
 }

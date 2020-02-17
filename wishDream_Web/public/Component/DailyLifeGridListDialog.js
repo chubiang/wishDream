@@ -2,6 +2,7 @@ import React, { Component, Fragment, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
@@ -49,12 +50,12 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-const DailyLifeGridListDialog = React.forwardRef(({open, close}, ref) =>  {
+const DailyLifeGridListDialog = React.forwardRef(({open, close, title, author}, ref) =>  {
 
     return (
         <Dialog onClose={close} aria-labelledby="customized-dialog-title" open={open} ref={ref}>
             <DialogTitle id="customized-dialog-title" onClose={close}>
-                Modal Title
+                {title}
             </DialogTitle>
             <DialogContent dividers>
             <Typography gutterBottom>
@@ -72,10 +73,17 @@ const DailyLifeGridListDialog = React.forwardRef(({open, close}, ref) =>  {
             </Typography>
             </DialogContent>
             <DialogActions>
+            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
             <Button autoFocus onClick={close} color="primary">
                 Save changes
             </Button>
             </DialogActions>
+            <DialogContent dividers>
+            <Typography gutterBottom>
+                Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
+                in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+            </Typography>
+            </DialogContent>
         </Dialog>
     )
 });
