@@ -1,23 +1,22 @@
 package kr.co.wishDream;
 
 import org.davidmoten.rx.jdbc.Database;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.reactivex.Flowable;
 import kr.co.wishDream.domain.Member;
 import reactor.core.publisher.Mono;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TestDatabaseConnect.class})
-@TestPropertySource(locations = {"classpath:application.yml"})
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 public class WishDreamWebApplicationTests {
 	
 	@Autowired
@@ -38,9 +37,11 @@ public class WishDreamWebApplicationTests {
 		
 //		System.out.println(findByUsername(email).blockOptional().get().toString());
 		
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		String password = encoder.encode("123");
-		System.out.println(password);
+//		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//		String password = encoder.encode("123");
+//		System.out.println(password);
+		
+//		System.out.println(System.getProperty("java.version"));
 	}
 	
 	public Mono<UserDetails> findByUsername(String email) {

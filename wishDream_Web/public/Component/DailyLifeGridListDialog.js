@@ -59,8 +59,7 @@ const DailyLifeGridListDialog = React.forwardRef(({open, close, title, author}, 
             </DialogTitle>
             <DialogContent dividers>
             <Typography gutterBottom>
-                Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                {author}
             </Typography>
             <Typography gutterBottom>
                 Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
@@ -75,7 +74,7 @@ const DailyLifeGridListDialog = React.forwardRef(({open, close, title, author}, 
             <DialogActions>
             <TextField id="outlined-basic" label="Outlined" variant="outlined" />
             <Button autoFocus onClick={close} color="primary">
-                Save changes
+                Comment
             </Button>
             </DialogActions>
             <DialogContent dividers>

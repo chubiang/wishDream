@@ -1,28 +1,25 @@
 package kr.co.wishDream;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TestDatabaseConnect.class})
-@TestPropertySource(locations = {"classpath:application.yml"})
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 public class WishDreamCoreApplicationTests {
 	
 	@Autowired

@@ -14,6 +14,13 @@ server:
     include-stacktrace: never
   port: 8080
 spring:
+  jackson:
+    default-property-inclusion: NON_NULL
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: wishDream
   main:
     allow-bean-definition-overriding: true
   webflux:

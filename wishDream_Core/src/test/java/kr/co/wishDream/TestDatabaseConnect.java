@@ -3,15 +3,12 @@ package kr.co.wishDream;
 import java.util.concurrent.TimeUnit;
 
 import org.davidmoten.rx.jdbc.ConnectionProvider;
-import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.DatabaseType;
 import org.davidmoten.rx.jdbc.pool.NonBlockingConnectionPool;
 import org.davidmoten.rx.jdbc.pool.Pools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ConfigurationProperties("classpath:application-test.yml")
