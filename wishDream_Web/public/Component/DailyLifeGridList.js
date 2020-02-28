@@ -78,7 +78,7 @@ const DailyLifeGridList = (props) => {
             txtArr[0] = txtArr[0].replace(/(\s)by/, '');
             setGridCont({
                 title: txtArr[0],
-                author: txtArr[1]
+                authorName: txtArr[1]
             });
         }
     }
@@ -89,7 +89,7 @@ const DailyLifeGridList = (props) => {
 
     return (
         <>
-            <LoadingBar loading={loadingBar} />
+            {/* <LoadingBar loading={loadingBar} /> */}
             <Grid container className={classes.root}>
                 <Grid item>
                     <Grid container justify='center' spacing={spacing}>
@@ -102,7 +102,7 @@ const DailyLifeGridList = (props) => {
                                     <img src={tile.img} alt={tile.title} />
                                     <GridListTileBar
                                         title={tile.title}
-                                        subtitle={<span>by: {tile.author}</span>}
+                                        subtitle={<span>by: {tile.author.username}</span>}
                                         actionIcon={
                                             <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
                                             <StarBorderRoundedIcon style={{color: 'rgba(255, 255, 255, 0.80)'}} />
@@ -116,7 +116,7 @@ const DailyLifeGridList = (props) => {
                 </Grid>
             </Grid>
             <DailyLifeGridListDialog open={open} close={handleClose} 
-                title={title} author={author}
+                title={gridCont.title} author={gridCont.authorName}
                 ref={openRef}/>
         </>
     )

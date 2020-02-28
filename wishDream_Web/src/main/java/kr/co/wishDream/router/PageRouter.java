@@ -36,6 +36,5 @@ public class PageRouter {
 								.render("index",
 										req.exchange().getAttributes())
 				);
-				
 	}
 }

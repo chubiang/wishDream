@@ -1,5 +1,5 @@
 // module "baseLayout.js"
-import React, { Component, Fragment } from 'react'
+import React, { Component, Fragment, Suspense, lazy } from 'react'
 import SockJsClient from 'react-stomp'
 import { Switch } from 'react-router'
 import { Redirect, Link, Route } from 'react-router-dom'
@@ -9,9 +9,11 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 
 import Header from "Component/Layout/Header"
 import Footer from "Component/Layout/Footer"
-import Home from 'Page/Home'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
+import LoadingBar from '../LoadingBar'
+
+const Home = lazy(() => import('Page/Home'));
 
 const useStyles = makeStyles({
   app: {
@@ -21,6 +23,8 @@ const useStyles = makeStyles({
 
 const BaseLayout = ({cookies}) => {
   const classes = useStyles();
+  const [loadingBar, setLoadingBar] = React.useState(true)
+
   return(
       <div className="base">
         {/* <SockJsClient url={url} topics={['/topics/all']}
@@ -33,9 +37,11 @@ const BaseLayout = ({cookies}) => {
         <Container maxWidth="md" component="main" className={classes.app}>
           <CssBaseline />
           <div className="content">
-            <Switch>
-              <Route exact path="/" component={Home} cookies={cookies} />
-            </Switch>
+            <Suspense fallback={<LoadingBar />}>
+              <Switch>
+                <Route exact path="/" component={Home} cookies={cookies} />
+              </Switch>
+            </Suspense>
           </div>
         </Container>
         <Footer />

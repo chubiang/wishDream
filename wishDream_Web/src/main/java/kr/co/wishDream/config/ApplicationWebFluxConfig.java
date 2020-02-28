@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
@@ -48,6 +49,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
+import kr.co.wishDream.filter.BaseWebFilter;
 import kr.co.wishDream.handler.EventEmitterHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
 
@@ -76,6 +78,13 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 	public LocaleContextResolver createLocaleContextResolver() {
 		return new LocaleResolver();
 	}
+	
+	@Bean
+	@Order(1)
+	public BaseWebFilter baseWebFilter() {
+		return new BaseWebFilter();
+	}
+	
 	@Bean
 	public HandlerMapping handlerMapping() {
 		Map<String, WebSocketHandler> map = new HashMap<>();
