@@ -8,7 +8,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/styles'
+import { withStyles, makeStyles } from '@material-ui/styles'
 
 const styles = theme => ({
     root: {
@@ -20,14 +20,21 @@ const styles = theme => ({
       right: theme.spacing(1),
       top: theme.spacing(1),
       color: theme.palette.grey[500],
-    },
+    }
   });
+
+const useStyles = makeStyles({
+    titleBox: {
+        margin: 0,
+        padding: '15px 15px 10px 15px',
+        lineHeight: '0.3em',
+    }
+});
 
 const DialogTitle = withStyles(styles)(props => {
     const { children, classes, onClose, ...other } = props;
     return (
         <MuiDialogTitle disableTypography className={classes.root} {...other}>
-        <Typography variant="h6">{children}</Typography>
         {onClose ? (
             <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
             <CloseIcon />
@@ -50,13 +57,23 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
+const TypographyTitle = withStyles(theme => ({
+    title: {
+        color: theme.palette.primary,
+        width: '93%'
+    }
+}))(Typography);
+
 const DailyLifeGridListDialog = React.forwardRef(({open, close, title, author}, ref) =>  {
+    const classes = useStyles();
 
     return (
         <Dialog onClose={close} aria-labelledby="customized-dialog-title" open={open} ref={ref}>
             <DialogTitle id="customized-dialog-title" onClose={close}>
-                {title}
             </DialogTitle>
+            <div className={classes.titleBox}>
+                <TypographyTitle variant="h6">{title}</TypographyTitle>
+            </div>
             <DialogContent dividers>
             <Typography gutterBottom>
                 {author}

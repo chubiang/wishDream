@@ -52,8 +52,6 @@ const DailyLifeGridList = (props) => {
         if (!tileData.length) {
             getGridData()
         }
-        console.log('open',open);
-        
     })
 
     function getGridData() {
@@ -89,7 +87,7 @@ const DailyLifeGridList = (props) => {
 
     return (
         <>
-            {/* <LoadingBar loading={loadingBar} /> */}
+            <LoadingBar loading={loadingBar} /> 
             <Grid container className={classes.root}>
                 <Grid item>
                     <Grid container justify='center' spacing={spacing}>

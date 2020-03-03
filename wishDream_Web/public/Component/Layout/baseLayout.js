@@ -23,7 +23,6 @@ const useStyles = makeStyles({
 
 const BaseLayout = ({cookies}) => {
   const classes = useStyles();
-  const [loadingBar, setLoadingBar] = React.useState(true)
 
   return(
       <div className="base">
@@ -37,7 +36,7 @@ const BaseLayout = ({cookies}) => {
         <Container maxWidth="md" component="main" className={classes.app}>
           <CssBaseline />
           <div className="content">
-            <Suspense fallback={<LoadingBar />}>
+            <Suspense fallback={<div>Loading...</div>}>
               <Switch>
                 <Route exact path="/" component={Home} cookies={cookies} />
               </Switch>
