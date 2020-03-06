@@ -11,12 +11,12 @@ class Home extends Component {
   
 
   render() {
-    Axios.get('/menu')
-      .then(function (res) {
-          setTailData(res.data)
-      }).catch(function (error) {
-          console.log(error)
-      })
+    // Axios.get('/menu')
+    //   .then(function (res) {
+          
+    //   }).catch(function (error) {
+    //       console.log(error)
+    //   })
     return (
       <>
         {/* <CategoryHelper menu={} /> */}

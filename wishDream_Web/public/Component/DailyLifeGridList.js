@@ -115,6 +115,7 @@ const DailyLifeGridList = (props) => {
             </Grid>
             <DailyLifeGridListDialog open={open} close={handleClose} 
                 title={gridCont.title} author={gridCont.authorName}
+                no={gridCont.no} 
                 ref={openRef}/>
         </>
     )

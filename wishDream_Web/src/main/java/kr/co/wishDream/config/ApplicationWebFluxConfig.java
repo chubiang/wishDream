@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
@@ -66,6 +68,9 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private MongoDbFactory mongoDbFactory;
 	
 	private ApplicationContext applicationContext;
 	
