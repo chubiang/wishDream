@@ -9,11 +9,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import kr.co.wishDream.domain.Author;
 import kr.co.wishDream.domain.DailyListGridComment;
 import kr.co.wishDream.domain.DailyListGridImage;
+import kr.co.wishDream.search.PageAndSort;
 import lombok.Data;
 
 @Data
 @Document(collection = "DailyLifeGrid")
-public class DailyLifeGrid implements Serializable{
+public class DailyLifeGrid extends PageAndSort implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -25,5 +26,7 @@ public class DailyLifeGrid implements Serializable{
 	private Author author;
 	private List<DailyListGridImage> images;
 	private List<DailyListGridComment> comments;
+	
+	
 	
 }

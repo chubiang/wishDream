@@ -1,6 +1,6 @@
 package dailyLifeGridRepository;
 
-import kr.co.softchain.assetCop.domain.request.PageAndSort;
+import kr.co.wishDream.search.PageAndSort;
 
 public class DailyLifeGridSearch extends PageAndSort {
 

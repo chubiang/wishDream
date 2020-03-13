@@ -82,9 +82,9 @@ const DailyLifeGridListDialog = React.forwardRef(({open, close, title, author, n
     const classes = useStyles();
     const defaultImg = '';
 
-    if (!no) {
-        close();
-    }
+    // if (!no) {
+    //     close();
+    // }
 
     return (
         <Dialog onClose={close} aria-labelledby="customized-dialog-title" open={open} ref={ref}>
