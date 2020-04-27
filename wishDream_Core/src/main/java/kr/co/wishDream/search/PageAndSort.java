@@ -9,7 +9,7 @@ public class PageAndSort {
 	static final Integer DEFAILT_PAGE_SIZE = 500;
 	
 	public PageAndSort() {
-		PageRequest.of(FIRST_PAGE_NUMBER, DEFAILT_PAGE_SIZE, Sort.by());
+		
 	}
 	
 	

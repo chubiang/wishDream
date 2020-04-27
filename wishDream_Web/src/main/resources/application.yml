@@ -30,6 +30,12 @@ spring:
     - "classpath:/static/"
   application:
     name: WishDream
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            
 wishDream:
   database:
     url: jdbc:postgresql://localhost:5430/wishDream
