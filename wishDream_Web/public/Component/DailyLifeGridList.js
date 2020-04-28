@@ -51,7 +51,6 @@ const DailyLifeGridList = (props) => {
     const [open, setOpen] = React.useState(false)
     const openRef = React.createRef()
     const [gridCont, setGridCont] = React.useState({})
-    const [popDialog, setPopDialog]= 
 
     let gridListTitle = 'Show Off My Pet'
         

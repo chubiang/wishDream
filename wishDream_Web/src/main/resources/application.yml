@@ -35,6 +35,8 @@ spring:
       client:
         registration:
           kakao:
+            client-id: 38b0b3993dcff7e6614324b5274d25cb
+            client-secret: F1yaolgLjCLEP7VCwzgaxrnFUWGtQEdA
             
 wishDream:
   database:

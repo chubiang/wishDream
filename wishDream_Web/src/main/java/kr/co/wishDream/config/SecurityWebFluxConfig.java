@@ -92,7 +92,6 @@ public class SecurityWebFluxConfig {
 		List<ClientRegistration> registrations = new ArrayList<ClientRegistration>(
 				OAuth2ClientPropertiesRegistrationAdapter
 					.getClientRegistrations(this.properties).values());
-		CommonOAuth2Provider
 		return new InMemoryClientRegistrationRepository(registrations);
 	}
 	
