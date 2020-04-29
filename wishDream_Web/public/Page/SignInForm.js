@@ -15,9 +15,9 @@ import { Form, Field, reduxForm } from 'redux-form'
 import validateSignIn from '../services/validateSignIn'
 import { rememberID } from '../actions/login'
 import { connect } from 'react-redux'
-import axios from 'axios'
+import Axios from 'axios'
 import Constants from '../services/constants'
-import querystring from 'querystring'
+import Querystring from 'querystring'
 import { withRouter } from 'react-router'
 import MessageDialog from '../Component/MessageDialog'
 
@@ -54,6 +54,12 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2),
     height: '50px'
   },
+  loginHelperBox: {
+    display: 'grid'
+  },
+  kakaoBtn: {
+    height: '50px'
+  },
   loginText: {
     margin: '8px 0'
   }
@@ -83,6 +89,7 @@ function SignIn(props) {
   const classes = useStyles();
   const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
   const [open, setOpen] = useState(false);
+  const [registerations, setRegisterations] = useState({});
   const alertDialog = { 
     fullWidth: true, 
     maxWidth:'xs',
@@ -103,6 +110,12 @@ function SignIn(props) {
         props.store.dispatch(rememberID(cookieEmail, password, cookieRemember));
       }
   });
+
+  Axios.get(Constants.Url.member.oauth2Reg)
+    .then((res) => {
+      console.log('res', res);
+      return res;
+    });
 
   const handleChange = (event) => {
     if (event.target.id == 'email') {
@@ -139,9 +152,9 @@ function SignIn(props) {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
-    const sendData = querystring.stringify({ username: email, password: password, 'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')});
+    const sendData = Querystring.stringify({ username: email, password: password, 'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')});
     if (email && password) {
-      axios.post(Constants.Url.member.login, sendData, config)
+      Axios.post(Constants.Url.member.login, sendData, config)
         .then((res) => {
           cookies.set("username", res.data);
           props.history.push("/");
@@ -203,14 +216,17 @@ function SignIn(props) {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
+            <Grid item xs className={classes.loginHelperBox}>
               <Link href="#" variant="body2">
                 Forgot password?
+              </Link>
+              <Link href="#" variant="body2">
+                {"Sign Up"}
               </Link>
             </Grid>
             <Grid item>
               <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+                <img src="/images/kakao_login_btn_large_narrow.png" className={classes.kakaoBtn}/>
               </Link>
             </Grid>
           </Grid>

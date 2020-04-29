@@ -56,7 +56,7 @@ import kr.co.wishDream.handler.EventEmitterHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
 
 /**
- * db : rxjava2-jdbc & postgresql or mssql
+ * db : rxjava2-jdbc = postgresql
  * @author jyKim
  *
  */

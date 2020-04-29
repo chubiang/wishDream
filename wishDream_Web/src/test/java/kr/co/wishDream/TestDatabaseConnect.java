@@ -12,9 +12,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.TestPropertySource;
 
 @Configuration
-@ConfigurationProperties("classpath:application-test.yml")
+@TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
 public class TestDatabaseConnect {
 
 	@Value("${wishDream.database.url:jdbc:postgresql://localhost:5430/wishDream}")

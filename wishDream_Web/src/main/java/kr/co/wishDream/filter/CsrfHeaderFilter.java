@@ -29,7 +29,7 @@ public class CsrfHeaderFilter implements WebFilter {
 			System.out.println("header = "+entry);
 		}
 
-		Pattern urlMatcher = Pattern.compile("(login)|(\\.map)|(\\.ico)|(\\.css)|(\\.js)");
+		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
 		MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
 
 		if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()

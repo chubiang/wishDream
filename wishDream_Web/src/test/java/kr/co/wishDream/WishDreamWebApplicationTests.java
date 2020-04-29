@@ -1,14 +1,20 @@
 package kr.co.wishDream;
 
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.davidmoten.rx.jdbc.Database;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.reactivex.Flowable;
@@ -22,14 +28,24 @@ public class WishDreamWebApplicationTests {
 	@Autowired
 	private TestDatabaseConnect testDatabaseConnect;
 	
+	@Autowired
+	OAuth2ClientProperties properties;
+	
 	private Database database;
 	
 	Mono<Member> member;
 
+	@Autowired
+	InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
+	
 	@Test
 	public void contextLoads() throws Exception {
 		String email = "nana@gmail.com";
-		
+		List<ClientRegistration> registrations = StreamSupport.stream(clientRegistrationRepository.spliterator(), true)
+				.collect(Collectors.toList());
+		registrations.forEach(System.out::println);
+//		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
+//		System.out.println(urlMatcher.matcher("/fdsfddd.ddd.ffffffffffff&%$##@$()+=-_\"\\~`").find());
 //		Flowable<Member> mem = findByEmailAutoMap(email);
 //		member = Mono.justOrEmpty(mem.toObservable().blockingSingle());
 //		System.out.print("mem = ");

@@ -1,6 +1,4 @@
-package dailyLifeGridRepository;
-
-import kr.co.wishDream.search.PageAndSort;
+package kr.co.wishDream.request;
 
 public class DailyLifeGridSearch extends PageAndSort {
 

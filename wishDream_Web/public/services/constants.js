@@ -6,7 +6,8 @@ const CURRENT_HOST = DEV_MODE? DEV_HOST: HOST;
 const Constants = {
     Url: { 
         member: {
-            login: 'login'
+            login: 'login',
+            oauth2Reg: 'oauth2/registration'
         },
         socket: {
             alarmList: 'alarmList'

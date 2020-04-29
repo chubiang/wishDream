@@ -17,26 +17,20 @@ import kr.co.wishDream.handler.MemberHandler;
 public class MemberRouter {
 
 	@Bean
-	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) {
+	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) throws Exception{
 		
 		return RouterFunctions
-				.route(GET("/member/{email}")
+				.route(GET("/oauth2/registration")
 				.and(accept(MediaType.APPLICATION_JSON)), request -> {
-					try {
+						return handler.sendOAuth2Registrations();
+				})
+				.andRoute(GET("/member/{email}")
+					.and(accept(MediaType.APPLICATION_JSON)), request -> {
 						return handler.findByUserName(request);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					return null;
 				})
 				.andRoute(GET("/menu")
-				.and(accept(MediaType.APPLICATION_JSON)), request -> {
-					try {
+					.and(accept(MediaType.APPLICATION_JSON)), request -> {
 						return handler.getMenus(request);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					return null;
 				});
 	}
 }

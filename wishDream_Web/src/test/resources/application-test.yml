@@ -6,7 +6,7 @@ logging:
         data:
           r2dbc: DEBUG
         web: DEBUG
-    root: WARN
+    root: INFO
     tomcat: INFO
 server:
   error:
@@ -14,9 +14,15 @@ server:
     include-stacktrace: never
   port: 8080
 spring:
-  devtools:
-    restart:
-      enabled: true
+  jackson:
+    default-property-inclusion: NON_NULL
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: wishDream
+  main:
+    allow-bean-definition-overriding: true
   webflux:
     static-path-pattern: "/static/**"
   resources:
@@ -24,6 +30,14 @@ spring:
     - "classpath:/static/"
   application:
     name: WishDream
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 38b0b3993dcff7e6614324b5274d25cb
+            client-secret: F1yaolgLjCLEP7VCwzgaxrnFUWGtQEdA
+            
 wishDream:
   database:
     url: jdbc:postgresql://localhost:5430/wishDream

@@ -1,4 +1,4 @@
-package kr.co.wishDream.search;
+package kr.co.wishDream.request;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
