@@ -3,13 +3,14 @@ package kr.co.wishDream.document;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import kr.co.wishDream.domain.Author;
 import kr.co.wishDream.domain.DailyListGridComment;
 import kr.co.wishDream.domain.DailyListGridImage;
-import kr.co.wishDream.search.PageAndSort;
+import kr.co.wishDream.request.PageAndSort;
 import lombok.Data;
 
 @Data
@@ -18,8 +19,8 @@ public class DailyLifeGrid extends PageAndSort implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	private String id;
+	@MongoId
+	private ObjectId id;
 	private Long no;
 	private String title;
 	private String content;

@@ -4,10 +4,11 @@ const DEV_HOST = 'http://localhost:8080/';
 const CURRENT_HOST = DEV_MODE? DEV_HOST: HOST;
 
 const Constants = {
+    Host: CURRENT_HOST,
     Url: { 
         member: {
             login: 'login',
-            oauth2Reg: 'oauth2/registration'
+            oauth2Kakao: '/oauth2/authorization/kakao'
         },
         socket: {
             alarmList: 'alarmList'

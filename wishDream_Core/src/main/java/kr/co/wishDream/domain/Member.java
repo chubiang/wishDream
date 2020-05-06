@@ -29,6 +29,7 @@ public class Member implements UserDetails, CredentialsContainer {
 	private Date joinDate;
 	private Date leaveDate;
 	private String role;
+	private String authProvider;
 	
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
@@ -206,8 +207,14 @@ public class Member implements UserDetails, CredentialsContainer {
 	public void eraseCredentials() {
 		password = "[PROTECTED]";
 	}
-	
-	
+
+	public String getAuthProvider() {
+		return authProvider;
+	}
+
+	public void setAuthProvider(String authProvider) {
+		this.authProvider = authProvider;
+	}
 
 	@Override
 	public String toString() {

@@ -58,7 +58,8 @@ const useStyles = makeStyles(theme => ({
     display: 'grid'
   },
   kakaoBtn: {
-    height: '50px'
+    height: '50px',
+    cursor: 'pointer'
   },
   loginText: {
     margin: '8px 0'
@@ -111,18 +112,21 @@ function SignIn(props) {
       }
   });
 
-  Axios.get(Constants.Url.member.oauth2Reg)
-    .then((res) => {
-      console.log('res', res);
-      return res;
-    });
-
   const handleChange = (event) => {
     if (event.target.id == 'email') {
       email = event.target.value;
     } else {
       password = event.target.value;
     }
+  }/*  */
+
+  const loginKakao = () => {
+    Axios.get(Constants.Url.member.oauth2Kakao)
+    .then((res) => {
+      console.log('res', res);
+      
+      // res.header("Access-Control-Allow-Origin", "*");
+    });
   }
 
   const checkRemeberID = (event) => {
@@ -225,7 +229,7 @@ function SignIn(props) {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link onClick={loginKakao} variant="body2">
                 <img src="/images/kakao_login_btn_large_narrow.png" className={classes.kakaoBtn}/>
               </Link>
             </Grid>

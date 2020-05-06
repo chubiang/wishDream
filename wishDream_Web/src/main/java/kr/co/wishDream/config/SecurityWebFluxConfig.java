@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.Registration;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesRegistrationAdapter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -23,8 +23,10 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.server.ServerAuthorizationRequestRepository;
-import org.springframework.security.oauth2.client.web.server.WebSessionOAuth2ServerAuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
@@ -32,9 +34,12 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import kr.co.wishDream.filter.CsrfHeaderFilter;
 
@@ -78,7 +83,10 @@ public class SecurityWebFluxConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
+		source.registerCorsConfiguration("/topic/alarm", config);
+		source.registerCorsConfiguration("/oauth2//authorization/kakao", config);
+		source.registerCorsConfiguration("/oauth/**", config);
 		return source;
 	}
 	
@@ -94,23 +102,42 @@ public class SecurityWebFluxConfig {
 	}
 	
 	@Bean
+	public WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations, 
+			ServerOAuth2AuthorizedClientRepository authorizedClients) {
+		ServerOAuth2AuthorizedClientExchangeFilterFunction oauth = 
+				new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrations, authorizedClients);
+		oauth.setDefaultOAuth2AuthorizedClient(true);
+		return WebClient.builder()
+				.baseUrl("http://localhost:8080")
+				.filter(oauth)
+				.build();
+	}
+	
+	@Bean
 	public ReactiveOAuth2AuthorizedClientService authorizedClientService() {
 		return new InMemoryReactiveOAuth2AuthorizedClientService(clientRegistrationRepository());
 	}
 	
+	@Bean
+	public ServerOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver(ReactiveClientRegistrationRepository clientRegistrations) {
+		return new DefaultServerOAuth2AuthorizationRequestResolver(clientRegistrations);
+	}
 	
 	@Bean
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 		return 
 			http.authorizeExchange()
-				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth2/**", "/favicon.ico", "/styles/**", "/login", "/logout", "/static/**", "/topic/**")
+				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/oauth2/**", "/favicon.ico", "/styles/**", "/login", "/logout", "/static/**", "/topic/**")
 				.permitAll()
+			.and().oauth2Client()
 			.and().oauth2Login()
 			.clientRegistrationRepository(clientRegistrationRepository())
 			.authorizedClientService(authorizedClientService())
+			.authorizationRequestResolver(oAuth2AuthorizationRequestResolver(clientRegistrationRepository()))
 			.and().httpBasic()
 			.and().cors().configurationSource(corsConfigurationSource())
 			.and().csrf()
+				.requireCsrfProtectionMatcher(new PathPatternParserServerWebExchangeMatcher("^(\\/oauth2\\/)|(\\/oauth\\/)", null))
 				.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 			.and().addFilterAfter(new CsrfHeaderFilter(), SecurityWebFiltersOrder.CSRF)
 			.exceptionHandling().authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login"))
