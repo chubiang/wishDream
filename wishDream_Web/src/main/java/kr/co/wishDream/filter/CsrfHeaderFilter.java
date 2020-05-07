@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpCookie;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -19,30 +19,28 @@ public class CsrfHeaderFilter implements WebFilter {
 
 	private Logger LOG = LoggerFactory.getLogger(CsrfHeaderFilter.class);
 
-	final static String CSRF_TOKEN_COOKIE = "XSRF-TOKEN";
-	final static String CSRF_TOKEN_HEADER = "X-XSRF-TOKEN";
+//	final static String CSRF_TOKEN_COOKIE = "XSRF-TOKEN";
+//	final static String CSRF_TOKEN_HEADER = "X-XSRF-TOKEN";
 	
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 		String currentUrl = exchange.getRequest().getPath().value();
 		
+		if (currentUrl.matches("(\\/login\\/oauth2\\/code)")) {
+			exchange.getRequest().getHeaders().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		}
 		for (Map.Entry<String, List<String>> entry : exchange.getRequest().getHeaders().entrySet()) {
 			System.out.println("header = "+entry);
 		}
-		
-		if (currentUrl.matches("(\\/oauth2\\/authorization\\/)[a-z]*")) {
-//			exchange.getRequest().getHeaders().setAccessControlAllowOrigin("*");
-//			exchange.getRequest().getHeaders().remove(CSRF_TOKEN_HEADER);
-		} else {
-			Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
-			MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
-			if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()
-					&& !csrfCookie.isEmpty() && csrfCookie.get(CSRF_TOKEN_COOKIE) != null) {
-				exchange.getAttributes().putIfAbsent("_csrf_headerName", CSRF_TOKEN_COOKIE);
-				exchange.getAttributes().putIfAbsent("_csrf_token", csrfCookie.get(CSRF_TOKEN_COOKIE).iterator().next().getValue());
-				LOG.info("CSRF HEADER FILTER = " + CSRF_TOKEN_COOKIE + " : "+csrfCookie.get(CSRF_TOKEN_COOKIE).iterator().next().getValue());
-			}
-		}
+//		ÄíÅ° ÅäÅ«¿ë
+//		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
+//		MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
+//		if (currentUrl != null && !urlMatcher.matcher(currentUrl).find()
+//				&& !csrfCookie.isEmpty() && csrfCookie.get(CSRF_TOKEN_COOKIE) != null) {
+//			exchange.getAttributes().putIfAbsent("_csrf_headerName", CSRF_TOKEN_COOKIE);
+//			exchange.getAttributes().putIfAbsent("_csrf_token", csrfCookie.get(CSRF_TOKEN_COOKIE).iterator().next().getValue());
+//			LOG.info("CSRF HEADER FILTER = " + CSRF_TOKEN_COOKIE + " : "+csrfCookie.get(CSRF_TOKEN_COOKIE).iterator().next().getValue());
+//		}
 		return chain.filter(exchange);
 	}
 

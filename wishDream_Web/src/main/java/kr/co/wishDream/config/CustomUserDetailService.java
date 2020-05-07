@@ -18,6 +18,7 @@ public class CustomUserDetailService implements ReactiveUserDetailsService {
 	@Override
 	public Mono<UserDetails> findByUsername(String email) {
 		return memberRepository.findByEmailToUserDetails(email)
+				.doOnSuccess(user -> user.getAuthorities())
 				.switchIfEmpty(Mono.defer(() -> {
 					return Mono.error(new UsernameNotFoundException("User not found"));
 				}));

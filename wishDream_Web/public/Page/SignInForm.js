@@ -120,14 +120,17 @@ function SignIn(props) {
     }
   }/*  */
 
-  const loginKakao = () => {
-    Axios.get(Constants.Url.member.oauth2Kakao)
-    .then((res) => {
-      console.log('res', res);
-      
-      // res.header("Access-Control-Allow-Origin", "*");
-    });
-  }
+  // const loginKakao = () => {
+  //   Axios.get(Constants.Url.member.oauth2Kakao, {
+  //     headers: {
+  //       "UseCookies": false,
+  //       "Content-type": "application/x-www-form-urlencoded"
+  //     }
+  //   })
+  //   .then((res) => {
+  //     console.log('res', res);
+  //   });
+  // }
 
   const checkRemeberID = (event) => {
     event.preventDefault();
@@ -229,7 +232,7 @@ function SignIn(props) {
               </Link>
             </Grid>
             <Grid item>
-              <Link onClick={loginKakao} variant="body2">
+              <Link href={Constants.Url.member.oauth2Kakao} variant="body2">
                 <img src="/images/kakao_login_btn_large_narrow.png" className={classes.kakaoBtn}/>
               </Link>
             </Grid>

@@ -72,7 +72,7 @@ const DailyLifeGridList = (props) => {
         }).finally(function() {
             setLoadingBar(false)
         })
-        }, 10000);
+        }, 1000);
     }
 
     const handleOpen = (e) => {

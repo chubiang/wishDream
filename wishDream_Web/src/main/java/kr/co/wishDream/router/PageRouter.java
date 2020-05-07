@@ -1,5 +1,7 @@
 package kr.co.wishDream.router;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +30,6 @@ public class PageRouter {
 				.andRoute(RequestPredicates.POST("/login"),
 						req -> memberHandler.login(req)
 				)
-				.andRoute(RequestPredicates.GET("/logout"),
-						req -> ServerResponse.ok().render("login"))
 				.andRoute(RequestPredicates.GET("/index"),
 						req -> ServerResponse
 								.ok()
