@@ -26,11 +26,8 @@ public class CsrfHeaderFilter implements WebFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 		String currentUrl = exchange.getRequest().getPath().value();
 		
-		if (currentUrl.matches("(\\/login\\/oauth2\\/code)")) {
-			exchange.getRequest().getHeaders().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		}
 		for (Map.Entry<String, List<String>> entry : exchange.getRequest().getHeaders().entrySet()) {
-			System.out.println("header = "+entry);
+			LOG.info("REQUEST HEADER = "+entry);
 		}
 //		쿠키 토큰용
 //		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");

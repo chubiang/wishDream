@@ -13,6 +13,7 @@ public enum CustomOAuth2Provider {
 			ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST)
 					.scope("profile", "account_email")
 					.authorizationUri("https://kauth.kakao.com/oauth/authorize")
+					.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 					.tokenUri("https://kauth.kakao.com/oauth/token")
 					.userInfoUri("https://kapi.kakao.com/v2/user/me")
 					.userNameAttributeName("id")

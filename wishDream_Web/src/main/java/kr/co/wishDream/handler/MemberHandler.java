@@ -28,10 +28,6 @@ import reactor.core.publisher.Mono;
 public class MemberHandler {
 	
 	private Logger LOG = LoggerFactory.getLogger(MemberHandler.class);
-
-	@Autowired
-	private InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
-	
 	
 	@Autowired
 	private MemberService memberService;
@@ -65,15 +61,14 @@ public class MemberHandler {
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(memberService.getMenu(), Menu.class);
 	}
-
-	public Mono<ServerResponse> sendOAuth2Registrations() {
-		Registration registration = new Registration();
-		List<ClientRegistration> registrations = StreamSupport.stream(clientRegistrationRepository.spliterator(), true)
-				.collect(Collectors.toList());
-//		return ServerResponse
-//				.ok()
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.body(Mono.justOrEmpty(data));
-		return null;
+	
+	public Mono<ServerResponse> username(ServerRequest request) {
+		return ServerResponse
+				.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(ReactiveSecurityContextHolder.getContext()
+						.map(SecurityContext::getAuthentication)
+						.map(Authentication::getName), Object.class);
 	}
+
 }

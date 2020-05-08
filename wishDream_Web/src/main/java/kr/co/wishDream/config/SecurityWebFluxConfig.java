@@ -87,6 +87,8 @@ public class SecurityWebFluxConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		config.setAllowedMethods(Arrays.asList("GET", "POST"));
+		config.setAllowedHeaders(Arrays.asList("*"));
 		config.setAllowedOrigins(Arrays.asList("http://localhost:8080/**", "ws://localhost:8080/topic/**",
 				"https://kapi.kakao.com/**", "https://kauth.kakao.com/oauth/**"));
 		source.registerCorsConfiguration("/**", config);

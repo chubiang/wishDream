@@ -1,5 +1,7 @@
 package kr.co.wishDream.config.handler;
 
+import java.util.LinkedHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,8 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
 	
 	@Override
 	public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
+		
+		
 		ServerWebExchange exchange = webFilterExchange.getExchange();
 		return webFilterExchange.getChain().filter(exchange).doOnSuccess(ok -> {
 			LOG.info("[Security] Authentication Success ==== " + authentication);

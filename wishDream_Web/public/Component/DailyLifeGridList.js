@@ -64,15 +64,15 @@ const DailyLifeGridList = (props) => {
     function getGridData() {
         setLoadingBar(true)
         setTimeout(() => {
-        Axios.get(Constants.Url.tmp.gridListData)
-        .then(function (res) {
-            setTailData(res.data)
-        }).catch(function (error) {
-            console.log(error)
-        }).finally(function() {
-            setLoadingBar(false)
-        })
-        }, 1000);
+            Axios.get(Constants.Url.tmp.gridListData)
+            .then(function (res) {
+                setTailData(res.data)
+            }).catch(function (error) {
+                console.log(error)
+            }).finally(function() {
+                setLoadingBar(false)
+            })
+        });
     }
 
     const handleOpen = (e) => {

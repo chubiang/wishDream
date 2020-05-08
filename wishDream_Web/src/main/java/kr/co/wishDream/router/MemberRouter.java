@@ -20,17 +20,17 @@ public class MemberRouter {
 	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) throws Exception{
 		
 		return RouterFunctions
-				.route(GET("/oauth2/registration")
-				.and(accept(MediaType.APPLICATION_JSON)), request -> {
-						return handler.sendOAuth2Registrations();
-				})
-				.andRoute(GET("/member/{email}")
+				.route(GET("/member/{email}")
 					.and(accept(MediaType.APPLICATION_JSON)), request -> {
 						return handler.findByUserName(request);
 				})
 				.andRoute(GET("/menu")
 					.and(accept(MediaType.APPLICATION_JSON)), request -> {
 						return handler.getMenus(request);
+				})
+				.andRoute(GET("/username")
+					.and(accept(MediaType.APPLICATION_JSON)), request -> {
+						return handler.username(request);
 				});
 	}
 }

@@ -9,6 +9,7 @@ const Constants = {
         member: {
             login: 'login',
             logout: 'logout',
+            username: '/username',
             oauth2Kakao: '/oauth2/authorization/kakao'
         },
         socket: {

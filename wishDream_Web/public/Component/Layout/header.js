@@ -35,6 +35,7 @@ import Home from 'Page/Home'
 import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 import RepeatListItem from '../RepeatListItem'
+import Axios from 'axios'
 
 const drawerWidth = 240
 
@@ -118,12 +119,21 @@ export default function Header (props) {
   const [alarmList, setAlarmList] = React.useState([])
   const [open, setOpen] = React.useState(false)
   const [connected, setConnected] = React.useState(false);
-  const username = props.cookies.get('username');
+  const [username, setUsername] = React.useState('')
   const [menus, setMenus] = React.useState([['Inbox', 'Starred', 'Send email', 'Drafts'], ['Inbox', 'Starred', 'Send email']]);
   
+
+
   React.useEffect(() => {
     // effect
     //getAlarmList();
+    if (!username.length) { //oauth2로 로그인 시에
+      Axios.get(constants.Url.member.username)
+      .then((res) => {
+        console.log('res', res);
+        setUsername(res.data);
+      });
+    }
     if (!ws) {
       setConnected(onConnect());
     }
