@@ -17,6 +17,46 @@
     "@babel/transform-arrow-functions",
     "@babel/plugin-syntax-dynamic-import",
     "@babel/plugin-syntax-jsx",
-    "@babel/plugin-proposal-class-properties"
+    "@babel/plugin-proposal-class-properties",
+    [
+      "babel-plugin-import",
+      {
+        "libraryName": "@material-ui/core",
+        // Use ""libraryDirectory": ""," if your bundler does not support ES modules
+        "libraryDirectory": "esm",
+        "camel2DashComponentName": false
+      },
+      "core"
+    ],
+    [
+      "babel-plugin-import",
+      {
+        "libraryName": "@material-ui/core/styles",
+        // Use ""libraryDirectory": ""," if your bundler does not support ES modules
+        "libraryDirectory": "",
+        "camel2DashComponentName": false
+      },
+      "styles"
+    ],
+    [
+      "babel-plugin-import",
+      {
+        "libraryName": "@material-ui/core/colors",
+        // Use ""libraryDirectory": ""," if your bundler does not support ES modules
+        "libraryDirectory": "",
+        "camel2DashComponentName": false
+      },
+      "colors"
+    ],
+    [
+      "babel-plugin-import",
+      {
+        "libraryName": "@material-ui/icons",
+        // Use ""libraryDirectory": ""," if your bundler does not support ES modules
+        "libraryDirectory": "esm",
+        "camel2DashComponentName": false
+      },
+      "icons"
+    ]
   ]
 }

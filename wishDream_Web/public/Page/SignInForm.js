@@ -1,24 +1,17 @@
-// module "SignIn.js"
 import React, { Component, useEffect, useState, createContext } from 'react'
-import { Button, TextField } from '@material-ui/core'
-import Link from '@material-ui/core/Link'
-import Avatar from '@material-ui/core/Avatar'
-import Grid from '@material-ui/core/Grid'
+import { Button, TextField , Avatar, Link, Grid, Typography } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Typography from '@material-ui/core/Typography'
-import { createMuiTheme } from '@material-ui/core/styles'
-import purple from '@material-ui/core/colors/purple'
-import pink from '@material-ui/core/colors/pink'
-import { makeStyles } from '@material-ui/core/styles'
+import { createMuiTheme, makeStyles } from '@material-ui/core/styles'
+import { purple, pink } from '@material-ui/core/colors'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import { Form, Field, reduxForm } from 'redux-form'
-import validateSignIn from '../services/validateSignIn'
-import { rememberID } from '../actions/login'
 import { connect } from 'react-redux'
 import Axios from 'axios'
-import Constants from '../services/constants'
 import Querystring from 'querystring'
 import { withRouter } from 'react-router'
+import validateSignIn from '../services/validateSignIn'
+import { rememberID } from '../actions/reducerVariable'
+import Constants from '../services/constants'
 import MessageDialog from '../Component/MessageDialog'
 
 const theme = createMuiTheme({
@@ -66,6 +59,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const rememberLabel = "Remember ID";
+
 const inputField = ({input, label, defaultValue, type, meta: {touched, error}}) => {
   const classes = useStyles();
   return(
@@ -118,7 +112,7 @@ function SignIn(props) {
     } else {
       password = event.target.value;
     }
-  }/*  */
+  }
 
   // const loginKakao = () => {
   //   Axios.get(Constants.Url.member.oauth2Kakao, {
@@ -242,8 +236,12 @@ function SignIn(props) {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  state.rememberValue = Boolean(ownProps.cookies.get('remember'));
-  state.email = ownProps.cookies.get('email');
+  console.log(1, state, ownProps);
+  if (state.signIn) {
+    state.signIn.rememberValue = Boolean(ownProps.cookies.get('remember'));
+    state.signIn.email = ownProps.cookies.get('email');
+  }
+  console.log(2, state, ownProps);
   return state;
 };
 

@@ -5,7 +5,7 @@ import { ThemeProvider } from '@material-ui/styles';
 
 import App from 'app';
 import { amber, deepPurple } from '@material-ui/core/colors';
-import { createMuiTheme } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
     palette: {

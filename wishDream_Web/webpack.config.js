@@ -81,8 +81,10 @@ module.exports = {
                   loader: 'sass-loader',
                   options: {
                       implementation: sass,
-                      includePaths: [path.resolve(__dirname, './public/styles')],
-                      fiber: Fiber,
+                      sassOptions: {
+                        includePaths: [path.resolve(__dirname, './public/styles')],
+                        fiber: Fiber
+                      },
                       sourceMap: true
                   }
                 },

@@ -1,5 +1,3 @@
-import { REMEMBER_ID } from '../actions/login';
-
 export const initSignInForm = {
     email: '',
     password: '',
@@ -8,7 +6,7 @@ export const initSignInForm = {
 
 export const signInReducer = (state = initSignInForm, action) => {
     switch(action.type) {
-        case REMEMBER_ID: 
+        case 'REMEMBER_ID': 
             return Object.assign({}, {
                 email: action.email,
                 password: action.password,
