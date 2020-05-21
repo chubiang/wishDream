@@ -5,6 +5,8 @@ export const initSignInForm = {
 };
 
 export const signInReducer = (state = initSignInForm, action) => {
+    // console.log('reducer',state,action);
+    
     switch(action.type) {
         case 'REMEMBER_ID': 
             return Object.assign({}, {

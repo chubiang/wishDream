@@ -14,7 +14,7 @@ export const signUpReducer = (state = initSignUpForm, action) => {
               username: action.username,
               password: action.password,
               repassword: action.repassword,
-              allowReceive: action.allowReceive
+              withPet: action.withPet
           });
       case 'PET':
           return Object.assign({}, {

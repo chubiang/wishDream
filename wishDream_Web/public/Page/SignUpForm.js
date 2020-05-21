@@ -1,13 +1,15 @@
-import React from 'react';
-import { Avatar, Button, Checkbox, FormControlLabel, 
-  TextField, Link, Grid, Box, Typography, CssBaseline } from '@material-ui/core/Avatar';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import React, { Component, useEffect, useState, createContext } from 'react'
+import { Avatar, Button, TextField, Link, Grid, Box, 
+  Typography, CssBaseline, Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import { reduxForm } from 'redux-form';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form';
 import { withRouter } from 'react-router';
+import { signUp, signUpWithPet } from '../actions/reducerVariable'
 import validateSignIn from '../services/validateSignIn';
-import { signUpForm, signUpWithPetForm } from '../actions/reducerVariable';
+import RenderCheckbox  from '../Component/RenderCheckbox'
+import WithPetForm  from '../Component/WithPetForm'
 
 function Copyright() {
   return (
@@ -42,12 +44,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp(props) {
+function SignUp(props) {
   const classes = useStyles();
 
-  const handleSubmit = submit => {
+  const [userInfo, setUserInfo] = React.useState({});
+  const [withPet, setWithPet] = React.useState(false);
+
+  const handleSubmit = () => {
 
   };
+
+  const showWithPetForm = (event) => {
+    console.log(event, event.target.checked);
+    setWithPet(event.target.checked);
+    
+  }
+
+  const checkBoxAllowReceive = () => (
+    <RenderCheckbox
+        name="withPet"
+        label="Add my pet information" 
+        value={withPet}
+        change={showWithPetForm} />
+  )
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +78,7 @@ export default function SignUp(props) {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit(submit)}>
+        <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -82,8 +101,8 @@ export default function SignUp(props) {
                 fullWidth
                 id="username"
                 label="Username"
-                name="lastName"
-                autoComplete="lname"
+                name="username"
+                autoComplete="username"
               />
             </Grid>
             <Grid item xs={12}>
@@ -95,7 +114,7 @@ export default function SignUp(props) {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="password"
+                autoComplete="new-password"
               />
             </Grid>
             <Grid item xs={12}>
@@ -103,19 +122,17 @@ export default function SignUp(props) {
                 variant="outlined"
                 required
                 fullWidth
-                name="password"
-                label="Password"
+                name="repassword"
+                label="Repassword"
                 type="password"
-                id="password"
+                id="repassword"
                 autoComplete="confirm-password"
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox name="allowReceive" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
+                <Field name="withPet" component={checkBoxAllowReceive} />
             </Grid>
+            { withPet ? <WithPetForm /> : null }
           </Grid>
           <Button
             type="submit"
@@ -128,7 +145,7 @@ export default function SignUp(props) {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
@@ -139,24 +156,24 @@ export default function SignUp(props) {
         <Copyright />
       </Box>
     </Container>
-  );
+  )
 }
 
 const mapStateToProps = (state, ownProps) => {
-   console.log(1, state, ownProps);
-    console.log(state, ownProps);
-    state.email = ownProps.email;
-    state.username = ownProps.username;
-    state.password = ownProps.password;
-    state.repassword = ownProps.repassword;
-    state.allowReceive = ownProps.allowReceive;
-    console.log(2, state, ownProps);
+   console.log(state, ownProps);
+  return state;
 }
 
 const mapDispatchToProps = dispatch => {
-
+  return {
+    'signUp': () => dispatch(signUp()),
+    'signUpWithPet': () => dispatch(signUpWithPet())
+  }
 }
 
-export default reduxForm({ form: 'signUp', validateSignIn })
-(connect(mapStateToProps, { signUpForm, signUpWithPetForm })
-(withRouter(SignUp)))
+const SignUpForm = reduxForm({ 
+  form: 'signUp', 
+  validateSignIn 
+})(SignUp)
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignUpForm))

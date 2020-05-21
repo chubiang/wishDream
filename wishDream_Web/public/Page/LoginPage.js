@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Redirect, Link, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
-import SignInForm from './SignInForm';
 import { CookiesProvider } from 'react-cookie';
 import { withCookies } from 'react-cookie';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+import { purple, pink } from '@material-ui/core/colors';
+import SignInForm from './SignInForm';
+import SignUpForm from './SignUpForm';
 import { signInReducer } from '../reducers/signIn';
 import { signUpReducer } from '../reducers/signUp';
 
@@ -19,12 +23,20 @@ const store = (window.devToolsExtension
   ? window.devToolsExtension()(createStore)
   : createStore)(rootReducer)
 
+export const GlobalTheme = createMuiTheme({
+	palette: {
+		primary: purple,
+		secondary: pink
+	}
+})
+
 class LoginPage extends Component {
     render() {
         return (
             <BrowserRouter>
-                <Provider store={store}>
-                    <CookiesProvider>
+							<Provider store={store}>
+                <ThemeProvider theme={GlobalTheme}>
+									<CookiesProvider>
                     <Switch>
                         <Route path="/login"
                         render={ () => (<SignInForm cookies={this.props.cookies} />)}/>
@@ -33,10 +45,11 @@ class LoginPage extends Component {
                         <Route path="/" component={() => { window.location.href = "/"; return null; }} />
                     </Switch>
                     </CookiesProvider>
+									</ThemeProvider>
                 </Provider>
             </BrowserRouter>
         )
     }
 }
 
-export default withCookies(LoginPage);
+export default withCookies(LoginPage)

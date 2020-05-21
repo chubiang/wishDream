@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import io.reactivex.Flowable;
 import kr.co.wishDream.connect.DatabaseConnect;
@@ -22,7 +23,7 @@ import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Component
+@Repository
 public class MemberRepository {
 	
 	@Autowired

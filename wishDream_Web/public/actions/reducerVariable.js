@@ -1,29 +1,22 @@
 export const REMEMBER_ID = 'REMEMBER_ID';
 
-export function rememberID(email, password, value) {
+export function rememberID(email, password, rememberValue) {
     return {
         type: REMEMBER_ID,
         email: email,
         password: password,
-        rememberValue: value
+        rememberValue: rememberValue,
     };
 }
 
-export function signUpForm(email, username, password, repassword, allowReceive) {
+export function signUp() {
     return {
-        email: email,
-        username: username,
-        password: password,
-        repassword: repassword,
-        allowReceive: allowReceive
+        type: 'SIGN_UP'
     }
 }
 
-export function signUpWithPetForm(petName, petAge, petGender, petBreeds) {
+export function signUpWithPet() {
     return {
-        petName: petName,
-        petAge: petAge,
-        petGender: petGender,
-        petBreeds: petBreeds
+        type: 'SIGN_UP_WITH_PET'
     }
 }

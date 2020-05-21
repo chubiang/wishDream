@@ -30,6 +30,12 @@ public class PageRouter {
 				.andRoute(RequestPredicates.POST("/login"),
 						req -> memberHandler.login(req)
 				)
+				.andRoute(RequestPredicates.GET("/signUp"),
+						req -> ServerResponse
+								.ok()
+								.render("login",
+										req.exchange().getAttributes())
+				)
 				.andRoute(RequestPredicates.GET("/login/oauth2/code/kakao"),
 						req -> ServerResponse
 								.temporaryRedirect(URI.create("/")).build()

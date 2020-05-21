@@ -1,8 +1,7 @@
 import React, { Component, useEffect, useState, createContext } from 'react'
 import { Button, TextField , Avatar, Link, Grid, Typography } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import { createMuiTheme, makeStyles } from '@material-ui/core/styles'
-import { purple, pink } from '@material-ui/core/colors'
+import { makeStyles } from '@material-ui/core/styles'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import { Form, Field, reduxForm } from 'redux-form'
 import { connect } from 'react-redux'
@@ -14,12 +13,6 @@ import { rememberID } from '../actions/reducerVariable'
 import Constants from '../services/constants'
 import MessageDialog from '../Component/MessageDialog'
 
-const theme = createMuiTheme({
-  palette: {
-    primary: purple,
-    secondary: pink
-  }
-});
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -84,7 +77,6 @@ function SignIn(props) {
   const classes = useStyles();
   const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
   const [open, setOpen] = useState(false);
-  const [registerations, setRegisterations] = useState({});
   const alertDialog = { 
     fullWidth: true, 
     maxWidth:'xs',
@@ -93,18 +85,20 @@ function SignIn(props) {
     buttons: [{color: 'primary', text: 'Close', classes: 'alertBtn'},
               {color: 'primary', text: 'Ok', classes: 'alertBtn'}]
   };
-  let email = props.email;
-  let password = props.password;
-  let rememberValue = props.rememberValue;
+  let email = props.signIn.email;
+  let password = props.signIn.password;
+  let rememberValue = props.signIn.rememberValue;
   
   useEffect(() => {
       
       const cookieRemember = Boolean(cookies.get('remember'));
       const cookieEmail = cookies.get('email');
-      if (cookieRemember && !email) {
-        props.store.dispatch(rememberID(cookieEmail, password, cookieRemember));
+      
+      if (cookieEmail && cookieRemember) {
+        props.dispatch(rememberID(cookieEmail, password, cookieRemember));
+        console.log('props', email, rememberValue);
       }
-  });
+  }, []);
 
   const handleChange = (event) => {
     if (event.target.id == 'email') {
@@ -129,24 +123,21 @@ function SignIn(props) {
   const checkRemeberID = (event) => {
     event.preventDefault();
     
-    if (!email) {
-      event.target.checked = false;
-      return;
-    }
-    const value = props.store.getState().rememberValue;
-    if (!value && cookies.get('email') == undefined) {
-      cookies.set('email', email, { path: "/login" });
+    if (!rememberValue && event.target.checked) {
       cookies.set('remember', !rememberValue, { path: "/login" });
-      event.target.checked = true;
-    } else if (value && cookies.get('email')) {
-      cookies.remove('email', { path: "/login" });
+    } else if (rememberValue && !event.target.checked) {
       cookies.remove('remember', { path: "/login" });
-      event.target.checked = false;
     }
-    props.store.dispatch(rememberID(email, password, value));
+    if (cookies.get('email') && !event.target.checked) {
+      cookies.remove('email', { path: "/login" });
+    }   
+    props.dispatch(rememberID(email, password, event.target.checked));
   }
 
   function submit() {
+    if (rememberValue && cookies.get('email') == undefined) {
+      cookies.set('email', email, { path: "/login" });
+    }
     const config = {
         headers: {
             'Accept': 'application/json',
@@ -175,75 +166,82 @@ function SignIn(props) {
   );
 
   return (
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
+    <div className={classes.paper}>
+      <Avatar className={classes.avatar}>
+        <LockOutlinedIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Sign In
+      </Typography>
+      <AlertContext.Provider value={open}>
+      <MessageDialog 
+                        fullWidth={alertDialog.fullWidth} 
+                        maxWidth={alertDialog.maxWidth}
+                        title={alertDialog.title} 
+                        content={alertDialog.content}
+                        handleClose={() => {setOpen(false);}}
+                        buttons={alertDialog.buttons}/>
+      </AlertContext.Provider>
+      <form className={classes.form} onSubmit={handleSubmit(submit)}>
+        <Field
+          id="email" name="email" type="email" label="Email"
+          defaultValue={email}
+          component={inputField}
+          onChange={handleChange}
+        /><br/>
+        <Field
+          id="password" name="password" type="password" label="Password"
+          defaultValue ={password}
+          component={inputField}
+          onChange={handleChange}
+        />
+        <Field name="remeberValue" component={rememberField} />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          disabled={submitting}
+          className={classes.submit}
+        >
           Sign In
-        </Typography>
-        <AlertContext.Provider value={open}>
-        <MessageDialog 
-                          fullWidth={alertDialog.fullWidth} 
-                          maxWidth={alertDialog.maxWidth}
-                          title={alertDialog.title} 
-                          content={alertDialog.content}
-                          handleClose={() => {setOpen(false);}}
-                          buttons={alertDialog.buttons}/>
-        </AlertContext.Provider>
-        <form className={classes.form} onSubmit={handleSubmit(submit)}>
-          <Field
-            id="email" name="email" type="email" label="Email"
-            defaultValue={email}
-            component={inputField}
-            onChange={handleChange}
-          /><br/>
-          <Field
-            id="password" name="password" type="password" label="Password"
-            defaultValue ={password}
-            component={inputField}
-            onChange={handleChange}
-          />
-          <Field name="remeberValue" component={rememberField} />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            disabled={submitting}
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs className={classes.loginHelperBox}>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-              <Link href="#" variant="body2">
-                {"Sign Up"}
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href={Constants.Url.member.oauth2Kakao} variant="body2">
-                <img src="/images/kakao_login_btn_large_narrow.png" className={classes.kakaoBtn}/>
-              </Link>
-            </Grid>
+        </Button>
+        <Grid container>
+          <Grid item xs className={classes.loginHelperBox}>
+            <Link href="#" variant="body2">
+              Forgot password?
+            </Link>
+            <Link href="/signUp" variant="body2">
+              {"Sign Up"}
+            </Link>
           </Grid>
-        </form>
-      </div>
+          <Grid item>
+            <Link href={Constants.Url.member.oauth2Kakao} variant="body2">
+              <img src="/images/kakao_login_btn_large_narrow.png" className={classes.kakaoBtn}/>
+            </Link>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
   )
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(1, state, ownProps);
-  if (state.signIn) {
+  if (!state.signIn.rememberValue) {
     state.signIn.rememberValue = Boolean(ownProps.cookies.get('remember'));
+  }
+  if (!state.signIn.email) {
     state.signIn.email = ownProps.cookies.get('email');
   }
-  console.log(2, state, ownProps);
   return state;
 };
+
+const mapDispatchToProps  = (dispatch) => {
+  
+  return {
+    rememberId: () => dispatch(rememberID())
+  }
+}
 
 const SignInForm = reduxForm({
   form: 'signIn',
@@ -251,4 +249,4 @@ const SignInForm = reduxForm({
   validateSignIn
 })(SignIn)
 
-export default connect(mapStateToProps)(withRouter(SignInForm))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInForm))

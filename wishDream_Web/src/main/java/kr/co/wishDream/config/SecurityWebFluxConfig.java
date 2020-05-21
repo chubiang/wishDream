@@ -1,6 +1,5 @@
 package kr.co.wishDream.config;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +32,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
-import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
-import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
@@ -42,7 +39,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.server.ServerResponse;
 
 import kr.co.wishDream.filter.CsrfHeaderFilter;
 
@@ -137,7 +133,7 @@ public class SecurityWebFluxConfig {
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 		return 
 			http.authorizeExchange()
-				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/favicon.ico", "/styles/**", "/login", "/logout", "/static/**", "/topic/**")
+				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/favicon.ico", "/styles/**", "/login", "/signUp", "/logout", "/static/**", "/topic/**")
 				.permitAll()
 			.and().oauth2Client()
 			.and().oauth2Login()

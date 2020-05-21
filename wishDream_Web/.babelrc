@@ -53,7 +53,7 @@
       {
         "libraryName": "@material-ui/icons",
         // Use ""libraryDirectory": ""," if your bundler does not support ES modules
-        "libraryDirectory": "esm",
+        "libraryDirectory": "",
         "camel2DashComponentName": false
       },
       "icons"
