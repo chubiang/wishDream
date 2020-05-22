@@ -133,7 +133,8 @@ public class SecurityWebFluxConfig {
 	public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
 		return 
 			http.authorizeExchange()
-				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/favicon.ico", "/styles/**", "/login", "/signUp", "/logout", "/static/**", "/topic/**")
+				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/favicon.ico", "/styles/**", 
+						"/login", "/signUp", "/logout", "/static/**", "/topic/**", "/json/**")
 				.permitAll()
 			.and().oauth2Client()
 			.and().oauth2Login()

@@ -1,8 +1,6 @@
 package kr.co.wishDream.repository;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import io.reactivex.Flowable;
 import kr.co.wishDream.connect.DatabaseConnect;
-import kr.co.wishDream.domain.Auth;
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;

@@ -15,7 +15,14 @@ const useStyles = makeStyles((theme) => ({
 function WithPetForm(props) {
 	const classes = useStyles();
 
+	const breed = Axios.get(Constants.Url.pet.breed)
+		.then( res => {
+			return res.data;
+		});
 	
+	const changeBreedId  = event => {
+		console.log(event.target.value);
+	}
 
 	return (
 		<Grid container spacing={2}>
@@ -43,8 +50,22 @@ function WithPetForm(props) {
 			</Grid>
 			<Grid item xs={12}>
 				<FormControl className={classes.formControl}>
-					<InputLabel id="gender">Gender</InputLabel>
-					<Select labelId="gender" id="select">
+					<InputLabel id="petBreed">Pet</InputLabel>
+					<Select labelId="petBreed" id="select" onChange={changeBreedId}>
+						{
+							breed.map((b) => (
+								<MenuItem value="b.breedId">{b.breedName}</MenuItem>
+							))
+						}
+					</Select>
+				</FormControl>
+			</Grid>
+			<Grid item xs={12}>
+				<FormControl className={classes.formControl}>
+					<InputLabel id="petBreed">Pet</InputLabel>
+					<Select labelId="petBreed" id="select">
+						{
+						}
 						<MenuItem value="male">male</MenuItem>
 						<MenuItem value="female">female</MenuItem>
 					</Select>

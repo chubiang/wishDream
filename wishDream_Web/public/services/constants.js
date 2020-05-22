@@ -12,6 +12,9 @@ const Constants = {
             username: '/username',
             oauth2Kakao: '/oauth2/authorization/kakao'
         },
+        pet: {
+            breed: '/json/petBreed'
+        },
         socket: {
             alarmList: 'alarmList'
         },

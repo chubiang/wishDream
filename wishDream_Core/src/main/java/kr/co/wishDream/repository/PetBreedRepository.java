@@ -1,13 +1,14 @@
 package kr.co.wishDream.repository;
 
-import java.util.List;
-
 import org.davidmoten.rx.jdbc.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import io.reactivex.Flowable;
+import kr.co.wishDream.automap.PetBreed;
+import kr.co.wishDream.automap.SubPetBreed;
 import kr.co.wishDream.connect.DatabaseConnect;
-import kr.co.wishDream.domain.PetBreed;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class PetBreedRepository {
@@ -17,14 +18,30 @@ public class PetBreedRepository {
 	
 	private Database database;
 	
-	public List<PetBreed> findPetBreedCategory() throws Exception {
-		this.setDatabase(Database.from(databaseConnect.pool()));
-		return null;
+	public Mono<PetBreed> findPetBreedCategory()  {
+		Flowable<PetBreed> petBreedFlowable = null;
+		try {
+			this.setDatabase(Database.from(databaseConnect.pool()));
+			petBreedFlowable = database.select("SELECT * FROM pet_breed p WHERE p.breedPid = null")
+			.autoMap(PetBreed.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Mono.from(petBreedFlowable);
 	}
 	
-	public List<PetBreed> findByBreedIdSubPetBreed(Integer breedId) throws Exception {
-		this.setDatabase(Database.from(databaseConnect.pool()));
-		return null;
+	public Mono<SubPetBreed> findByBreedIdSubPetBreed(Integer breedId) {
+		Flowable<SubPetBreed> petBreedFlowable = null;
+		
+		try {
+			this.setDatabase(Database.from(databaseConnect.pool()));
+			petBreedFlowable = database.select("SELECT * FROM sub_pet_breed p WHERE p.breedId = ?")
+				.parameter(breedId)
+				.autoMap(SubPetBreed.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Mono.from(petBreedFlowable);
 	}
 	
 	public void setDatabase(Database database) {
