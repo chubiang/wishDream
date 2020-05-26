@@ -77,6 +77,8 @@ subprojects {
 		implementation "org.springframework.boot:spring-boot-starter-integration"
 		implementation "org.springframework.boot:spring-boot-starter-security"
 		implementation "org.springframework.security:spring-security-jwt:${jwtVersion}"
+	    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	
 
 		developmentOnly "org.springframework.boot:spring-boot-devtools"
 		
@@ -155,31 +157,9 @@ flywayMigrate {
 	dependsOn build
 }
 
-project(":wishDream_Web") {
-	def coreJarPath = rootProject.files("wishDream_Core/build/libs")[0].toString()
-	bootJar {
-		//launchScript()
-		mainClassName = "kr.co.wishDream.WishDreamWebApplication"
-		classifier = "boot"
-		from("out/main") {
-			into "static"
-		}
-	}
-	dependencies {
-		//implementation project(":wishDream_Core")
-	 	implementation fileTree(dir: coreJarPath, include: ["*.jar"])
-	}
-	test {
-	    ignoreFailures = true
-	}
-	
-}
-
 project(":wishDream_Core") {
-	bootJar {
-		enabled = false
-	}
-	
+	bootJar.enabled = false
+	jar.enabled = true
 	task coreJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
 	    archiveClassifier = "core"
 	    archiveBaseName = "wishDream_Core"
@@ -200,6 +180,29 @@ project(":wishDream_Core") {
 	}
 }
 
+project(":wishDream_Web") {
+	def coreJarPath = rootProject.files("wishDream_Core/build/libs")[0].toString()
+	bootJar {
+		//launchScript()
+		mainClassName = "kr.co.wishDream.WishDreamWebApplication"
+		classifier = "boot"
+		from("out/main") {
+			into "static"
+		}
+	}
+	dependencies {
+		//implementation project(":wishDream_Core")
+		implementation fileTree(dir: coreJarPath, include: ["*.jar"])
+	 	implementation (project(':wishDream_Core'))  {
+		    transitive = true
+		}
+	}
+	test {
+	    ignoreFailures = true
+	}
+	
+}
+
 
 task start() {
     println "PROJECT INFO"
@@ -210,8 +213,8 @@ task start() {
     dependsOn ":wishDream_Core:start"
     dependsOn ":wishDream_Web:start"
 	
-    dependsOn ":flywayValidate"
-    dependsOn ":flywayMigrate"
+    //dependsOn ":flywayValidate"
+    //dependsOn ":flywayMigrate"
     println "####################################################"
     println	""
     println "            flywayMigrate completed                 "

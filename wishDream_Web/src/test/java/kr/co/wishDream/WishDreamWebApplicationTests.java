@@ -1,24 +1,22 @@
 package kr.co.wishDream;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
+import org.assertj.core.util.Arrays;
 import org.davidmoten.rx.jdbc.Database;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import io.reactivex.Flowable;
 import kr.co.wishDream.domain.Member;
+import kr.co.wishDream.domain.PetBreed;
 import reactor.core.publisher.Mono;
 
 @ExtendWith(SpringExtension.class)
@@ -40,10 +38,13 @@ public class WishDreamWebApplicationTests {
 	
 	@Test
 	public void contextLoads() throws Exception {
-		String email = "nana@gmail.com";
-		List<ClientRegistration> registrations = StreamSupport.stream(clientRegistrationRepository.spliterator(), true)
-				.collect(Collectors.toList());
-		registrations.forEach(System.out::println);
+		List<Object> list = findPetBreedCategory();
+		list.forEach(x->System.out.println("list = "+ x));
+		
+//		String email = "nana@gmail.com";
+//		List<ClientRegistration> registrations = StreamSupport.stream(clientRegistrationRepository.spliterator(), true)
+//				.collect(Collectors.toList());
+//		registrations.forEach(System.out::println);
 //		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
 //		System.out.println(urlMatcher.matcher("/fdsfddd.ddd.ffffffffffff&%$##@$()+=-_\"\\~`").find());
 //		Flowable<Member> mem = findByEmailAutoMap(email);
@@ -60,48 +61,79 @@ public class WishDreamWebApplicationTests {
 //		System.out.println(System.getProperty("java.version"));
 	}
 	
-	public Mono<UserDetails> findByUsername(String email) {
-		return findByEmailGetMono(email).switchIfEmpty(Mono.defer(() -> {
-			return Mono.error(new UsernameNotFoundException("User not found"));
-		}) );
-	}
-	
-	public Mono<UserDetails> findByEmailGetMono(String email) {
-		Flowable<UserDetails> memberFlowable = null;
+	public List<Object> findPetBreedCategory()  {
+		List<PetBreed> list = new ArrayList<>();
+		List<PetBreed> list2 = new ArrayList<>();
+		List<Object> result =  new ArrayList<>();
 		try {
 			this.setDatabase(Database.from(testDatabaseConnect.pool()));
+			database.select("SELECT * FROM pet_breed WHERE breed_pid is null")
+			.getTupleN(PetBreed.class).blockingIterable().forEach(onNext-> {
+				PetBreed pet = new PetBreed();
+				List<?> values = onNext.values();
+				pet.setBreedId((Integer) values.get(0));
+				pet.setBreedPid((Integer) values.get(1));
+				pet.setBreedName((String) values.get(2));
+				pet.setBreedEtc((String) values.get(3));
+				list.add(pet);
+			});
+			database.select("SELECT * FROM pet_breed WHERE breed_pid is not null")
+			.getTupleN(PetBreed.class).blockingIterable().forEach(onNext-> {
+				PetBreed pet = new PetBreed();
+				List<?> values = onNext.values();
+				pet.setBreedId((Integer) values.get(0));
+				pet.setBreedPid((Integer) values.get(1));
+				pet.setBreedName((String) values.get(2));
+				pet.setBreedEtc((String) values.get(3));
+				list2.add(pet);
+			});
+//			result = list.stream().filter(x-> x.getBreedPid() == null).map( item -> {
+//				list2.stream().filter(x -> x.getBreedPid() == item.getBreedId()).forEach(x-> System.out.println(x));
+//				Boolean condition = list2.stream().filter(x -> x.getBreedPid() == item.getBreedId()).anyMatch(x-> x.getBreedPid() == item.getBreedId());
+//				if (condition) {
+//					List<Object> it = new ArrayList<>();
+//					it.add(item);
+//					return it.addAll(list2.stream().filter(x -> x.getBreedPid() == item.getBreedId()).collect(Collectors.toList()));
+//				} else {
+//					return item;
+//				}
+//			}).collect(Collectors.toList());
+			for (int i = 0; i < list.size(); i++) {
+				List<PetBreed> it = new ArrayList<>();
+				for (int j = 0; j < list2.size(); j++) {
+					if ( list.get(i).getBreedId() == list2.get(j).getBreedPid()) {
+						if (it.isEmpty()) {					
+							it.add(list.get(i));
+						}
+						it.add(list2.get(j));
+					}
+				}
+				if(it.isEmpty()) {
+					result.add(list.get(i));
+				} else {
+					result.add(it);
+				}
+				
+			}
+			System.out.println(list2.size());
 			
-			String sql = "SELECT * FROM member WHERE EMAIL = ?";
-	
-			memberFlowable =
-					database.select(sql)
-						.parameter(email)
-						.get(
-							rs -> {
-								Member member = new Member();
-								member.setUsername(rs.getString("username"));
-								member.setEmail(rs.getString("email"));
-								member.setBirth(rs.getDate("birth"));
-								member.setJoinDate(rs.getDate("joinDate"));
-								member.setLeaveDate(rs.getDate("leaveDate"));
-								member.setEtc(rs.getString("etc"));
-								
-								return (UserDetails) member;
-						});
+//			database.select("SELECT * FROM pet_breed WHERE breed_pid is null")
+//			.getTupleN(PetBreed.class).blockingIterable().forEach(
+//				e -> {
+//					PetBreed pet = new PetBreed();
+//					List<?> values = e.values();
+//					pet.setBreedId((Integer) values.get(0));
+//					pet.setBreedPid((Integer) values.get(1));
+//					pet.setBreedName((String) values.get(2));
+//					pet.setBreedEtc((String) values.get(3));
+//					list.add(pet);
+//				}
+//			);
 		} catch (Exception e) {
-			e.getStackTrace();
+			e.printStackTrace();
 		}
-		return Mono.from(memberFlowable);
-	}
-	
-	public Flowable<Member> findByEmailAutoMap(String email) throws Exception {
-		this.setDatabase(Database.from(testDatabaseConnect.pool()));
-		
-		return database.select("SELECT * FROM member WHERE EMAIL = ?")
-				.parameter(email)
-				.getAs(Member.class);
-	}
-	
+		return (result);
+	}	
 	
 	public void setDatabase(Database database) {
 		this.database = database;

@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import kr.co.wishDream.automap.PetBreed;
-import kr.co.wishDream.automap.SubPetBreed;
+import kr.co.wishDream.domain.PetBreed;
+import kr.co.wishDream.domain.SubPetBreed;
 import kr.co.wishDream.repository.PetBreedRepository;
 import reactor.core.publisher.Mono;
 

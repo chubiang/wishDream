@@ -26,9 +26,9 @@ public class CsrfHeaderFilter implements WebFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 		String currentUrl = exchange.getRequest().getPath().value();
 		
-		for (Map.Entry<String, List<String>> entry : exchange.getRequest().getHeaders().entrySet()) {
-			LOG.info("REQUEST HEADER = "+entry);
-		}
+//		for (Map.Entry<String, List<String>> entry : exchange.getRequest().getHeaders().entrySet()) {
+//			LOG.info("REQUEST HEADER = "+entry);
+//		}
 		
 //		Pattern urlMatcher = Pattern.compile("(login)|(\\/)*[!@#$%^&*(),.?\\\\\"~`:{}|<>+=_-]*");
 //		MultiValueMap<String, HttpCookie> csrfCookie = exchange.getRequest().getCookies();
