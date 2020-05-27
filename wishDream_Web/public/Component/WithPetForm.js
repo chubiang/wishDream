@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, createContext } from 'react'
+import React, { Component, useEffect, useRef, useState, createContext, Fragment } from 'react'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles'
 import { Form, Field, reduxForm } from 'redux-form'
@@ -17,58 +17,46 @@ function WithPetForm(props) {
 
 	const [topBreed, setTopBreed] = React.useState([]);
 	const [subBreed, setSubBreed] = React.useState([]);
-	props = { selected: {} };
+	props = { selected: { topBreed: '', subBreed: '' } };
 	const [state, setState] =  React.useState(props.selected);
+	const selectRef = useRef();
 	
 	useEffect(() => {
 		if (!topBreed.length) {
 			Axios.get(Constants.Url.pet.breed)
 			.then( res => {
-					console.log('res',res);
 					setTopBreed(res.data);
 			});
 		}
 	})
 	
-	const optionElem = function(array) {
-		return (
-			array.map((e, i) => {
-				if (e.breedPid == null) array.splice(i, 1)
-				else return (<MenuItem key={'Sub'+i} value={e.breedId}>{e.breedName}</MenuItem>)
-			})
-		)
-	}
-
-	const topBreedElem = function() {
-		topBreed.map((b, i) => {
-			if (Array.isArray(b)) {
-				const category = b.find(e => e.breedPid == null);
-				
-				return (
-					<ListSubheader key={'Top'+i} label={category.breedName}>
-						{optionElem(b)}
-					</ListSubheader>
-				)
-			} else {
-				return (<MenuItem key={i} value={b.breedId}>{b.breedName}</MenuItem>)
-			}
-		})
-	};
-
-	const subBreedElem = subBreed.map((b, i) => (
-		<MenuItem key={i} value={b.breedId}>{b.breedName}</MenuItem>
-	));
-	
-	const changeBreedId  = event => {
+	const changeBreedId  = (event) => {
 		props.selected.topBreed = event.target.value;
-		Axios.get(Constants.Url.pet.breed + "/" + props.selected.topBreed)
-			.then( res => {
-					console.log('res',res);
-					setSubBreed(res.data);
-			});
-		console.log(props.selected);
-		setState(props.selected);
 		
+		if (props.selected.topBreed) {
+			Axios.get(Constants.Url.pet.breed + "/" + props.selected.topBreed)
+			.then( res => {
+				console.log('res',res);
+				setSubBreed(res.data);
+			});
+			setState(props.selected.topBreed);
+			console.log('select ',props.selected.topBreed, state);
+		}
+	}
+	
+	const SubBreedSelect = (props) => {
+		return (
+			<FormControl className={classes.formControl}>
+				<InputLabel id="breeds">Breeds</InputLabel>
+				<Select labelId="breeds" id="breeds">
+					{
+						subBreed.map((b, u) => 
+							<MenuItem key={'SubBreedElemItem'+(u)} value={b.breedId}>{b.breedName}</MenuItem>
+						)
+					}
+				</Select>
+			</FormControl>
+		)
 	}
 
 	return (
@@ -96,26 +84,35 @@ function WithPetForm(props) {
 				/>
 			</Grid>
 			<Grid item xs={12}>
-				<FormControl className={classes.formControl}>
-					<InputLabel id="petBreed">Pet</InputLabel>
-					<Select labelId="petBreed" id="petBreed" onChange={changeBreedId}>
-						{topBreedElem()}
-					</Select>
-				</FormControl>
+				{topBreed.length ?
+					(<FormControl className={classes.formControl}>
+						<InputLabel id="petBreed">Pet</InputLabel>
+						<Select labelId="petBreed" id="petBreed" value={props.selected.topBreed}>
+						{ topBreed.map((b, i) => {
+							return (
+								<div key={'TopBreedElemArr'+(i)}>
+									<ListSubheader>{!b.breedName? b.find(e => e.breedPid == null).breedName : b.breedName }</ListSubheader>
+									{
+										(Array.isArray(b))?
+										( b.map((e, j) => {
+														return (e.breedPid ? <MenuItem onClick={changeBreedId} key={'TopBreedElemArrItem'+(e.breedId*j)} value={e.breedId}>{e.breedName}</MenuItem> : '')
+											})
+										): <MenuItem onClick={changeBreedId} value={b.breedId}>{b.breedName}</MenuItem>
+									}
+								</div>
+							)
+						})}
+						</Select>
+					</FormControl>) : ''
+				}
 			</Grid>
 			<Grid item xs={12}>
-				<FormControl className={classes.formControl}
-					style={!subBreed ? {pointerEvents: "none", opacity: "0.4"} : {}}>
-					<InputLabel id="breeds">Breeds</InputLabel>
-					<Select labelId="breeds" id="breeds" >
-						{subBreed? subBreedElem: ''}
-					</Select>
-				</FormControl>
+				{/* {subBreed.length? <SubBreedSelect />: ''} */}
 			</Grid>
 			<Grid item xs={12}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="gender">Gender</InputLabel>
-					<Select labelId="gender" id="select">
+					<Select labelId="gender" defaultValue="male" id="select">
 						<MenuItem value="male">male</MenuItem>
 						<MenuItem value="female">female</MenuItem>
 					</Select>

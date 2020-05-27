@@ -113,7 +113,6 @@ public class WishDreamWebApplicationTests {
 				} else {
 					result.add(it);
 				}
-				
 			}
 			System.out.println(list2.size());
 			
