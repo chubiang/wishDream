@@ -80,12 +80,12 @@ public class PetBreedRepository {
 			this.setDatabase(Database.from(databaseConnect.pool()));
 			database.select("SELECT p.* FROM sub_pet_breed p WHERE p.breed_id = ?")
 				.parameter(breedId)
-				.getTupleN().blockingIterable().forEach(
+				.getTupleN(SubPetBreed.class).blockingIterable().forEach(
 					e -> {
 						List<?> values = e.values();
 						SubPetBreed subBreed = new SubPetBreed();
-						subBreed.setBreedId((Integer) values.get(0));
-						subBreed.setSubBreedId((Integer) values.get(1));
+						subBreed.setSubBreedId((Integer) values.get(0));
+						subBreed.setBreedId((Integer) values.get(1));
 						subBreed.setBreedName((String) values.get(2));
 						subBreed.setBreedEtc((String) values.get(3));
 						list.add(subBreed);

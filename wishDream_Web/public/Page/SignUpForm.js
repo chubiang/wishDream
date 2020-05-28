@@ -47,20 +47,27 @@ const useStyles = makeStyles((theme) => ({
 function SignUp(props) {
   const classes = useStyles();
 
-  const [userInfo, setUserInfo] = React.useState({});
+  const [userInfo, setUserInfo] = React.useState(props.signUp);
   const [withPet, setWithPet] = React.useState(false);
+  const [petInfo, setPetInfo] = React.useState(props.signUpWithPet);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    props.onSignUp(userInfo);
+    props.onSignUpWithPet(petInfo);
 
+    console.log(userInfo, petInfo);
   };
 
   const showWithPetForm = (event) => {
-    console.log(event, event.target.checked);
     setWithPet(event.target.checked);
-    
   }
 
-  const checkBoxAllowReceive = () => (
+  useEffect(() => {
+    console.log('effect', userInfo, petInfo);
+    
+  })
+
+  const checkPetInfo = () => (
     <RenderCheckbox
         name="withPet"
         label="Add my pet information" 
@@ -78,7 +85,7 @@ function SignUp(props) {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <form className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -90,6 +97,7 @@ function SignUp(props) {
                 fullWidth
                 id="Email Address"
                 label="Email"
+                onChange={(e)=>{userInfo.email = e.target.value}}
                 autoComplete="email"
                 autoFocus
               />
@@ -101,6 +109,7 @@ function SignUp(props) {
                 fullWidth
                 id="username"
                 label="Username"
+                onChange={(e)=>{userInfo.username = e.target.value}}
                 name="username"
                 autoComplete="username"
               />
@@ -113,6 +122,7 @@ function SignUp(props) {
                 name="password"
                 label="Password"
                 type="password"
+                onChange={(e)=>{userInfo.password = e.target.value}}
                 id="password"
                 autoComplete="new-password"
               />
@@ -125,21 +135,22 @@ function SignUp(props) {
                 name="repassword"
                 label="Repassword"
                 type="password"
+                onChange={(e)=>{userInfo.repassword = e.target.value}}
                 id="repassword"
                 autoComplete="confirm-password"
               />
             </Grid>
             <Grid item xs={12}>
-                <Field name="withPet" component={checkBoxAllowReceive} />
+                <Field name="withPet" component={checkPetInfo} />
             </Grid>
-            { withPet ? <WithPetForm /> : null }
+            { withPet ? <WithPetForm petInfo={petInfo} /> : null }
           </Grid>
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={handleSubmit}
           >
             Sign Up
           </Button>
@@ -166,8 +177,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    'signUp': () => dispatch(signUp()),
-    'signUpWithPet': () => dispatch(signUpWithPet())
+    onSignUp: (userInfo) => dispatch(signUp(userInfo)),
+    onSignUpWithPet: (petInfo) => dispatch(signUpWithPet(petInfo))
   }
 }
 

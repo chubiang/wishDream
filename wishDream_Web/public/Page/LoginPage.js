@@ -11,12 +11,13 @@ import { purple, pink } from '@material-ui/core/colors';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import { signInReducer } from '../reducers/signIn';
-import { signUpReducer } from '../reducers/signUp';
+import { signUpReducer, signUpWithPetReducer } from '../reducers/signUp';
 
 
 const rootReducer = combineReducers({
     signIn: signInReducer,
-    signUp: signUpReducer
+    signUp: signUpReducer,
+    signUpWithPet: signUpWithPetReducer
 })
 
 const store = (window.devToolsExtension

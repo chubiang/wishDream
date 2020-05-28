@@ -2,8 +2,14 @@ const initSignUpForm = {
   email: '',
   username: '',
   password: '',
-  repassword: '',
-  allowReceive: false
+  repassword: ''
+};
+
+const initSignUpWithPetForm = {
+  petName: '',
+	petAge: '',
+	petGender: '',
+	petBreedId: ''
 };
 
 export const signUpReducer = (state = initSignUpForm, action) => {
@@ -13,15 +19,21 @@ export const signUpReducer = (state = initSignUpForm, action) => {
               email: action.email,
               username: action.username,
               password: action.password,
-              repassword: action.repassword,
-              withPet: action.withPet
+              repassword: action.repassword
           });
-      case 'PET':
+      default:
+          return state;
+  }
+}
+
+export const signUpWithPetReducer = (state = initSignUpWithPetForm, action) => {
+  switch(action.type) {
+      case 'SIGN_UP_WITH_PET':
           return Object.assign({}, {
               petName: action.petName,
               petAge: action.petAge,
               petGender: action.petGender,
-              petBreeds: action.petBreeds
+              petBreedId: action.subBreedId
           });
       default:
           return state;

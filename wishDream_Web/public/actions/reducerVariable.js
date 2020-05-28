@@ -9,14 +9,22 @@ export function rememberID(email, password, rememberValue) {
     };
 }
 
-export function signUp() {
+export function signUp(userInfo) {
     return {
-        type: 'SIGN_UP'
+        type: 'SIGN_UP',
+        email: userInfo.email,
+        username: userInfo.username,
+        password: userInfo.password,
+        rePassword: userInfo.rePassword
     }
 }
 
-export function signUpWithPet() {
+export function signUpWithPet(petInfo) {
     return {
-        type: 'SIGN_UP_WITH_PET'
+        type: 'SIGN_UP_WITH_PET',
+        petName: petInfo.petName,
+        petAge: petInfo.petAge,
+        subBreedId: petInfo.subBreedId,
+        petGender: petInfo.petGender
     }
 }
