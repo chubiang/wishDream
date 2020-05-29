@@ -32,25 +32,25 @@ export const GlobalTheme = createMuiTheme({
 })
 
 class LoginPage extends Component {
-    render() {
-        return (
-            <BrowserRouter>
-							<Provider store={store}>
-                <ThemeProvider theme={GlobalTheme}>
-									<CookiesProvider>
-                    <Switch>
-                        <Route path="/login"
-                        render={ () => (<SignInForm cookies={this.props.cookies} />)}/>
-                        <Route path="/signUp"
-                        render={ () => (<SignUpForm cookies={this.props.cookies} />)}/>
-                        <Route path="/" component={() => { window.location.href = "/"; return null; }} />
-                    </Switch>
-                    </CookiesProvider>
-									</ThemeProvider>
-                </Provider>
-            </BrowserRouter>
-        )
-    }
+	render() {
+		return (
+			<BrowserRouter>
+				<Provider store={store}>
+					<ThemeProvider theme={GlobalTheme}>
+						<CookiesProvider>
+							<Switch>
+									<Route path="/login"
+									render={ () => (<SignInForm cookies={this.props.cookies} />)}/>
+									<Route path="/signUp"
+									render={ () => (<SignUpForm cookies={this.props.cookies} />)}/>
+									<Route path="/" component={() => { window.location.href = "/"; return null; }} />
+							</Switch>
+						</CookiesProvider>
+					</ThemeProvider>
+				</Provider>
+			</BrowserRouter>
+		)
+	}
 }
 
 export default withCookies(LoginPage)

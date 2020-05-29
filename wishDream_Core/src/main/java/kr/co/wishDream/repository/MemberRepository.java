@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
+import org.davidmoten.rx.jdbc.Tx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import io.reactivex.Flowable;
 import kr.co.wishDream.connect.DatabaseConnect;
@@ -148,6 +151,32 @@ public class MemberRepository {
 			e.getStackTrace();
 		}
 		return Mono.from(memberFlowable);
+	}
+	
+	public Mono<Object> signUp(Mono<MultiValueMap<String, String>> formData) {
+		MultiValueMap<String, String> data = formData.blockOptional().get();
+		String sql = "insert into member(email, password, username, joinDate) values ("
+				+ "?, ?, ?, current_date)";
+		Flowable<Integer> member = database.update(sql).parameters(
+				data.get("email"), data.get("password"), data.get("username"))
+			.returnGeneratedKeys()
+			.getAs(Integer.class);
+		member.doOnNext(count -> {
+			if (count > 0 && !data.get("petName").isEmpty()) {
+				savePetInfo(data);
+			}
+		});
+		return Mono.empty();
+	}
+	
+	public void savePetInfo(MultiValueMap<String, String> data) {
+		String sql = "insert into pet(pet_name, pet_age, sub_breed_id, pet_gender, pet_birth) values "
+				+ "(?, ?, ?, ?, ?)";
+		Flowable<Integer> pet = database.update(sql).parameters(
+				data.get("petName"), data.get("petAge"), data.get("subBreedId"),
+				 data.get("petGender"), data.get("petBirth"))
+			.returnGeneratedKeys()
+			.getAs(Integer.class);
 	}
 
 

@@ -175,12 +175,12 @@ function SignIn(props) {
       </Typography>
       <AlertContext.Provider value={open}>
       <MessageDialog 
-                        fullWidth={alertDialog.fullWidth} 
-                        maxWidth={alertDialog.maxWidth}
-                        title={alertDialog.title} 
-                        content={alertDialog.content}
-                        handleClose={() => {setOpen(false);}}
-                        buttons={alertDialog.buttons}/>
+        fullWidth={alertDialog.fullWidth} 
+        maxWidth={alertDialog.maxWidth}
+        title={alertDialog.title} 
+        content={alertDialog.content}
+        handleClose={() => {setOpen(false);}}
+        buttons={alertDialog.buttons}/>
       </AlertContext.Provider>
       <form className={classes.form} onSubmit={handleSubmit(submit)}>
         <Field

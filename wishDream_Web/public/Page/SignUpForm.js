@@ -10,6 +10,9 @@ import { signUp, signUpWithPet } from '../actions/reducerVariable'
 import validateSignIn from '../services/validateSignIn';
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import WithPetForm  from '../Component/WithPetForm'
+import Axios from 'axios';
+import Constants from '../services/constants';
+import MessageDialog from '../Component/MessageDialog'
 
 function Copyright() {
   return (
@@ -50,42 +53,70 @@ function SignUp(props) {
   const [userInfo, setUserInfo] = React.useState(props.signUp);
   const [withPet, setWithPet] = React.useState(false);
   const [petInfo, setPetInfo] = React.useState(props.signUpWithPet);
+  const [open, setOpen] = React.useState(false);
 
-  const handleSubmit = (e) => {
+  const alertDialog = { 
+    fullWidth: true, 
+    maxWidth:'xs',
+    title: 'Error',
+    content: 'Oops!! Failed SignUp!!',
+    buttons: [{color: 'primary', text: 'Ok', classes: 'alertBtn'}]
+  }
+
+  const config = {
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }
+
+  async const handleSubmit = (e) => {
     props.onSignUp(userInfo);
     props.onSignUpWithPet(petInfo);
 
     console.log(userInfo, petInfo);
-  };
 
-  const showWithPetForm = (event) => {
-    setWithPet(event.target.checked);
+    await Axios.post(Constants.Url.member.join, Object.assign(userInfo, { pet: petInfo }), config)
+    .then(function(res) {
+      props.history.push("/login");
+    })
+    .catch(function(error) {
+      setOpen(true);
+    })
   }
 
   useEffect(() => {
     console.log('effect', userInfo, petInfo);
-    
   })
 
   const checkPetInfo = () => (
     <RenderCheckbox
         name="withPet"
-        label="Add my pet information" 
+        label="With My Pet Information" 
         value={withPet}
-        change={showWithPetForm} />
+        change={() => {setWithPet(event.target.checked);}} />
   )
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+      <AlertContext.Provider value={open}>
+        <MessageDialog 
+          fullWidth={alertDialog.fullWidth} 
+          maxWidth={alertDialog.maxWidth}
+          title={alertDialog.title} 
+          content={alertDialog.content}
+          handleClose={() => {setOpen(false);}}
+          buttons={alertDialog.buttons}/>
+        </AlertContext.Provider>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -147,14 +178,14 @@ function SignUp(props) {
           </Grid>
           <Button
             fullWidth
+            type="submit"
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={handleSubmit}
           >
             Sign Up
           </Button>
-          <Grid container justify="flex-end">
+          <Grid container justify="center">
             <Grid item>
               <Link href="/login" variant="body2">
                 Already have an account? Sign in

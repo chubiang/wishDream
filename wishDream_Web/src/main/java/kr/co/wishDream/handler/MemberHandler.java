@@ -8,11 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
+import kr.co.wishDream.repository.MemberRepository;
 import kr.co.wishDream.service.MemberService;
 import reactor.core.publisher.Mono;
 
@@ -23,6 +25,9 @@ public class MemberHandler {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private MemberRepository memberRepository;
 	
 	public Mono<ServerResponse> findByUserName(ServerRequest request) {
 		Mono<String> fallback = Mono.error(new Throwable("Not exsit member"));
@@ -61,6 +66,14 @@ public class MemberHandler {
 				.body(ReactiveSecurityContextHolder.getContext()
 						.map(SecurityContext::getAuthentication)
 						.map(Authentication::getName), Object.class);
+	}
+
+	public Mono<ServerResponse> signUp(ServerRequest request) {
+		Mono<MultiValueMap<String, String>> formData = request.formData();
+		return ServerResponse
+				.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(memberRepository.signUp(formData), Object.class);
 	}
 
 }

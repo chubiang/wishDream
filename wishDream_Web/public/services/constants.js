@@ -10,7 +10,8 @@ const Constants = {
             login: 'login',
             logout: 'logout',
             username: '/username',
-            oauth2Kakao: '/oauth2/authorization/kakao'
+            oauth2Kakao: '/oauth2/authorization/kakao',
+            join: 'join'
         },
         pet: {
             breed: '/json/petBreed'

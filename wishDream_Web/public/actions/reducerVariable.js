@@ -25,6 +25,7 @@ export function signUpWithPet(petInfo) {
         petName: petInfo.petName,
         petAge: petInfo.petAge,
         subBreedId: petInfo.subBreedId,
-        petGender: petInfo.petGender
+        petGender: petInfo.petGender,
+        petBirth: petInfo.petBirth
     }
 }

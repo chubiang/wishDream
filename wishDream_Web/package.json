@@ -8,8 +8,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@date-io/date-fns": "^2.6.2",
     "axios": "^0.19.2",
     "clsx": "^1.1.0",
+    "date-fns": "^2.14.0",
     "fibers": "~5.0.0",
     "jquery": "^3.5.1",
     "jss-plugin-extend": "^10.1.1",

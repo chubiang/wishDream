@@ -2,6 +2,9 @@
   "presets": [
     [ "@babel/preset-env",
       {
+        "targets": {
+          "browsers" : ["last 2 versions", "ie >= 11"]
+        },
         "useBuiltIns": "usage",
         "corejs":  {
             "version": 3,
@@ -12,7 +15,16 @@
     "@babel/react"
   ],
   "plugins": [
-    "@babel/plugin-transform-runtime",
+    [
+      "@babel/plugin-transform-runtime", 
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true,
+        "useESModules": false
+      }
+    ],
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/transform-arrow-functions",
     "@babel/plugin-syntax-dynamic-import",

@@ -9,7 +9,8 @@ const initSignUpWithPetForm = {
   petName: '',
 	petAge: '',
 	petGender: '',
-	petBreedId: ''
+  petBreedId: '',
+  petBirth: null
 };
 
 export const signUpReducer = (state = initSignUpForm, action) => {
@@ -33,7 +34,8 @@ export const signUpWithPetReducer = (state = initSignUpWithPetForm, action) => {
               petName: action.petName,
               petAge: action.petAge,
               petGender: action.petGender,
-              petBreedId: action.subBreedId
+              petBreedId: action.subBreedId,
+              petBirth: action.petBirth
           });
       default:
           return state;

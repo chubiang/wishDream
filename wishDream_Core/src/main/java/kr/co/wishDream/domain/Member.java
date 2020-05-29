@@ -15,11 +15,11 @@ import lombok.Setter;
 import lombok.Synchronized;
 
 public class Member implements UserDetails, CredentialsContainer {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
-	private DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+	private DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
 	private String email;
 	private String username;
@@ -37,6 +37,9 @@ public class Member implements UserDetails, CredentialsContainer {
 	private boolean enabled = true;
 	
 	private Collection<? extends GrantedAuthority> authorities;
+	
+	private Pet pet;
+
 	
 	@Synchronized
 	public String syncDateFormate(Date date) {
@@ -221,6 +224,72 @@ public class Member implements UserDetails, CredentialsContainer {
 		return "Member [email=" + email + ", username=" + username + ", password=[PROTECTED]" + ", etc=" + etc
 				+ ", birth=" + birth + ", joinDate=" + joinDate + ", leaveDate=" + leaveDate + ", authorities="
 				+ authorities + "]";
+	}
+	
+	public Pet getPet() {
+		return pet;
+	}
+
+	public void setPet(Pet pet) {
+		this.pet = pet;
+	}
+
+	public class Pet {
+		
+		private Integer petId;
+		private String petName;
+		private Integer petAge;
+		private Integer subBreedId;
+		private String petGender;
+		private Date petBirth;
+		
+		public Pet() {}
+
+		public Pet(Integer petId, String petName, Integer petAge, Integer subBreedId, String petGender, Date petBirth) {
+			super();
+			this.petId = petId;
+			this.petName = petName;
+			this.petAge = petAge;
+			this.subBreedId = subBreedId;
+			this.petGender = petGender;
+			this.petBirth = petBirth;
+		}
+
+		public Integer getPetId() {
+			return petId;
+		}
+		public String getPetName() {
+			return petName;
+		}
+		public Integer getPetAge() {
+			return petAge;
+		}
+		public Integer getSubBreedId() {
+			return subBreedId;
+		}
+		public String getPetGender() {
+			return petGender;
+		}
+		public Date getPetBirth() {
+			return petBirth;
+		}
+		public void setPetId(Integer petId) {
+			this.petId = petId;
+		}
+		public void setPetName(String petName) {
+			this.petName = petName;
+		}
+		public void setPetAge(Integer petAge) {
+			this.petAge = petAge;
+		}
+		public void setSubBreedId(Integer subBreedId) {
+			this.subBreedId = subBreedId;
+		}
+		public void setPetGender(String petGender) {
+			this.petGender = petGender;
+		}		public void setPetBirth(Date petBirth) {
+			this.petBirth = petBirth;
+		}
 	}
 	
 

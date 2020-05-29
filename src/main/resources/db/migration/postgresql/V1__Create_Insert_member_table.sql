@@ -4,7 +4,7 @@ CREATE TABLE "member"
     email character varying(100) COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE  pg_catalog."default" NOT NULL,
     etc text COLLATE pg_catalog."default",
-    birth date NOT NULL,
+    birth date,
     "joinDate" date NOT NULL,
     "leaveDate" date,
     CONSTRAINT "Member_pkey" PRIMARY KEY (email)

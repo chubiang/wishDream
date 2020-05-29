@@ -1,3 +1,4 @@
+import 'date-fns';
 import React, { Component, useEffect, useRef, useState, createContext, Fragment } from 'react'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles'
@@ -6,6 +7,12 @@ import { Form, Field, reduxForm } from 'redux-form'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import Constants from '../services/constants'
 import { TextField, Select, ListSubheader, MenuItem, FormControl, Grid, InputLabel } from '@material-ui/core'
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -36,12 +43,12 @@ function WithPetForm(props) {
 		console.log(props);
 	})
 	
-	const changeBreedId = (event) => {
+	async const changeBreedId = (event) => {
 		if (event.target.value) {
 			setSelectedTopBreed({ id: event.target.value, name: event.target.innerText});
 
-			Axios.get(Constants.Url.pet.breed + "/" + event.target.value)
-			.then( res => {
+			await Axios.get(Constants.Url.pet.breed + "/" + event.target.value)
+			 .then( res => {
 				setSubBreed(res.data);
 			});
 		}
@@ -53,9 +60,14 @@ function WithPetForm(props) {
 		}
 	}
 
-	const changePetGender = (event) => {
-
-	}
+	const handleDateChange = (event) => {
+		if (event.target.value) {
+			props.petInfo.petBirth = event.target.value;
+			const year = new Date().getUTCFullYear();
+			const birthYear = (event.target.value).getUTCFullYear();
+			props.petInfo.petAge = year - birthYear;
+		}
+ 	}
 	
 	return (
 		<Grid container spacing={2}>
@@ -71,6 +83,22 @@ function WithPetForm(props) {
 						onChange={(e) => {props.petInfo.petName = e.target.value}}
 				/>
 			</Grid>
+			<MuiPickersUtilsProvider utils={DateFnsUtils}>
+      	<Grid container justify="space-around">
+					<KeyboardDatePicker
+						disableToolbar
+						variant="inline"
+						format="MM/dd/yyyy"
+						margin="normal"
+						id="date-picker-inline"
+						label="Date picker inline"
+						onChange={handleDateChange}
+						KeyboardButtonProps={{
+							'aria-label': 'change date',
+						}}
+					/>
+				</Grid>
+			</MuiPickersUtilsProvider>
 			<Grid item xs={12}>
 				<TextField
 						variant="outlined"
@@ -122,9 +150,11 @@ function WithPetForm(props) {
 			<Grid item xs={12}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="gender">Gender</InputLabel>
-					<Select labelId="gender" defaultValue="male" id="select" onChange={(e)=>{props.petInfo.petGender = e.target.value}}>
-						<MenuItem value="male">male</MenuItem>
-						<MenuItem value="female">female</MenuItem>
+					<Select labelId="gender" defaultValue="Male" id="select" onChange={(e)=>{props.petInfo.petGender = e.target.value}}>
+						<MenuItem value="Male">Male</MenuItem>
+						<MenuItem value="Female">Female</MenuItem>
+						<MenuItem value="Neuter male">Neuter male</MenuItem>
+						<MenuItem value="Neuter female">Neuter female</MenuItem>
 					</Select>
 				</FormControl>
 			</Grid>
