@@ -134,7 +134,7 @@ public class SecurityWebFluxConfig {
 		return 
 			http.authorizeExchange()
 				.pathMatchers("/images/**", "/login/oauth2/**", "/oauth/**", "/favicon.ico", "/styles/**", 
-						"/login", "/signUp", "/logout", "/static/**", "/topic/**", "/json/**")
+						"/login", "/signUp", "/join","/logout", "/static/**", "/topic/**", "/json/**")
 				.permitAll()
 			.and().oauth2Client()
 			.and().oauth2Login()

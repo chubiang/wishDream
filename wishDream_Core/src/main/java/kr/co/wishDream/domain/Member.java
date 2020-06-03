@@ -83,6 +83,26 @@ public class Member implements UserDetails, CredentialsContainer {
 		this.enabled = enabled;
 		this.authorities = authorities;
 	}
+	
+
+	public Member(String email, String username, String password, String etc, Date birth, Date joinDate, Date leaveDate,
+			Integer petAge, Date petBirth, String petGender, String petName, Integer subBreedId) {
+		super();
+		this.pet = new Pet();
+		this.email = email;
+		this.username = username;
+		this.password = password;
+		this.etc = etc;
+		this.birth = birth;
+		this.joinDate = joinDate;
+		this.leaveDate = leaveDate;
+		this.pet.petAge = petAge;
+		this.pet.petBirth = petBirth;
+		this.pet.petGender = petGender;
+		this.pet.petName = petName;
+		this.pet.subBreedId = subBreedId;
+		setPet(this.pet);
+	}
 
 	public Member() {
 	}

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
-import org.davidmoten.rx.jdbc.Tx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import io.reactivex.Flowable;
@@ -29,6 +29,8 @@ public class MemberRepository {
 	private DatabaseConnect databaseConnect;
 
 	private Database database;
+	
+	private Logger LOG = LoggerFactory.getLogger(MemberRepository.class);
 	
 	
 	public List<SimpleGrantedAuthority> findByRoleFromAuth(String role) throws Exception {
@@ -153,23 +155,31 @@ public class MemberRepository {
 		return Mono.from(memberFlowable);
 	}
 	
-	public Mono<Object> signUp(Mono<MultiValueMap<String, String>> formData) {
-		MultiValueMap<String, String> data = formData.blockOptional().get();
-		String sql = "insert into member(email, password, username, joinDate) values ("
-				+ "?, ?, ?, current_date)";
-		Flowable<Integer> member = database.update(sql).parameters(
-				data.get("email"), data.get("password"), data.get("username"))
-			.returnGeneratedKeys()
-			.getAs(Integer.class);
-		member.doOnNext(count -> {
-			if (count > 0 && !data.get("petName").isEmpty()) {
-				savePetInfo(data);
-			}
+	public Mono<Void> signUp(Mono<MultiValueMap<String, String>> formData) {
+		formData.doOnNext(data -> {
+			if (data.isEmpty()) throw new NullPointerException();
+			LOG.info("data = "+ data);
+			String sql = "insert into member(email, password, username, joinDate) values ("
+					+ "?, ?, ?, current_date)";
+			database.update(sql).parameters(
+					data.get("email"), data.get("password"), data.get("username"))
+				.returnGeneratedKeys()
+				.getAs(Integer.class)
+			.doOnNext(count -> {
+				System.out.println("Save member count = "+count);
+				if (count > 0 && !data.get("petName").isEmpty()) {
+					savePetInfo(data).doOnNext(result -> {
+						System.out.println("Save pet info count = "+result);
+					})
+					.doOnError(error -> System.out.println(error.toString()));
+				}
+			})
+			.doOnError(error -> System.out.println(error.toString()));
 		});
 		return Mono.empty();
 	}
 	
-	public void savePetInfo(MultiValueMap<String, String> data) {
+	public Flowable<Integer> savePetInfo(MultiValueMap<String, String> data) {
 		String sql = "insert into pet(pet_name, pet_age, sub_breed_id, pet_gender, pet_birth) values "
 				+ "(?, ?, ?, ?, ?)";
 		Flowable<Integer> pet = database.update(sql).parameters(
@@ -177,6 +187,7 @@ public class MemberRepository {
 				 data.get("petGender"), data.get("petBirth"))
 			.returnGeneratedKeys()
 			.getAs(Integer.class);
+		return pet;
 	}
 
 

@@ -6,13 +6,16 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { connect } from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
 import { withRouter } from 'react-router';
+import Axios from 'axios';
+import Querystring from 'querystring'
 import { signUp, signUpWithPet } from '../actions/reducerVariable'
 import validateSignIn from '../services/validateSignIn';
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import WithPetForm  from '../Component/WithPetForm'
-import Axios from 'axios';
 import Constants from '../services/constants';
 import MessageDialog from '../Component/MessageDialog'
+import "core-js/modules/es.promise"
+import { format } from 'date-fns';
 
 function Copyright() {
   return (
@@ -47,12 +50,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+export const AlertContext = createContext();
 function SignUp(props) {
   const classes = useStyles();
-
   const [userInfo, setUserInfo] = React.useState(props.signUp);
   const [withPet, setWithPet] = React.useState(false);
   const [petInfo, setPetInfo] = React.useState(props.signUpWithPet);
+  const ref = React.createRef();
   const [open, setOpen] = React.useState(false);
 
   const alertDialog = { 
@@ -68,17 +73,21 @@ function SignUp(props) {
         'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-  }
+  };
 
-  async const handleSubmit = (e) => {
+  function handleSubmit(e) {
+    e.preventDefault();
+    petInfo.petBirth = format(petInfo.petBirth, 'MM/dd/yyyy');
     props.onSignUp(userInfo);
     props.onSignUpWithPet(petInfo);
 
     console.log(userInfo, petInfo);
-
-    await Axios.post(Constants.Url.member.join, Object.assign(userInfo, { pet: petInfo }), config)
+    var sendData = Querystring.stringify(Object.assign(props.signUp, props.signUpWithPet));
+    Axios.post(Constants.Url.member.join, sendData, config)
     .then(function(res) {
       props.history.push("/login");
+      console.log(res);
+      
     })
     .catch(function(error) {
       setOpen(true);
@@ -101,15 +110,15 @@ function SignUp(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-      <AlertContext.Provider value={open}>
         <MessageDialog 
           fullWidth={alertDialog.fullWidth} 
           maxWidth={alertDialog.maxWidth}
           title={alertDialog.title} 
           content={alertDialog.content}
           handleClose={() => {setOpen(false);}}
-          buttons={alertDialog.buttons}/>
-        </AlertContext.Provider>
+          buttons={alertDialog.buttons}
+          open={open}
+          ref={ref} />
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>

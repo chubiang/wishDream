@@ -22,8 +22,8 @@ module.exports = {
     cache: false,
     context: path.resolve(__dirname, 'public'),
     entry: {
-        index: './index.js',
-        login: './login.js',
+      index: './index.js',
+      login: './login.js',
     },
     devtool: 'sourcemaps',
     output: {

@@ -37,7 +37,7 @@ public class MemberRouter {
 				.andRoute(POST("/join")
 					.and(accept(MediaType.APPLICATION_JSON))
 					.and(contentType(MediaType.APPLICATION_FORM_URLENCODED)), request -> {
-						return handler.signUp(request);
+					return handler.signUp(request);
 				});
 	}
 }

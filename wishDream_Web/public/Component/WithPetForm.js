@@ -1,18 +1,19 @@
 import 'date-fns';
-import React, { Component, useEffect, useRef, useState, createContext, Fragment } from 'react'
+import React, { Component, useEffect, useState, Fragment } from 'react'
 import Axios from 'axios'
-import { makeStyles } from '@material-ui/core/styles'
+import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
 import { Form, Field, reduxForm } from 'redux-form'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import Constants from '../services/constants'
 import { TextField, Select, ListSubheader, MenuItem, FormControl, Grid, InputLabel } from '@material-ui/core'
 import DateFnsUtils from '@date-io/date-fns';
+import { GlobalTheme } from '../Page/LoginPage'
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import "core-js/modules/es.promise"
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -23,11 +24,12 @@ const useStyles = makeStyles((theme) => ({
 function WithPetForm(props) {
 	const classes = useStyles();
 
-	const [topBreed, setTopBreed] = React.useState([]);
-	const [subBreed, setSubBreed] = React.useState([]);
-	const [selectedTopBreed, setSelectedTopBreed] =  React.useState({ id: '', name: '' });
-	const [selectedSubBreed, setSelectedSubBreed] =  React.useState({ id: '', name: '' });
-	const [petInfo, setPetInfo] = React.useState({});
+	const [topBreed, setTopBreed] = useState([]);
+	const [subBreed, setSubBreed] = useState([]);
+	const [selectedTopBreed, setSelectedTopBreed] = useState({ id: '', name: '' });
+	const [selectedSubBreed, setSelectedSubBreed] = useState({ id: '', name: '' });
+	const [petGender, setPetGender] = useState("Male");
+	const [petBirth, setPetBirth] = useState({});
 
 	useEffect(() => {
 		
@@ -39,11 +41,15 @@ function WithPetForm(props) {
 		}
 		if (props.petInfo) {
 			props.petInfo.petBreedId = selectedSubBreed.id;
+			props.petInfo.petGender = petGender;
+			if (petBirth) {
+				props.petInfo.petBirth = petBirth.birthday;
+				props.petInfo.petAge = petBirth.age;
+			}
 		}
-		console.log(props);
 	})
 	
-	async const changeBreedId = (event) => {
+	const changeBreedId = async (event) => {
 		if (event.target.value) {
 			setSelectedTopBreed({ id: event.target.value, name: event.target.innerText});
 
@@ -59,15 +65,28 @@ function WithPetForm(props) {
 			setSelectedSubBreed({ id: event.target.value, name: event.target.innerText});
 		}
 	}
-
-	const handleDateChange = (event) => {
+	const changePetGender = (event) => {
 		if (event.target.value) {
-			props.petInfo.petBirth = event.target.value;
-			const year = new Date().getUTCFullYear();
-			const birthYear = (event.target.value).getUTCFullYear();
-			props.petInfo.petAge = year - birthYear;
+			setPetGender(event.target.value);
+			props.petInfo.petGender = petGender;
 		}
- 	}
+	}
+
+	const handleAgeChange = (event) => {
+		const date = new Date();
+		const setDate = (date.getFullYear() - event.target.value)
+						+ '-' + (date.getMonth() + 1)
+						+ '-' + date.getDay();
+		setPetBirth({age: event.target.value, birthday: new Date(setDate)});
+	}
+
+	const handleDateChange = (date) => {
+		if (date) {
+			const year = new Date().getFullYear();
+			const birthYear = (date).getFullYear();
+			setPetBirth({age: year - birthYear, birthday: date});
+		}
+	 }
 	
 	return (
 		<Grid container spacing={2}>
@@ -76,40 +95,41 @@ function WithPetForm(props) {
 						variant="outlined"
 						required
 						fullWidth
-						id="petname"
+						id="petName"
 						label="Pet Name"
 						name="petname"
-						autoComplete="petname"
 						onChange={(e) => {props.petInfo.petName = e.target.value}}
 				/>
 			</Grid>
-			<MuiPickersUtilsProvider utils={DateFnsUtils}>
-      	<Grid container justify="space-around">
-					<KeyboardDatePicker
-						disableToolbar
-						variant="inline"
-						format="MM/dd/yyyy"
-						margin="normal"
-						id="date-picker-inline"
-						label="Date picker inline"
-						onChange={handleDateChange}
-						KeyboardButtonProps={{
-							'aria-label': 'change date',
-						}}
-					/>
-				</Grid>
-			</MuiPickersUtilsProvider>
+			<Grid item xs={12}>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<MuiThemeProvider theme={GlobalTheme}>
+						<KeyboardDatePicker
+							variant="outlined"
+							format="MM/dd/yyyy"
+							margin="normal"
+							id="petBirthday"
+							label="Pet birthday"
+							onChange={handleDateChange}
+							value={petBirth.birthday}
+							KeyboardButtonProps={{
+								'aria-label': 'change date',
+							}}
+							/>
+					</MuiThemeProvider>
+				</MuiPickersUtilsProvider>
+			</Grid>
 			<Grid item xs={12}>
 				<TextField
 						variant="outlined"
 						required
 						fullWidth
-						id="petage"
+						id="petAge"
 						label="Pet Age"
 						type="number"
 						name="petage"
-						autoComplete="petage"
-						onChange={(e) => {props.petInfo.petAge = e.target.value}}
+						value={petBirth.age}
+						onChange={handleAgeChange}
 				/>
 			</Grid>
 			<Grid item xs={12}>
@@ -150,7 +170,8 @@ function WithPetForm(props) {
 			<Grid item xs={12}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="gender">Gender</InputLabel>
-					<Select labelId="gender" defaultValue="Male" id="select" onChange={(e)=>{props.petInfo.petGender = e.target.value}}>
+					<Select name="petGender" labelId="gender" value={petGender}
+						id="select" onChange={changePetGender}>
 						<MenuItem value="Male">Male</MenuItem>
 						<MenuItem value="Female">Female</MenuItem>
 						<MenuItem value="Neuter male">Neuter male</MenuItem>

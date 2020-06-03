@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -72,8 +73,7 @@ public class MemberHandler {
 		Mono<MultiValueMap<String, String>> formData = request.formData();
 		return ServerResponse
 				.ok()
-				.contentType(MediaType.APPLICATION_JSON)
-				.body(memberRepository.signUp(formData), Object.class);
+				.build(memberRepository.signUp(formData));
 	}
 
 }

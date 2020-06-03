@@ -72,10 +72,10 @@ const inputField = ({input, label, defaultValue, type, meta: {touched, error}}) 
   )
 };
 
-export const AlertContext = createContext();
 function SignIn(props) {
   const classes = useStyles();
   const { cookies, error, handleSubmit, pristine, reset, submitting } = props;
+  let rememberValue = props.signIn.rememberValue;
   const [open, setOpen] = useState(false);
   const alertDialog = { 
     fullWidth: true, 
@@ -87,7 +87,7 @@ function SignIn(props) {
   };
   let email = props.signIn.email;
   let password = props.signIn.password;
-  let rememberValue = props.signIn.rememberValue;
+  const ref = React.createRef();
   
   useEffect(() => {
       
@@ -173,15 +173,15 @@ function SignIn(props) {
       <Typography component="h1" variant="h5">
         Sign In
       </Typography>
-      <AlertContext.Provider value={open}>
       <MessageDialog 
         fullWidth={alertDialog.fullWidth} 
         maxWidth={alertDialog.maxWidth}
         title={alertDialog.title} 
         content={alertDialog.content}
         handleClose={() => {setOpen(false);}}
-        buttons={alertDialog.buttons}/>
-      </AlertContext.Provider>
+        buttons={alertDialog.buttons}
+        open={open}
+        ref={ref} />
       <form className={classes.form} onSubmit={handleSubmit(submit)}>
         <Field
           id="email" name="email" type="email" label="Email"
