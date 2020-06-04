@@ -29,7 +29,8 @@ function WithPetForm(props) {
 	const [selectedTopBreed, setSelectedTopBreed] = useState({ id: '', name: '' });
 	const [selectedSubBreed, setSelectedSubBreed] = useState({ id: '', name: '' });
 	const [petGender, setPetGender] = useState("Male");
-	const [petBirth, setPetBirth] = useState({});
+	const [petBirth, setPetBirth] = useState({}); 
+	const [hasError, setHasError] = useState(false);
 
 	useEffect(() => {
 		
@@ -38,6 +39,9 @@ function WithPetForm(props) {
 			.then( res => {
 					setTopBreed(res.data);
 			});
+		}
+		if (!selectedSubBreed.id.length) {
+			setHasError(true);
 		}
 		if (props.petInfo) {
 			props.petInfo.petBreedId = selectedSubBreed.id;
@@ -133,10 +137,10 @@ function WithPetForm(props) {
 				/>
 			</Grid>
 			<Grid item xs={12}>
-				<FormControl className={classes.formControl}>
+				<FormControl className={classes.formControl} error={hasError}>
 					<InputLabel htmlFor="petBreed" id="petBreed">Pet</InputLabel>
-					<Select id="petBreed" 
-						value={selectedTopBreed.id} 
+					<Select id="petBreed" required
+						value={selectedTopBreed.id}
 						renderValue={() => selectedTopBreed.name}>
 					{ topBreed.map((b, i) => {
 						return (
@@ -153,18 +157,20 @@ function WithPetForm(props) {
 						)
 					})}
 					</Select>
+					{hasError && <FormHelperText>This is required!</FormHelperText>}
 				</FormControl>
 			</Grid>
 			<Grid item xs={12}> 
-				<FormControl className={classes.formControl} disabled={!subBreed.length}>
+				<FormControl className={classes.formControl} disabled={!subBreed.length} error={hasError}>
 					<InputLabel htmlFor="subBreeds" id="subBreeds">Breeds</InputLabel>
-					<Select id="subBreeds" value={selectedSubBreed.id} onChange={changeSubBreedId}>
+					<Select id="subBreeds" value={selectedSubBreed.id} onChange={changeSubBreedId} required>
 						{
 							subBreed.map((b, u) => {
 								return (<MenuItem key={'SubBreedElemItem'+(u)} value={b.subBreedId}>{b.breedName}</MenuItem>)
 							})
 						}
 					</Select>
+					{hasError && <FormHelperText>This is required!</FormHelperText>}
 				</FormControl>
 			</Grid>
 			<Grid item xs={12}>

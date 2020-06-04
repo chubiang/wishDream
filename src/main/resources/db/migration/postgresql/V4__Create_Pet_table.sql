@@ -2,18 +2,12 @@
 
 -- DROP TABLE public.pet;
 
-CREATE SEQUENCE pet_id_seq start 1;
-
-CREATE TABLE pet_sequence (
-    id integer NOT NULL DEFAULT nextval('pet_id_seq')
-);
-
-ALTER SEQUENCE pet_id_seq
-OWNED BY public.pet_sequence.id;
+CREATE SEQUENCE pet_seq;
 
 CREATE TABLE public.pet
 (
-    pet_id integer NOT NULL DEFAULT nextval('pet_sequence'::regclass),
+    email character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    pet_id integer NOT NULL DEFAULT nextval('pet_seq'),
     pet_name character varying COLLATE pg_catalog."default" NOT NULL,
     pet_age integer,
     sub_breed_id integer NOT NULL,

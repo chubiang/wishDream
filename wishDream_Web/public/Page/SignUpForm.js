@@ -1,6 +1,6 @@
-import React, { Component, useEffect, useState, createContext } from 'react'
+import React, { useEffect, useState, createRef, createContext } from 'react'
 import { Avatar, Button, TextField, Link, Grid, Box, 
-  Typography, CssBaseline, Container } from '@material-ui/core';
+  Typography, CssBaseline, Container, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { connect } from 'react-redux'
@@ -54,30 +54,36 @@ const useStyles = makeStyles((theme) => ({
 export const AlertContext = createContext();
 function SignUp(props) {
   const classes = useStyles();
-  const [userInfo, setUserInfo] = React.useState(props.signUp);
-  const [withPet, setWithPet] = React.useState(false);
-  const [petInfo, setPetInfo] = React.useState(props.signUpWithPet);
-  const ref = React.createRef();
-  const [open, setOpen] = React.useState(false);
-
-  const alertDialog = { 
+  const [userInfo, setUserInfo] = useState(props.signUp);
+  const [withPet, setWithPet] = useState(false);
+  const [petInfo, setPetInfo] = useState(props.signUpWithPet);
+  const ref = createRef();
+  const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState({ 
     fullWidth: true, 
     maxWidth:'xs',
-    title: 'Error',
-    content: 'Oops!! Failed SignUp!!',
+    title: 'Invalid',
+    content: 'Please enter required values.',
     buttons: [{color: 'primary', text: 'Ok', classes: 'alertBtn'}]
-  }
+  });
 
   const config = {
     headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
   };
 
   function handleSubmit(e) {
     e.preventDefault();
-    petInfo.petBirth = format(petInfo.petBirth, 'MM/dd/yyyy');
+    if (!petInfo.petBreedId) return;
+    if (userInfo.repassword != userInfo.password) {
+      alert.title = 'Invalid'
+      alert.content = 'Reconfirm password is different from password.'
+      setOpen(true);
+      return;
+    }
+
+    petInfo.petBirth = format(petInfo.petBirth, 'yyyy-MM-dd');
     props.onSignUp(userInfo);
     props.onSignUpWithPet(petInfo);
 
@@ -86,10 +92,10 @@ function SignUp(props) {
     Axios.post(Constants.Url.member.join, sendData, config)
     .then(function(res) {
       props.history.push("/login");
-      console.log(res);
-      
     })
     .catch(function(error) {
+      alert.title = 'Error'
+      alert.content = 'Oops!! Failed SignUp!!'
       setOpen(true);
     })
   }
@@ -106,17 +112,26 @@ function SignUp(props) {
         change={() => {setWithPet(event.target.checked);}} />
   )
 
+  const checkRePassword = (e) => {
+    userInfo.repassword = e.target.value;
+    if (userInfo.repassword != userInfo.password) {
+      alert.title = 'Valid'
+      alert.content = 'Reconfirm password is different from password.'
+      setOpen(true);
+    }
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <MessageDialog 
-          fullWidth={alertDialog.fullWidth} 
-          maxWidth={alertDialog.maxWidth}
-          title={alertDialog.title} 
-          content={alertDialog.content}
+          fullWidth={alert.fullWidth} 
+          maxWidth={alert.maxWidth}
+          title={alert.title} 
+          content={alert.content}
           handleClose={() => {setOpen(false);}}
-          buttons={alertDialog.buttons}
+          buttons={alert.buttons}
           open={open}
           ref={ref} />
         <Avatar className={classes.avatar}>
@@ -175,7 +190,7 @@ function SignUp(props) {
                 name="repassword"
                 label="Repassword"
                 type="password"
-                onChange={(e)=>{userInfo.repassword = e.target.value}}
+                onChange={checkRePassword}
                 id="repassword"
                 autoComplete="confirm-password"
               />

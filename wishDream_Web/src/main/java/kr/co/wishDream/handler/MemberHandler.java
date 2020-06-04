@@ -1,5 +1,7 @@
 package kr.co.wishDream.handler;
 
+import java.lang.reflect.Method;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,11 @@ public class MemberHandler {
 	}
 
 	public Mono<ServerResponse> signUp(ServerRequest request) {
-		Mono<MultiValueMap<String, String>> formData = request.formData();
+		 MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+		request.formData().block().entrySet().forEach( data -> {
+			System.out.println(data.getKey() + "=" + data.getValue());
+			formData.addAll(data.getKey(), data.getValue());
+		});
 		return ServerResponse
 				.ok()
 				.build(memberRepository.signUp(formData));

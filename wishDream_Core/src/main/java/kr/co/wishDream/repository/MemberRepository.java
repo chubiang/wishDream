@@ -1,7 +1,9 @@
 package kr.co.wishDream.repository;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import kr.co.wishDream.connect.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
@@ -107,8 +111,8 @@ public class MemberRepository {
 								member.setPassword(rs.getString("password"));
 								member.setEmail(rs.getString("email"));
 								member.setBirth(rs.getDate("birth"));
-								member.setJoinDate(rs.getDate("joinDate"));
-								member.setLeaveDate(rs.getDate("leaveDate"));
+								member.setJoinDate(rs.getDate("join_date"));
+								member.setLeaveDate(rs.getDate("leave_date"));
 								member.setEtc(rs.getString("etc"));
 								member.setRole(rs.getString("role"));
 								try {
@@ -143,8 +147,8 @@ public class MemberRepository {
 								member.setUsername(rs.getString("username"));
 								member.setEmail(rs.getString("email"));
 								member.setBirth(rs.getDate("birth"));
-								member.setJoinDate(rs.getDate("joinDate"));
-								member.setLeaveDate(rs.getDate("leaveDate"));
+								member.setJoinDate(rs.getDate("join_date"));
+								member.setLeaveDate(rs.getDate("leave_date"));
 								member.setEtc(rs.getString("etc"));
 								
 								return member;
@@ -155,39 +159,49 @@ public class MemberRepository {
 		return Mono.from(memberFlowable);
 	}
 	
-	public Mono<Void> signUp(Mono<MultiValueMap<String, String>> formData) {
-		formData.doOnNext(data -> {
-			if (data.isEmpty()) throw new NullPointerException();
-			LOG.info("data = "+ data);
-			String sql = "insert into member(email, password, username, joinDate) values ("
-					+ "?, ?, ?, current_date)";
+	public Mono<Void> signUp(MultiValueMap<String, String> formData) {
+
+		try {
+			this.setDatabase(Database.from(databaseConnect.pool()));
+			LOG.info("formData = "+ formData);
+			String password = new BCryptPasswordEncoder(11).encode(formData.get("password").get(0));
+			String sql = "insert into member(email, password, username, join_date, role) values "
+					+ "(?,?,?,current_date,'USER')";
 			database.update(sql).parameters(
-					data.get("email"), data.get("password"), data.get("username"))
-				.returnGeneratedKeys()
-				.getAs(Integer.class)
-			.doOnNext(count -> {
-				System.out.println("Save member count = "+count);
-				if (count > 0 && !data.get("petName").isEmpty()) {
-					savePetInfo(data).doOnNext(result -> {
-						System.out.println("Save pet info count = "+result);
-					})
-					.doOnError(error -> System.out.println(error.toString()));
+					formData.get("email").get(0), 
+					password, 
+					formData.get("username").get(0))
+			.transaction().blockingSubscribe(onNext -> {
+				LOG.info("SignUp Member = "+formData.get("email").get(0));
+				if (!formData.get("petName").isEmpty()) {
+					savePetInfo(formData);
 				}
-			})
-			.doOnError(error -> System.out.println(error.toString()));
-		});
+			});
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return Mono.empty();
 	}
 	
-	public Flowable<Integer> savePetInfo(MultiValueMap<String, String> data) {
-		String sql = "insert into pet(pet_name, pet_age, sub_breed_id, pet_gender, pet_birth) values "
-				+ "(?, ?, ?, ?, ?)";
-		Flowable<Integer> pet = database.update(sql).parameters(
-				data.get("petName"), data.get("petAge"), data.get("subBreedId"),
-				 data.get("petGender"), data.get("petBirth"))
-			.returnGeneratedKeys()
-			.getAs(Integer.class);
-		return pet;
+	public void savePetInfo(MultiValueMap<String, String> data) {
+		String sql = "insert into pet(pet_id, email, pet_name, pet_age, sub_breed_id, pet_gender, pet_birth) values "
+				+ "(default,?,?,?,?,?,?)";
+		String[] date = data.get("petBirth").get(0).split("-");
+		Calendar cal = Calendar.getInstance();
+		cal.set(new Integer(date[0]), new Integer(date[1]), new Integer(date[2]));
+		
+		database.update(sql).parameters(
+			 data.get("email").get(0),
+			 data.get("petName").get(0),
+			 new Integer(data.get("petAge").get(0)), 
+			 new Integer(data.get("petBreedId").get(0)),
+			 data.get("petGender").get(0), 
+			 cal.getTime())
+		.transaction().blockingSubscribe(onNext -> {
+			LOG.info("Saved PetInfo = "+data.get("email").get(0));
+		});
+
 	}
 
 
