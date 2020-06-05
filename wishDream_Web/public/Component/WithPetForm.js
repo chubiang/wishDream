@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import { Form, Field, reduxForm } from 'redux-form'
 import RenderCheckbox  from '../Component/RenderCheckbox'
 import Constants from '../services/constants'
-import { TextField, Select, ListSubheader, MenuItem, FormControl, Grid, InputLabel } from '@material-ui/core'
+import { TextField, Select, ListSubheader, MenuItem, FormControl, 
+	FormHelperText, Grid, InputLabel } from '@material-ui/core'
 import DateFnsUtils from '@date-io/date-fns';
 import { GlobalTheme } from '../Page/LoginPage'
 import {
@@ -30,7 +31,7 @@ function WithPetForm(props) {
 	const [selectedSubBreed, setSelectedSubBreed] = useState({ id: '', name: '' });
 	const [petGender, setPetGender] = useState("Male");
 	const [petBirth, setPetBirth] = useState({}); 
-	const [hasError, setHasError] = useState(false);
+	
 
 	useEffect(() => {
 		
@@ -39,9 +40,6 @@ function WithPetForm(props) {
 			.then( res => {
 					setTopBreed(res.data);
 			});
-		}
-		if (!selectedSubBreed.id.length) {
-			setHasError(true);
 		}
 		if (props.petInfo) {
 			props.petInfo.petBreedId = selectedSubBreed.id;
@@ -137,7 +135,7 @@ function WithPetForm(props) {
 				/>
 			</Grid>
 			<Grid item xs={12}>
-				<FormControl className={classes.formControl} error={hasError}>
+				<FormControl className={classes.formControl} error={props.hasError}>
 					<InputLabel htmlFor="petBreed" id="petBreed">Pet</InputLabel>
 					<Select id="petBreed" required
 						value={selectedTopBreed.id}
@@ -157,11 +155,11 @@ function WithPetForm(props) {
 						)
 					})}
 					</Select>
-					{hasError && <FormHelperText>This is required!</FormHelperText>}
+					{props.hasError && <FormHelperText>This is required!</FormHelperText>}
 				</FormControl>
 			</Grid>
 			<Grid item xs={12}> 
-				<FormControl className={classes.formControl} disabled={!subBreed.length} error={hasError}>
+				<FormControl className={classes.formControl} disabled={!subBreed.length} error={props.hasError}>
 					<InputLabel htmlFor="subBreeds" id="subBreeds">Breeds</InputLabel>
 					<Select id="subBreeds" value={selectedSubBreed.id} onChange={changeSubBreedId} required>
 						{
@@ -170,7 +168,7 @@ function WithPetForm(props) {
 							})
 						}
 					</Select>
-					{hasError && <FormHelperText>This is required!</FormHelperText>}
+					{props.hasError && <FormHelperText>This is required!</FormHelperText>}
 				</FormControl>
 			</Grid>
 			<Grid item xs={12}>

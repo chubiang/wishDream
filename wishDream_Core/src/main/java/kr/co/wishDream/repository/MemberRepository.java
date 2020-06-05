@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
@@ -158,39 +160,39 @@ public class MemberRepository {
 		}
 		return Mono.from(memberFlowable);
 	}
-	
-	public Mono<Void> signUp(MultiValueMap<String, String> formData) {
-
-		try {
-			this.setDatabase(Database.from(databaseConnect.pool()));
-			LOG.info("formData = "+ formData);
-			String password = new BCryptPasswordEncoder(11).encode(formData.get("password").get(0));
-			String sql = "insert into member(email, password, username, join_date, role) values "
-					+ "(?,?,?,current_date,'USER')";
-			database.update(sql).parameters(
-					formData.get("email").get(0), 
-					password, 
-					formData.get("username").get(0))
-			.transaction().blockingSubscribe(onNext -> {
-				LOG.info("SignUp Member = "+formData.get("email").get(0));
-				if (!formData.get("petName").isEmpty()) {
-					savePetInfo(formData);
-				}
-			});
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Mono.empty();
+	String message;
+	public Mono<Object> signUp(MultiValueMap<String, String> formData) throws Exception{
+		this.setDatabase(Database.from(databaseConnect.pool()));
+		LOG.info("formData = "+ formData);
+		message = null;
+		String password = new BCryptPasswordEncoder(11).encode(formData.get("password").get(0));
+		String sql = "insert into member(email, password, username, join_date, role) values "
+				+ "(?,?,?,current_date,'USER')";
+		database.update(sql).parameters(
+				formData.get("email").get(0), 
+				password, 
+				formData.get("username").get(0))
+		.transaction()
+		.subscribe(
+		onNext -> {
+			LOG.info("SignUp Member = "+formData.get("email").get(0));
+			if (!formData.get("petName").isEmpty()) {
+				savePetInfo(formData);
+			}
+			message = "success";
+		},
+		onError -> {
+			LOG.error("onError = "+onError);
+		});
+		return Mono.just(message);
 	}
 	
-	public void savePetInfo(MultiValueMap<String, String> data) {
+	public void savePetInfo(MultiValueMap<String, String> data) throws Exception{
 		String sql = "insert into pet(pet_id, email, pet_name, pet_age, sub_breed_id, pet_gender, pet_birth) values "
 				+ "(default,?,?,?,?,?,?)";
 		String[] date = data.get("petBirth").get(0).split("-");
 		Calendar cal = Calendar.getInstance();
 		cal.set(new Integer(date[0]), new Integer(date[1]), new Integer(date[2]));
-		
 		database.update(sql).parameters(
 			 data.get("email").get(0),
 			 data.get("petName").get(0),
@@ -198,8 +200,11 @@ public class MemberRepository {
 			 new Integer(data.get("petBreedId").get(0)),
 			 data.get("petGender").get(0), 
 			 cal.getTime())
-		.transaction().blockingSubscribe(onNext -> {
+		.transaction().subscribe(onNext -> {
 			LOG.info("Saved PetInfo = "+data.get("email").get(0));
+		},
+		onError -> {
+			LOG.error("onError Pet = "+onError);
 		});
 
 	}

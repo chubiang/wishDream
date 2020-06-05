@@ -59,6 +59,7 @@ function SignUp(props) {
   const [petInfo, setPetInfo] = useState(props.signUpWithPet);
   const ref = createRef();
   const [open, setOpen] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [alert, setAlert] = useState({ 
     fullWidth: true, 
     maxWidth:'xs',
@@ -73,9 +74,14 @@ function SignUp(props) {
     }
   };
 
+  useEffect(() => {
+    if (petInfo.petBreedId) setHasError(false);
+    console.log('effect', userInfo, petInfo);
+  })
+
   function handleSubmit(e) {
     e.preventDefault();
-    if (!petInfo.petBreedId) return;
+    if (!petInfo.petBreedId) setHasError(true);
     if (userInfo.repassword != userInfo.password) {
       alert.title = 'Invalid'
       alert.content = 'Reconfirm password is different from password.'
@@ -88,21 +94,22 @@ function SignUp(props) {
     props.onSignUpWithPet(petInfo);
 
     console.log(userInfo, petInfo);
-    var sendData = Querystring.stringify(Object.assign(props.signUp, props.signUpWithPet));
-    Axios.post(Constants.Url.member.join, sendData, config)
+    const sendData = Object.assign(props.signUp, props.signUpWithPet);
+    // let formData = new FormData();
+    // for (const key in sendData) {
+    //   formData.set(key, sendData[key]);
+    // }
+    Axios.post(Constants.Url.member.join, Querystring.stringify(sendData), config)
     .then(function(res) {
-      props.history.push("/login");
+      console.log(res);
+      // props.history.push("/login");
     })
     .catch(function(error) {
-      alert.title = 'Error'
-      alert.content = 'Oops!! Failed SignUp!!'
+      alert.title = error.response.data.exception;
+      alert.content = error.response.data.message;
       setOpen(true);
     })
   }
-
-  useEffect(() => {
-    console.log('effect', userInfo, petInfo);
-  })
 
   const checkPetInfo = () => (
     <RenderCheckbox
@@ -111,15 +118,6 @@ function SignUp(props) {
         value={withPet}
         change={() => {setWithPet(event.target.checked);}} />
   )
-
-  const checkRePassword = (e) => {
-    userInfo.repassword = e.target.value;
-    if (userInfo.repassword != userInfo.password) {
-      alert.title = 'Valid'
-      alert.content = 'Reconfirm password is different from password.'
-      setOpen(true);
-    }
-  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -190,7 +188,7 @@ function SignUp(props) {
                 name="repassword"
                 label="Repassword"
                 type="password"
-                onChange={checkRePassword}
+                onChange={(e)=>{userInfo.repassword = e.target.value}}
                 id="repassword"
                 autoComplete="confirm-password"
               />
@@ -198,7 +196,7 @@ function SignUp(props) {
             <Grid item xs={12}>
                 <Field name="withPet" component={checkPetInfo} />
             </Grid>
-            { withPet ? <WithPetForm petInfo={petInfo} /> : null }
+            { withPet ? <WithPetForm hasError={hasError} petInfo={petInfo} /> : null }
           </Grid>
           <Button
             fullWidth
