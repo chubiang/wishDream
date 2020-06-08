@@ -3,13 +3,12 @@ package kr.co.wishDream.repository;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
+import org.davidmoten.rx.jdbc.Tx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
+import com.sun.mail.iap.ConnectionException;
+
 import io.reactivex.Flowable;
-import io.reactivex.Single;
+import io.reactivex.plugins.RxJavaPlugins;
 import kr.co.wishDream.connect.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Repository
 public class MemberRepository {
@@ -160,31 +162,43 @@ public class MemberRepository {
 		}
 		return Mono.from(memberFlowable);
 	}
-	String message;
-	public Mono<Object> signUp(MultiValueMap<String, String> formData) throws Exception{
-		this.setDatabase(Database.from(databaseConnect.pool()));
-		LOG.info("formData = "+ formData);
-		message = null;
-		String password = new BCryptPasswordEncoder(11).encode(formData.get("password").get(0));
-		String sql = "insert into member(email, password, username, join_date, role) values "
-				+ "(?,?,?,current_date,'USER')";
-		database.update(sql).parameters(
-				formData.get("email").get(0), 
-				password, 
-				formData.get("username").get(0))
-		.transaction()
-		.subscribe(
-		onNext -> {
-			LOG.info("SignUp Member = "+formData.get("email").get(0));
-			if (!formData.get("petName").isEmpty()) {
-				savePetInfo(formData);
+	
+	public Mono<Object> signUp(Mono<MultiValueMap<String, String>> fm) throws Exception{
+		return fm.flatMap(formdata -> {
+			if (formdata.entrySet().size() == 0) {
+				return Mono.error(new NullPointerException("No Receive Form Data"));
 			}
-			message = "success";
-		},
-		onError -> {
-			LOG.error("onError = "+onError);
+			try {
+				if (database == null) {
+					this.setDatabase(Database.from(databaseConnect.pool()));
+				}
+				LOG.info("formData = "+ formdata);
+				
+				String password = new BCryptPasswordEncoder(11).encode(formdata.get("password").get(0));
+				String sql = "insert into member(email, password, username, join_date, role) values "
+						+ "(?,?,?,current_date,'USER')";
+				Flowable<Tx<?>> flowable = database.update(sql).parameters(
+						formdata.get("email").get(0), 
+						password, 
+						formdata.get("username").get(0))
+				.transaction()
+				.doOnNext(
+					onNext -> {
+						if (formdata.get("petName") != null && !formdata.get("petName").get(0).isEmpty()) {
+							savePetInfo(formdata);
+						}
+					}
+				)
+				.doOnComplete(()->{  
+					LOG.info("SignUp Member = "+formdata.get("email").get(0));
+				});
+				flowable.count().subscribe();
+				
+				return Mono.from(flowable.publish());
+			} catch (Exception e) {
+				return Mono.error(new ConnectionException("Failed db connection"));
+			}
 		});
-		return Mono.just(message);
 	}
 	
 	public void savePetInfo(MultiValueMap<String, String> data) throws Exception{
@@ -200,14 +214,15 @@ public class MemberRepository {
 			 new Integer(data.get("petBreedId").get(0)),
 			 data.get("petGender").get(0), 
 			 cal.getTime())
-		.transaction().subscribe(onNext -> {
+		.transaction()
+		.doOnNext(onNext -> {
 			LOG.info("Saved PetInfo = "+data.get("email").get(0));
-		},
-		onError -> {
+		})
+		.doOnError(onError -> {
 			LOG.error("onError Pet = "+onError);
-		});
-
+		}).count().subscribe();
 	}
+	
 
 
 	public void setDatabase(Database database) {

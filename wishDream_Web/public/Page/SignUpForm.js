@@ -81,32 +81,31 @@ function SignUp(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!petInfo.petBreedId) setHasError(true);
-    if (userInfo.repassword != userInfo.password) {
-      alert.title = 'Invalid'
-      alert.content = 'Reconfirm password is different from password.'
-      setOpen(true);
-      return;
-    }
-
-    petInfo.petBirth = format(petInfo.petBirth, 'yyyy-MM-dd');
     props.onSignUp(userInfo);
-    props.onSignUpWithPet(petInfo);
-
+    let sendData = userInfo;
+    if (!!withPet) {
+      if (!petInfo.petBreedId) setHasError(true);
+      if (userInfo.repassword != userInfo.password) {
+        alert.title = 'Invalid'
+        alert.content = 'Reconfirm password is different from password.'
+        setOpen(true);
+        return;
+      }
+      
+      petInfo.petBirth = format(petInfo.petBirth, 'yyyy-MM-dd');
+      props.onSignUpWithPet(petInfo);
+      
+      sendData = Object.assign(userInfo, petInfo);
+    }
     console.log(userInfo, petInfo);
-    const sendData = Object.assign(props.signUp, props.signUpWithPet);
-    // let formData = new FormData();
-    // for (const key in sendData) {
-    //   formData.set(key, sendData[key]);
-    // }
     Axios.post(Constants.Url.member.join, Querystring.stringify(sendData), config)
     .then(function(res) {
-      console.log(res);
       // props.history.push("/login");
     })
     .catch(function(error) {
       alert.title = error.response.data.exception;
       alert.content = error.response.data.message;
+      alert.maxWidth = 'sm';
       setOpen(true);
     })
   }

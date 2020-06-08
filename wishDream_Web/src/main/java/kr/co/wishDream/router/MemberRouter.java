@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 public class MemberRouter {
 
 	@Bean
-	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) throws Exception{
+	RouterFunction<ServerResponse> memberRoutes(MemberHandler handler) {
 		
 		return RouterFunctions
 				.route(GET("/member/{email}")
@@ -44,7 +44,7 @@ public class MemberRouter {
 						return handler.signUp(request);
 					} catch (Exception e) {
 						return ServerResponse.status(HttpStatus.BAD_REQUEST)
-								.body(Mono.error(new BatchUpdateException("Duplicate Email", null)), Object.class);
+								.body(e.getCause(), Object.class);
 					}
 				});
 	}

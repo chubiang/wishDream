@@ -1,23 +1,13 @@
 package kr.co.wishDream.handler;
 
-import java.sql.BatchUpdateException;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties.Build;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -78,20 +68,8 @@ public class MemberHandler {
 	}
 
 	public Mono<ServerResponse> signUp(ServerRequest request) throws Exception {
-//		MultiValueMap<String, String> formData = request.formData().map(data-> {
-//			MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-//			data.entrySet().forEach(entryData -> {
-//				LOG.info(entryData.getKey()+"="+entryData.getValue());
-//				formData.addAll(entryData.getKey(), entryData.getValue());
-//			});
-//			return Mono.just(data)formData;
-//		});
-//		if (formData.isEmpty()) {
-//			return ServerResponse.status(HttpStatus.BAD_REQUEST)
-//					.body(Mono.error(new NullPointerException("No Receive Form Data")), Object.class);
-//		}
 		return ServerResponse.ok()
-				.body(memberRepository.signUp(formData), Object.class);
+				.body(memberRepository.signUp(request.formData()), Object.class);
 		
 	}
 
