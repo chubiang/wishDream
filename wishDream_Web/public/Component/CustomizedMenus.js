@@ -1,12 +1,7 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-
+import { Menu, MenuItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core'
 import { grey } from '@material-ui/core/colors'
-import { IconButton } from '@material-ui/core'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 
 import NoticeType from './NoticeType'

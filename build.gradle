@@ -1,11 +1,11 @@
 buildscript {
 	ext {
-		springVersion = "2.2.4.RELEASE"
+		springVersion = "2.3.1.RELEASE"
 		springDependencyMng = "1.0.8.RELEASE"
 		ioReactorVersion = "3.3.0.RELEASE"
-		jwtVersion = "1.1.0.RELEASE"
-		junitVersion = "5.5.2"
-		flywayVersion = "6.0.8"
+		jwtVersion = "1.1.1.RELEASE"
+		junitVersion = "5.6.2"
+		flywayVersion = "6.4.4"
 		flyway = [
 			url: "jdbc:postgresql://localhost:5430/wishDream",
 			user: "wishdream",
@@ -13,14 +13,14 @@ buildscript {
 			driver: "org.postgresql.Driver",
 			schemas: ["public"]
 		]
-		postgresDriver = "42.2.6"
-		rxJava2Driver = "0.2.5"
+		postgresDriver = "42.2.14"
+		rxJava2Driver = "0.2.7"
 	}
 }
 
 plugins {
 	id "java"
-	id "org.springframework.boot" version "${springVersion}" apply false
+	id "org.springframework.boot" version "${springVersion}"
  	id "io.spring.dependency-management" version "${springDependencyMng}"
 	id "org.flywaydb.flyway" version "${flywayVersion}"
 }
@@ -60,7 +60,6 @@ allprojects {
 }
 
 subprojects {
-	apply plugin: "org.springframework.boot"
 	apply plugin: "io.spring.dependency-management"
 	
 	sourceCompatibility = 1.8
@@ -158,8 +157,9 @@ flywayMigrate {
 }
 
 project(":wishDream_Core") {
-	bootJar.enabled = false
-	jar.enabled = true
+	jar {
+		enabled = true
+	}
 	task coreJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
 	    archiveClassifier = "core"
 	    archiveBaseName = "wishDream_Core"
@@ -182,6 +182,9 @@ project(":wishDream_Core") {
 
 project(":wishDream_Web") {
 	def coreJarPath = rootProject.files("wishDream_Core/build/libs")[0].toString()
+	jar {
+		enabled = true
+	}
 	bootJar {
 		//launchScript()
 		mainClassName = "kr.co.wishDream.WishDreamWebApplication"
