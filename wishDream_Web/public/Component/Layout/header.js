@@ -38,10 +38,14 @@ import RepeatListItem from '../RepeatListItem'
 import Axios from 'axios'
 
 const drawerWidth = 240
+const appTitle = 'WishDream';
 
 const headerStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    backgroundColor: theme.palette.primary,
+    color: theme.palette.whiteFont,
+    iconColor: theme.palette.whiteIcon
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -120,7 +124,7 @@ export default function Header (props) {
   const [open, setOpen] = React.useState(false)
   const [connected, setConnected] = React.useState(false);
   const [username, setUsername] = React.useState('')
-  const [menus, setMenus] = React.useState([['Inbox', 'Starred', 'Send email', 'Drafts'], ['Inbox', 'Starred', 'Send email']]);
+  const [menus, setMenus] = React.useState([]);
   
 
 
@@ -132,6 +136,12 @@ export default function Header (props) {
       .then((res) => {
         console.log('res', res);
         setUsername(res.data);
+      });
+    }
+    if (!menus.length) {
+      Axios.get(constants.Url.member.menu)
+      .then((res) => {
+        console.log('res', res);
       });
     }
     if (!ws) {
@@ -222,14 +232,14 @@ export default function Header (props) {
             className={clsx(classes.menuButton, {
               [classes.hide]: open,
             })}
-            color="inherit"
+            color={classes.root.iconColor}
             aria-label="open drawer"
             onClick={handleDrawerOpen}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title} noWrap>
-            <Link to="/">WishDream</Link>
+          <Link to="/">{appTitle}</Link>
           </Typography>
           {alarmButton(alarmList)}
           {popOverUserInfo()}

@@ -11,7 +11,8 @@ const Constants = {
             logout: 'logout',
             username: '/username',
             oauth2Kakao: '/oauth2/authorization/kakao',
-            join: 'join'
+            join: 'join',
+            menu: 'menu',
         },
         pet: {
             breed: '/json/petBreed'

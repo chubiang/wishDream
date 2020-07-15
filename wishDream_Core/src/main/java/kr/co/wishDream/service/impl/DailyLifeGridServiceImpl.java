@@ -2,6 +2,7 @@ package kr.co.wishDream.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import kr.co.wishDream.document.DailyLifeGrid;
 import kr.co.wishDream.repository.DailyLifeGridRepository;
@@ -13,6 +14,9 @@ public class DailyLifeGridServiceImpl implements DailyLifeGridService, DailyLife
 
 	@Autowired
 	DailyLifeGridRepository dailyLifeGridRepository;
+	
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	@Override
 	public Page<DailyLifeGrid> searchDailyLifeGrid(DailyLifeGridSearch search) {

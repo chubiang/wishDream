@@ -4,6 +4,7 @@ logging:
       hibernate: DEBUG
       springframework:
         data:
+          mongodb: DEBUG
           r2dbc: DEBUG
         web: DEBUG
     root: INFO

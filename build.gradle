@@ -77,6 +77,7 @@ subprojects {
 		implementation "org.springframework.boot:spring-boot-starter-security"
 		implementation "org.springframework.security:spring-security-jwt:${jwtVersion}"
 	    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	    implementation "io.jsonwebtoken:jjwt:0.9.1"
 	
 
 		developmentOnly "org.springframework.boot:spring-boot-devtools"
@@ -144,7 +145,7 @@ flyway {
     password = project.flyway.password
     driver = project.flyway.driver
     schemas = project.flyway.schemas
-    locations = [ "classpath:/db/migration/postgresql" ] //������ų ��
+    locations = [ "classpath:/db/migration/postgresql" ]
     encoding = "UTF-8"
     outOfOrder = false
     validateOnMigrate = true
@@ -172,7 +173,7 @@ project(":wishDream_Core") {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
-	    //from configurations.runtimeClasspath.findAll { it.name.endsWith("jar") }.collect { zipTree(it) } <- �������� ��
+	    //from configurations.runtimeClasspath.findAll { it.name.endsWith("jar") }.collect { zipTree(it) }
     }
 	
 	test {
@@ -216,8 +217,8 @@ task start() {
     dependsOn ":wishDream_Core:start"
     dependsOn ":wishDream_Web:start"
 	
-    //dependsOn ":flywayValidate"
-    //dependsOn ":flywayMigrate"
+    dependsOn ":flywayValidate"
+    dependsOn ":flywayMigrate"
     println "####################################################"
     println	""
     println "            flywayMigrate completed                 "

@@ -17,6 +17,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberRepository memberRepository;
+	
+//	private Menu
 
 	
 	@Override
@@ -28,7 +30,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Flux<?> getMenu() {
 		Mono<SecurityContext> securityContext = ReactiveSecurityContextHolder.getContext();
-		
 		
 		
 		return securityContext.map(SecurityContext::getAuthentication)
