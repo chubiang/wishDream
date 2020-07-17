@@ -12,6 +12,8 @@ HELP.md
 .settings
 .springBeans
 .sts4-cache
+/wishDream_Core/.externalToolBuilders
+/wishDream_Web/.externalToolBuilders
 
 ### IntelliJ IDEA ###
 .idea

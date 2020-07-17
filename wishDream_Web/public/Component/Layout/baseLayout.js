@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   }
 });
 
-const BaseLayout = ({cookies}) => {
+const BaseLayout = ({cookies, history}) => {
   const classes = useStyles();
 
   return(
@@ -32,7 +32,7 @@ const BaseLayout = ({cookies}) => {
             onDisconnect={() => { connected = false; }}
             debug={ false }
             ref={ (client) => { clientRef = client }} /> */}
-        <Header cookies={cookies} />
+        <Header cookies={cookies} history={history}  />
         <Container maxWidth="md" component="main" className={classes.app}>
           <CssBaseline />
           <div className="content">

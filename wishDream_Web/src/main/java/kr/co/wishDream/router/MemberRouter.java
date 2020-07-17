@@ -32,7 +32,13 @@ public class MemberRouter {
 				})
 				.andRoute(GET("/menu")
 					.and(accept(MediaType.APPLICATION_JSON)), request -> {
-						return handler.getMenus(request);
+						Mono<ServerResponse> res = null;
+						try {
+							res = handler.getMenus(request);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return res;
 				})
 				.andRoute(GET("/username")
 					.and(accept(MediaType.APPLICATION_JSON)), request -> {

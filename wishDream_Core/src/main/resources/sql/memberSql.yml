@@ -1,0 +1,48 @@
+member:
+  menuByAuth:
+    with recursive menu_list(
+    menu_type, name, authority, menu_order,
+    depth, path, cycle) as (
+      select 
+        mt.menu_type,
+        mt.name,
+        mt.authority,
+        0,
+        1,
+        ARRAY[menu_type::text],
+        false
+      from
+        menu_type mt
+      union all
+      select 
+        m.menu_type,
+        m.name,
+        a.authority,
+        m.menu_order,
+        ml.depth + 1,
+        ARRAY_APPEND(ml.path, m.menu_type::text),
+        m.menu_type::text = any(ml.path)
+      from
+        menu m, menu_list ml
+        , menu_type mt2 
+        , auth a
+      where 
+        m.menu_type = ml.menu_type
+        and a.authority = mt2.authority
+        and m.menu_type = mt2.menu_type
+        and not cycle
+    )
+     select 
+      DISTINCT 
+      ml.menu_type as menu_type, 
+      ml.name as name, 
+      ml.authority as authority, 
+      p.path as menu_path,
+      ml.menu_order as menu_order,
+      ml.depth as depth, 
+      ml.path as path 
+    from menu_list ml
+    left join menu_path p
+     on ml.name = p.name
+    where authority = ?
+    order by ml.menu_type, ml.depth, ml.menu_order asc

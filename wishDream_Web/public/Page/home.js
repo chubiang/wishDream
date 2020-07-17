@@ -6,24 +6,20 @@ import DailyLifeGridList from 'Component/DailyLifeGridList'
 import CategoryHelper from '../Component/CategoryHelper'
 
 
-class Home extends Component {
+function Home() {
 
-  
-
-  render() {
+  return (
     // Axios.get('/menu')
     //   .then(function (res) {
           
     //   }).catch(function (error) {
     //       console.log(error)
     //   })
-    return (
-      <>
-        {/* <CategoryHelper menu={} /> */}
-        <DailyLifeGridList />
-      </>
-    )
-  }
+    <>
+      {/* <CategoryHelper menu={} /> */}
+      <DailyLifeGridList />
+    </>
+  )
 }
 
 export default Home

@@ -1,10 +1,12 @@
 package kr.co.wishDream.repository;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.davidmoten.rx.jdbc.Database;
@@ -12,25 +14,33 @@ import org.davidmoten.rx.jdbc.Tx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import com.sun.mail.iap.ConnectionException;
 
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
+import kr.co.wishDream.config.YamlPropertySourceFactory;
 import kr.co.wishDream.connect.DatabaseConnect;
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Repository
+@PropertySource(factory = YamlPropertySourceFactory.class, value = "classpath:/sql/memberSql.yml")
 public class MemberRepository {
 	
 	@Autowired
@@ -39,6 +49,9 @@ public class MemberRepository {
 	private Database database;
 	
 	private Logger LOG = LoggerFactory.getLogger(MemberRepository.class);
+	
+	@Value("${member.menuByAuth}")
+	public String menuByAuth;
 	
 	
 	public List<SimpleGrantedAuthority> findByRoleFromAuth(String role) throws Exception {
@@ -69,33 +82,31 @@ public class MemberRepository {
 		return menuTypes;
 	}
 	
-	public Flux<List<Menu>> findByAuthMenu(List<Integer> menuTypes) throws Exception {
+	public Flux<Menu> findByAuthMenu(Mono<? extends Principal> user) throws Exception {
 		this.setDatabase(Database.from(databaseConnect.pool()));
 		ArrayList<Menu> menus = new ArrayList<Menu>();
 		List<Menu> sortedMenus = new ArrayList<Menu>();
-		if (!menuTypes.isEmpty()) {
-			String sql = "WITH RECURSIVE menu_tree(id, pid, name, menu_type) AS " + 
-					"(SELECT id, pid, name, menu_type " + 
-					"FROM public.menu " + 
-					"WHERE pid is null " + 
-					"UNION ALL " + 
-					"SELECT m.id, m.pid, m.name, m.menu_type " + 
-					"FROM menu m, menu_tree tree " + 
-					"WHERE m.pid = tree.id) " + 
-					"SELECT id, pid, name, menu_type " + 
-					"FROM menu_tree WHERE menu_type in (?) ORDER BY id";
-			database.select(sql)
-				.parameters(menuTypes)
-				.getTupleN().blockingIterable().forEach(onNext -> {
-					Menu m = Menu.menus(onNext.values());
-					menus.add(m);
-				});
-			
-			Comparator<Menu> compareId = (e1,e2) -> Integer.compare(e1.getId(), e2.getId()); 
-			sortedMenus = menus.stream().sorted(compareId).collect(Collectors.toList());
-			Menu.sortHierarchyMenus(sortedMenus);
-		}
-		return Flux.just(sortedMenus);
+		String sql = menuByAuth;
+//		Comparator<Menu> compareId = (e1,e2) -> Integer.compare(e1.getId(), e2.getId()); 
+//		sortedMenus = menus.stream().sorted(compareId).collect(Collectors.toList());
+//		Menu.sortHierarchyMenus(sortedMenus);
+		return user.flatMapMany(x-> {
+			UsernamePasswordAuthenticationToken map = (UsernamePasswordAuthenticationToken) x;
+			System.out.println(map.toString() +", "+ map.getAuthorities());
+			String role = map.getAuthorities().iterator().next().getAuthority();
+			return Flux.from(database.select(sql)
+				.parameter(role)
+				.get(
+					rs -> {
+						Menu menu = new Menu();
+						menu.setMenuType(rs.getInt("menu_type"));
+						menu.setName(rs.getString("name"));
+						menu.setMenuOrder(rs.getInt("menu_order"));
+						menu.setMenuPath(rs.getString("menu_path"));
+						return menu;
+					}
+				));
+		});
 	}
 	
 	public Mono<UserDetails> findByEmailToUserDetails(String email) {

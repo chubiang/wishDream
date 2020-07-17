@@ -51,11 +51,12 @@ public class MemberHandler {
 					.map(Authentication::getName), Member.class);
 	}
 	
-	public Mono<ServerResponse> getMenus(ServerRequest request) {
+	public Mono<ServerResponse> getMenus(ServerRequest request) throws Exception {
+		request.principal();
 		return ServerResponse
 				.ok()
 				.contentType(MediaType.APPLICATION_JSON)
-				.body(memberService.getMenu(), Menu.class);
+				.body(memberService.getMenu(request.principal()), Menu.class);
 	}
 	
 	public Mono<ServerResponse> username(ServerRequest request) {

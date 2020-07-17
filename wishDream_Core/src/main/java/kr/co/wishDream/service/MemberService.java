@@ -1,5 +1,8 @@
 package kr.co.wishDream.service;
 
+import java.security.Principal;
+
+import io.reactivex.Flowable;
 import kr.co.wishDream.domain.Member;
 import kr.co.wishDream.domain.Menu;
 import reactor.core.publisher.Flux;
@@ -9,5 +12,6 @@ public interface MemberService {
 
 	public Mono<Member> findOneByEmail(String email);
 	
-	public Flux<?> getMenu();
+	Flux<Menu> getMenu(Mono<? extends Principal> mono) throws Exception;
+
 }

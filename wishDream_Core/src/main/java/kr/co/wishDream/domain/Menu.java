@@ -23,13 +23,16 @@ public class Menu {
 	
 	Integer menuType;
 	
+	Integer menuOrder;
+	
+	String menuPath;
+	
 	public static Menu menus(List<?> list) {
 		Menu m = new Menu();
 		m.setId((Integer) list.get(0));
 		m.setPid((Integer) list.get(1));
 		m.setName((String) list.get(2));
 		m.setMenuType((Integer) list.get(3));
-		
 		return m;
 	}
 	

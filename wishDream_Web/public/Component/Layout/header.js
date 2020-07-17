@@ -125,7 +125,7 @@ export default function Header (props) {
   const [connected, setConnected] = React.useState(false);
   const [username, setUsername] = React.useState('')
   const [menus, setMenus] = React.useState([]);
-  
+  const ref = React.createRef();
 
 
   React.useEffect(() => {
@@ -142,6 +142,7 @@ export default function Header (props) {
       Axios.get(constants.Url.member.menu)
       .then((res) => {
         console.log('res', res);
+        setMenus(res.data);
       });
     }
     if (!ws) {
@@ -265,12 +266,17 @@ export default function Header (props) {
           </IconButton>
         </div>
         <Divider />
-        {menus.map((items, index) => (
-          <React.Fragment key={'menus'+index}>
-            <List>
-              {RepeatListItem({items: items})}
-            </List>
-            <Divider />
+        {menus.map((item, index) => (
+            <React.Fragment key={'menus'+index}>
+              {index > 0 && item.menuOrder ==0? <Divider /> : ''}
+              {item.menuOrder === 0 ?
+                  (<>
+                    <List>
+                      <RepeatListItem item={item} index={index} ref={ref} />
+                    </List>
+                    <Divider />
+                  </>) : <RepeatListItem item={item} index={index} ref={ref} />
+              }
           </React.Fragment>
         ))}
       </Drawer>
