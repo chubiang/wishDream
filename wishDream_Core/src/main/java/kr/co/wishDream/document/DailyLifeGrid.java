@@ -1,6 +1,7 @@
 package kr.co.wishDream.document;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -11,7 +12,7 @@ import kr.co.wishDream.domain.DailyListGridComment;
 import kr.co.wishDream.domain.DailyListGridImage;
 import kr.co.wishDream.request.PageAndSort;
 
-@Document(collection = "DailyLifeGrid")
+@Document(collection = "dailyLifeGrid")
 public class DailyLifeGrid extends PageAndSort implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -24,6 +25,7 @@ public class DailyLifeGrid extends PageAndSort implements Serializable {
 	private Author author;
 	private List<DailyListGridImage> images;
 	private List<DailyListGridComment> comments;
+	private Date creDate;
 	
 	public ObjectId getId() {
 		return id;
@@ -67,6 +69,13 @@ public class DailyLifeGrid extends PageAndSort implements Serializable {
 	public void setComments(List<DailyListGridComment> comments) {
 		this.comments = comments;
 	}
+	public Date getCreDate() {
+		return creDate;
+	}
+	public void setCreDate(Date creDate) {
+		this.creDate = creDate;
+	}
+	
 	
 	
 	
