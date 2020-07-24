@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("application.yml")
+@PropertySource("application-core.yml")
 public class DatabaseConnect {
 
 	@Value("${wishDream.database.url:jdbc:postgresql://localhost:5430/wishDream}")

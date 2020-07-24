@@ -7,11 +7,11 @@ import org.davidmoten.rx.jdbc.pool.DatabaseType;
 import org.davidmoten.rx.jdbc.pool.NonBlockingConnectionPool;
 import org.davidmoten.rx.jdbc.pool.Pools;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@ConfigurationProperties("classpath:application-test.yml")
+@PropertySource("classpath:application-test.yml")
 public class TestDatabaseConnect {
 
 	@Value("${wishDream.database.url:jdbc:postgresql://localhost:5430/wishDream}")

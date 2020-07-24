@@ -41,10 +41,6 @@ allprojects {
 	}
 	
 	configurations {
-		developmentOnly
-		runtimeClasspath {
-			extendsFrom developmentOnly
-		}
 		compileOnly {
 			extendsFrom annotationProcessor
 		}
@@ -60,7 +56,8 @@ allprojects {
 }
 
 subprojects {
-	apply plugin: "io.spring.dependency-management"
+	apply plugin: "org.springframework.boot"
+    apply plugin: 'io.spring.dependency-management'
 	
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -98,10 +95,9 @@ subprojects {
 
 		testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
 		testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
- 		testImplementation "org.junit.jupiter:junit-jupiter-vintage-engine:${junitVersion}"
  		testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 		testImplementation ("org.springframework.boot:spring-boot-starter-test") {
-			exclude group: 'junit', module: "junit"
+			exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 		}
 		testImplementation "io.projectreactor:reactor-test"
 		implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
@@ -137,7 +133,9 @@ subprojects {
 			println	""
 		}
 	}
-    
+    test {
+		useJUnitPlatform()
+	}
 }
  
 flyway {
@@ -158,10 +156,13 @@ flywayMigrate {
 	dependsOn build
 }
 
+bootJar.enabled = false
+
 project(":wishDream_Core") {
 	jar {
 		enabled = true
 	}
+	bootJar.enabled = false
 	task coreJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
 	    archiveClassifier = "core"
 	    archiveBaseName = "wishDream_Core"
@@ -183,9 +184,16 @@ project(":wishDream_Core") {
 }
 
 project(":wishDream_Web") {
+	
 	def coreJarPath = rootProject.files("wishDream_Core/build/libs")[0].toString()
 	jar {
 		enabled = true
+		 manifest {
+	        attributes 'Main-Class': 'kr.co.wishDream.WishDreamWebApplication'
+	    }
+      	from {
+        	configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    	}
 	}
 	bootJar {
 		//launchScript()
@@ -194,6 +202,10 @@ project(":wishDream_Web") {
 		from("out/main") {
 			into "static"
 		}
+		with jar
+	}
+	springBoot {
+		buildInfo()
 	}
 	dependencies {
 		//implementation project(":wishDream_Core")
