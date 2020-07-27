@@ -34,6 +34,7 @@ const StyledMenuItem = withStyles(theme => ({
         color: theme.palette.common.white,
       },
     },
+    marginRight: '8px'
   },
 }))(MenuItem)
 

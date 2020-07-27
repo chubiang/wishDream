@@ -16,10 +16,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
@@ -51,13 +47,11 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
 import kr.co.wishDream.filter.BaseWebFilter;
-import kr.co.wishDream.handler.EventEmitterHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
+import kr.co.wishDream.handler.EventEmitterHandler;
 
 /**
  * db : rxjava2-jdbc = postgresql

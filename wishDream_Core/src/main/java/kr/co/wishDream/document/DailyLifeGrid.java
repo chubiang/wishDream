@@ -23,8 +23,8 @@ public class DailyLifeGrid extends PageAndSort implements Serializable {
 	private String title;
 	private String content;
 	private Author author;
-	private List<DailyListGridImage> images;
-	private List<DailyListGridComment> comments;
+	private List<DailyListGridImage> image;
+	private List<DailyListGridComment> comment;
 	private Date creDate;
 	
 	public ObjectId getId() {
@@ -57,17 +57,17 @@ public class DailyLifeGrid extends PageAndSort implements Serializable {
 	public void setAuthor(Author author) {
 		this.author = author;
 	}
-	public List<DailyListGridImage> getImages() {
-		return images;
+	public List<DailyListGridImage> getImage() {
+		return image;
 	}
-	public void setImages(List<DailyListGridImage> images) {
-		this.images = images;
+	public void setImage(List<DailyListGridImage> image) {
+		this.image = image;
 	}
-	public List<DailyListGridComment> getComments() {
-		return comments;
+	public List<DailyListGridComment> getComment() {
+		return comment;
 	}
-	public void setComments(List<DailyListGridComment> comments) {
-		this.comments = comments;
+	public void setComment(List<DailyListGridComment> comment) {
+		this.comment = comment;
 	}
 	public Date getCreDate() {
 		return creDate;

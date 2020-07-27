@@ -15,7 +15,8 @@ const Constants = {
             menu: 'menu',
         },
         pet: {
-            breed: '/json/petBreed'
+            breed: '/json/petBreed',
+            dailyLife: '/pet/dailyLife/grid',
         },
         socket: {
             alarmList: 'alarmList'

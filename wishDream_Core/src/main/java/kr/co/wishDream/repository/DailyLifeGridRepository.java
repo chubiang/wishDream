@@ -1,13 +1,12 @@
 package kr.co.wishDream.repository;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.stereotype.Repository;
 
 import kr.co.wishDream.document.DailyLifeGrid;
 
-public interface DailyLifeGridRepository extends MongoRepository<DailyLifeGrid, Long> {
-
-	public List<DailyLifeGrid> findAll();
+@Repository
+public interface DailyLifeGridRepository 
+	extends ReactiveMongoRepository<DailyLifeGrid, Long> {
 
 }

@@ -64,7 +64,7 @@ const DailyLifeGridList = (props) => {
     function getGridData() {
         setLoadingBar(true)
         setTimeout(() => {
-            Axios.get(Constants.Url.tmp.gridListData)
+            Axios.get(Constants.Url.pet.dailyLife)
             .then(function (res) {
                 setTailData(res.data)
             }).catch(function (error) {
@@ -112,7 +112,8 @@ const DailyLifeGridList = (props) => {
                             </GridListTile>
                             {tileData.map((tile, index) => (
                                 <GridListTile key={index} onClick={handleOpen} className={classes.gridTile}>
-                                    <img src={tile.image.img} alt={tile.title} />
+                                    { tile.image.length? <img src={tile.image[0].img} alt={tile.title} /> :
+                                        <img src="/images/animal_paw.jpg" alt="temp image" /> }
                                     <GridListTileBar
                                         title={tile.title}
                                         subtitle={<span>by: {tile.author.username}</span>}
