@@ -3,6 +3,7 @@ logging:
     org:
       hibernate: DEBUG
       springframework:
+        security: DEBUG
         data:
           mongodb: DEBUG
           r2dbc: DEBUG
@@ -16,7 +17,7 @@ server:
   port: 8080
 kafka:
   server: localhost:9099
-  topic: alarm-topic
+  topics: alarm-topic
 spring:
   jackson:
     default-property-inclusion: NON_NULL

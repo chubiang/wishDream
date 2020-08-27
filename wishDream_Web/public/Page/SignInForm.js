@@ -144,7 +144,7 @@ function SignIn(props) {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
-    const sendData = Querystring.stringify({ username: email, password: password, 'X-XSRF-TOKEN': cookies.get('XSRF-TOKEN')});
+    const sendData = Querystring.stringify({ username: email, password: password});
     if (email && password) {
       Axios.post(Constants.Url.member.login, sendData, config)
         .then((res) => {

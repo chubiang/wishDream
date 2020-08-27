@@ -9,23 +9,19 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import kr.co.wishDream.handler.AlarmConsumerHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
 
 @Configuration
-public class EventRouter {
+public class KafkaEventRouter {
 	
 	@Bean
-	public RouterFunction<?> eventRoutes(AlarmWebSocketHandler handler) {
+	public RouterFunction<?> eventRoutes(AlarmConsumerHandler handler) {
 		return RouterFunctions
-				.route(RequestPredicates.GET("/alarmList")
+				.route(RequestPredicates.GET("/kafkaAlarmList")
 						.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
 						request -> {
-								try {
-									return handler.emitUserMessages();
-								} catch (JsonProcessingException e) {
-									e.printStackTrace();
-								}
-								return null;
+								return handler.emitMessage();
 						});
 	}
 	
