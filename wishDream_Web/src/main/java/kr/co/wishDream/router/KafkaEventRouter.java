@@ -18,7 +18,7 @@ public class KafkaEventRouter {
 	@Bean
 	public RouterFunction<?> eventRoutes(AlarmConsumerHandler handler) {
 		return RouterFunctions
-				.route(RequestPredicates.GET("/kafkaAlarmList")
+				.route(RequestPredicates.GET("/kafkaAlarm")
 						.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
 						request -> {
 								return handler.emitMessage();

@@ -114,7 +114,7 @@ const NotifyIcon = ({count}) => {
   ) 
 };
 
-const url = "ws://localhost:8080/topic/alarm";
+const url = constants.WebSocket + constants.Url.socket.kafkaAlarm;
 let ws = null;
 
 export default function Header (props) {

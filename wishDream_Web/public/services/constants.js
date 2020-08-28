@@ -1,10 +1,12 @@
 const DEV_MODE = true;
 const HOST = '';
-const DEV_HOST = 'http://localhost:8080/';
+const DEV_HOST = 'http://localhost:8030/';
+const WEBSOCKET_HOST = 'ws://localhost:8030';
 const CURRENT_HOST = DEV_MODE? DEV_HOST: HOST;
 
 const Constants = {
     Host: CURRENT_HOST,
+    WebSocket:WEBSOCKET_HOST,
     Url: { 
         member: {
             login: 'login',
@@ -19,7 +21,8 @@ const Constants = {
             dailyLife: '/pet/dailyLife/grid',
         },
         socket: {
-            alarmList: 'alarmList'
+            alarmList: '/topic/alarmList',
+            kafkaAlarm: '/topic/kafkaAlarm'
         },
         tmp: {
             gridListData: 'json/tmpGridListData.json'

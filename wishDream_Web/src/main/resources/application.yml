@@ -14,9 +14,9 @@ server:
   error:
     include-exception: true
     include-stacktrace: never
-  port: 8080
+  port: 8030
 kafka:
-  server: localhost:9099
+  server: localhost:9092
   topics: alarm-topic
 spring:
   jackson:

@@ -2,7 +2,6 @@ package kr.co.wishDream.config;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.KafkaReceiver;
@@ -25,18 +25,18 @@ import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 
 @Configuration
-public class KafkaConfiguration {
+public class KafkaConfig {
 
-	private static final Logger LOG = LoggerFactory.getLogger(KafkaConfiguration.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KafkaConfig.class);
 	
 	@Value("${kafka.server}")
 	String kafkaServers;
 	
 	@Value("${kafka.topics}") 
-	List<String> topics;
+	String[] topics;
 	
 	@Bean
-	Map<String, Object> kafkaConsumerConfiguration() {
+	public Map<String, Object> kafkaConsumerConfiguration() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
 		config.put(ConsumerConfig.CLIENT_ID_CONFIG, "wishdream-consumer");
@@ -48,20 +48,22 @@ public class KafkaConfiguration {
 	}
 	
 	@Bean
-	ReceiverOptions<Integer, String> receiverOptions(@Value("${kafka.topics}") String[] topics) {
+	public ReceiverOptions<Integer, String> receiverOptions(@Value("${kafka.topics}") String[] topics) {
 		ReceiverOptions<Integer, String> receiverOptions = ReceiverOptions.create(kafkaConsumerConfiguration());
+		LOG.info(receiverOptions.groupId());
 		return receiverOptions.subscription(Arrays.asList(topics))
-				.withKeyDeserializer(new IntegerDeserializer())
-				.withValueDeserializer(new StringDeserializer());
+				.addAssignListener(partitions -> LOG.debug("onPartitionsAssigned {}", partitions))
+                .addRevokeListener(partitions -> LOG.debug("onPartitionsRevoked {}", partitions));
 	}
+	
 	// consumer receiver
 	@Bean
-	Flux<ReceiverRecord<Integer, String>> reactiveKafkaReceiver(ReceiverOptions<Integer, String> receiverOptions) {
-		return KafkaReceiver.create(receiverOptions).receive();
+	public Flux<ReceiverRecord<Integer, String>> reactiveKafkaReceiver() {
+		return KafkaReceiver.create(receiverOptions(this.topics)).receive();
 	}
 	
 	@Bean
-	Map<String, Object> kafkaProducerConfiguration() {
+	public Map<String, Object> kafkaProducerConfiguration() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
 		config.put(ProducerConfig.CLIENT_ID_CONFIG, "wishdream-producer");
@@ -72,15 +74,17 @@ public class KafkaConfiguration {
 	}
 	
 	@Bean
-	SenderOptions<Integer, String> senderOptions() {
+	public SenderOptions<Integer, String> senderOptions() {
 		return SenderOptions.create(kafkaProducerConfiguration());
 	}
+	
 	// producer sender
 	@Bean
-	KafkaSender<Integer, String> kafkaSender() {
+	public KafkaSender<Integer, String> kafkaSender() {
 		return KafkaSender.create(senderOptions());
 	}
 	
+	// TODO: KafkaSchedulers
 	
 	
 }

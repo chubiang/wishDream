@@ -135,7 +135,7 @@ function SignIn(props) {
   }
 
   function submit() {
-    if (rememberValue && cookies.get('email') == undefined) {
+    if (rememberValue && cookies.get('email') == undefined && !!email) {
       cookies.set('email', email, { path: "/login" });
     }
     const config = {

@@ -70,7 +70,7 @@ public class AlarmProducerHandler {
 									), 1);
 				})
 				.doOnError(onError -> LOG.error("## KAFKA MESSAGE PRODUCER ## SUBSCRIBE MESSAGE"+onError.getStackTrace()))
-				);
+				).subscribe();
 	}
 	
 	public void close() {

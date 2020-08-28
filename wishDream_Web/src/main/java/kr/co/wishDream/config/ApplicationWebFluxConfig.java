@@ -12,6 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
@@ -50,6 +51,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import kr.co.wishDream.config.resolver.LocaleResolver;
 import kr.co.wishDream.filter.BaseWebFilter;
+import kr.co.wishDream.handler.AlarmConsumerHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
 import kr.co.wishDream.handler.EventEmitterHandler;
 
@@ -90,6 +92,7 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		Map<String, WebSocketHandler> map = new HashMap<>();
 		map.put("/topic/info", new EventEmitterHandler());
 		map.put("/topic/alarm", new AlarmWebSocketHandler());
+		map.put("/topic/kafkaAlarm", new AlarmConsumerHandler());
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);
 		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
