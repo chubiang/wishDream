@@ -20,9 +20,13 @@ const Constants = {
             breed: '/json/petBreed',
             dailyLife: '/pet/dailyLife/grid',
         },
+        event: {
+            kafkaAlarm: 'kafkaAlarm'
+        },
         socket: {
             alarmList: '/topic/alarmList',
-            kafkaAlarm: '/topic/kafkaAlarm'
+            kafkaAlarm: '/kafkaAlarm',
+            kafkaProducerAlarm: '/topic/kafkaProducerAlarm',
         },
         tmp: {
             gridListData: 'json/tmpGridListData.json'

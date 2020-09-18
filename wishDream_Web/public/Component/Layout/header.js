@@ -36,6 +36,7 @@ import About from 'Page/About'
 import FindMember from 'Page/FindMember'
 import RepeatListItem from '../RepeatListItem'
 import Axios from 'axios'
+import { resolve } from 'core-js/fn/promise'
 
 const drawerWidth = 240
 const appTitle = 'WishDream';
@@ -127,17 +128,8 @@ export default function Header (props) {
   const [menus, setMenus] = React.useState([]);
   const ref = React.createRef();
 
-
+  
   React.useEffect(() => {
-    // effect
-    //getAlarmList();
-    if (!username.length) { //oauth2로 로그인 시에
-      Axios.get(constants.Url.member.username)
-      .then((res) => {
-        console.log('res', res);
-        setUsername(res.data);
-      });
-    }
     if (!menus.length) {
       Axios.get(constants.Url.member.menu)
       .then((res) => {
@@ -145,12 +137,49 @@ export default function Header (props) {
         setMenus(res.data);
       });
     }
-    if (!ws) {
-      setConnected(onConnect());
+    if (!username.length) { //oauth2로 로그인 시에
+      Axios.get(constants.Url.member.username)
+      .then((res) => {
+        console.log('res', res);
+        setUsername(res.data);
+      });
     }
-  }, [alarmList])
+    
+    if (!ws) {
+      Promise.allSettled([onConnect()])
+             .then((res) => {
+               console.log('res', res);
+               if (res[0].value) setConnected(true);
+            });
+      console.log('conn', connected);
+    }
+    if (!!connected) {
+      // effect
+      getAlarmList();
+    }
+  }, [connected])
 
   function onConnect() {
+    ws = new WebSocket(constants.WebSocket + constants.Url.socket.kafkaProducerAlarm);
+    ws.onopen = function(e) {
+      console.log('Info: Connection Established.')
+    }
+    ws.onerror = function(ev) {
+      console.log('Info: Connection Error.')
+    };
+    ws.onmessage = function(event) {
+      console.log('Info: received Message = '+ event.data)
+      //setAlarmList(JSON.parse(event.data))
+    };
+  
+    ws.onclose = function(event) {
+      console.log('Info: Closing Connection.')
+        return false;
+    };
+    return true;
+  }
+
+  function onConnect2() {
     ws = new WebSocket(url);
     ws.onopen = function(e) {
       console.log('Info: Connection Established.')
@@ -187,10 +216,10 @@ export default function Header (props) {
   
 
   function getAlarmList() {
-    axios.get(constants.Url.socket.alarmList)
+    axios.get(constants.Url.event.kafkaAlarm)
     .then(function(res) {
-      console.log(res);
-      setAlarmList(res.data);
+      console.log('alarmList',res.data);
+      //setAlarmList(res.data);
     }).catch(function (error) {
         console.log(error);
     });

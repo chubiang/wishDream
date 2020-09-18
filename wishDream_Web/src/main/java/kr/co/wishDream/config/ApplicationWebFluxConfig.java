@@ -52,6 +52,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.wishDream.config.resolver.LocaleResolver;
 import kr.co.wishDream.filter.BaseWebFilter;
 import kr.co.wishDream.handler.AlarmConsumerHandler;
+import kr.co.wishDream.handler.AlarmProducerHandler;
 import kr.co.wishDream.handler.AlarmWebSocketHandler;
 import kr.co.wishDream.handler.EventEmitterHandler;
 
@@ -63,11 +64,18 @@ import kr.co.wishDream.handler.EventEmitterHandler;
 
 @Configuration
 @EnableWebFlux
+@Import(KafkaConfig.class)
 @ComponentScan(basePackages = {"kr.co.wishDream"})
 public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFluxConfigurer {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	AlarmConsumerHandler alarmConsumerHandler;
+	
+	@Autowired
+	AlarmProducerHandler alarmProducerHandler;
 	
 	private ApplicationContext applicationContext;
 	
@@ -92,7 +100,8 @@ public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFlu
 		Map<String, WebSocketHandler> map = new HashMap<>();
 		map.put("/topic/info", new EventEmitterHandler());
 		map.put("/topic/alarm", new AlarmWebSocketHandler());
-		map.put("/topic/kafkaAlarm", new AlarmConsumerHandler());
+//		map.put("/topic/kafkaAlarm", alarmConsumerHandler);
+		map.put("/topic/kafkaProducerAlarm", alarmProducerHandler);
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);
 		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);

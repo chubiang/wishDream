@@ -1,41 +1,41 @@
 package kr.co.wishDream.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.reactivex.Flowable;
+import kr.co.wishDream.config.KafkaConfig;
 import kr.co.wishDream.domain.NoticeMessage;
+import kr.co.wishDream.service.KafkaService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.kafka.sender.KafkaSender;
-import reactor.kafka.sender.SenderOptions;
 import reactor.kafka.sender.SenderRecord;
 
-@Component
-public class AlarmProducerHandler {
+@Component("alarmProducerHandler")
+public class AlarmProducerHandler implements WebSocketHandler{
 	private Logger LOG = LoggerFactory.getLogger(AlarmProducerHandler.class);
 
 	@Autowired
-	private KafkaSender<Integer, String> kafkaSender;
+	KafkaService kafkaService;
+	
+	@Autowired
+	KafkaSender<String, String> reactiveKafkaSender;
 	
 	@Value("${kafka.server}")
 	String kafkaServer;
@@ -43,38 +43,38 @@ public class AlarmProducerHandler {
 	@Value("${kafka.topics}") 
 	List<String> topics;
 	
+	@Autowired
+	KafkaConfig kafkaConfig;
+	
+	@Autowired
 	private ObjectMapper objectMapper;
 	
 	public void sendMessage() {
 		ArrayList<NoticeMessage> msgs = noticeMessages();
 		
-		kafkaSender.send(Flux.empty()
-				.map(x -> {
-					Map<Integer, NoticeMessage> msgMap = new LinkedHashMap<Integer, NoticeMessage>();
-	
-					for (int i = 0; i < msgs.size(); i++) {
-						msgMap.put(i+1, msgs.get(i));
-					}
-					String message = null;
-					try {
-						message = objectMapper.writeValueAsString(msgMap);
-					} catch (JsonProcessingException e) {
-						e.printStackTrace();
-					}
-					return SenderRecord.create(
-							new ProducerRecord<Integer, String>(
-									topics.get(0), 
-									1, 
-									1, 
-									message //value??
-									), 1);
-				})
-				.doOnError(onError -> LOG.error("## KAFKA MESSAGE PRODUCER ## SUBSCRIBE MESSAGE"+onError.getStackTrace()))
-				).subscribe();
-	}
-	
-	public void close() {
-		kafkaSender.close();
+		Map<Integer, NoticeMessage> msgMap = new LinkedHashMap<Integer, NoticeMessage>();
+		
+		for (int i = 0; i < msgs.size(); i++) {
+			msgMap.put(i+1, msgs.get(i));
+		}
+		String message = null;
+		try {
+			message = objectMapper.writeValueAsString(msgMap);
+			LOG.info("## message = " + message);
+			LOG.info("## topics.get(0) = " + topics.get(0));
+			SenderRecord<String, String, Integer> msg = SenderRecord.create(
+					new ProducerRecord<String, String>(
+							topics.get(0), 
+							"1", 
+							message //value??
+							), 1);
+			reactiveKafkaSender.send(Flowable.just(msg));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} finally {
+			LOG.info("## KAFKA SENDER - CLOSE()");
+			reactiveKafkaSender.close();
+		}
 	}
 	
 	// temporary method
@@ -97,5 +97,17 @@ public class AlarmProducerHandler {
 		objectMapper = new ObjectMapper();
 		
 		return objectMapper.writeValueAsString(msgs);
+	}
+
+	@Override
+	public Mono<Void> handle(WebSocketSession session) {
+		sendMessage();
+		Flux<WebSocketMessage> messages = session.receive();
+//				.doOnNext(message -> {
+//					message.getPayloadAsText();
+//				})
+//				.doOnSubscribe(sub -> LOG.info("CONNECT // "+ session.getId()))
+//				.doFinally(sig -> LOG.info("DISCONNECT // "+ session.getId()));
+		return session.send(messages);
 	}
 }

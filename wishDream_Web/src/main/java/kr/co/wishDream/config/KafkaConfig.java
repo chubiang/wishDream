@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.config.EnableWebFlux;
 
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.KafkaReceiver;
@@ -41,25 +42,28 @@ public class KafkaConfig {
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
 		config.put(ConsumerConfig.CLIENT_ID_CONFIG, "wishdream-consumer");
 		config.put(ConsumerConfig.GROUP_ID_CONFIG, "wishdream-group");
-		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+		config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 		return config;
 	}
 	
 	@Bean
-	public ReceiverOptions<Integer, String> receiverOptions(@Value("${kafka.topics}") String[] topics) {
-		ReceiverOptions<Integer, String> receiverOptions = ReceiverOptions.create(kafkaConsumerConfiguration());
-		LOG.info(receiverOptions.groupId());
+	public ReceiverOptions<String, String> receiverOptions(@Value("${kafka.topics}") String[] topics) {
+		ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create(kafkaConsumerConfiguration());
+		LOG.info("## receiverOptions.groupId = "+receiverOptions.groupId());
 		return receiverOptions.subscription(Arrays.asList(topics))
 				.addAssignListener(partitions -> LOG.debug("onPartitionsAssigned {}", partitions))
                 .addRevokeListener(partitions -> LOG.debug("onPartitionsRevoked {}", partitions));
 	}
 	
 	// consumer receiver
-	@Bean
-	public Flux<ReceiverRecord<Integer, String>> reactiveKafkaReceiver() {
-		return KafkaReceiver.create(receiverOptions(this.topics)).receive();
+	@Bean(value = "reactiveKafkaReceiver")
+	public Flux<?> reactiveKafkaReceiver() {
+		LOG.info("## reactiveKafkaReceiver = "+this.topics);
+		return KafkaReceiver.create(receiverOptions(this.topics)).receiveAutoAck()
+				.map(r -> { return r; });
 	}
 	
 	@Bean
@@ -67,20 +71,23 @@ public class KafkaConfig {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
 		config.put(ProducerConfig.CLIENT_ID_CONFIG, "wishdream-producer");
-		config.put(ProducerConfig.ACKS_CONFIG, "all");
-		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
+		config.put(ProducerConfig.ACKS_CONFIG, "1");
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		return config;
 	}
 	
 	@Bean
-	public SenderOptions<Integer, String> senderOptions() {
-		return SenderOptions.create(kafkaProducerConfiguration());
+	public SenderOptions<String, String> senderOptions() {
+		SenderOptions<String, String> senderOptions = SenderOptions.create(kafkaProducerConfiguration());
+		LOG.info("## senderOptions = "+senderOptions.producerProperties());
+		return senderOptions;
 	}
 	
 	// producer sender
-	@Bean
-	public KafkaSender<Integer, String> kafkaSender() {
+	@Bean(value = "reactiveKafkaSender")
+	public KafkaSender<String, String> reactiveKafkaSender() {
+		LOG.info("## reactiveKafkaSender = "+senderOptions());
 		return KafkaSender.create(senderOptions());
 	}
 	

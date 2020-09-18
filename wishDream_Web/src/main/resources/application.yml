@@ -1,6 +1,7 @@
 logging:
   level:
     org:
+      kafka: DEBUG
       hibernate: DEBUG
       springframework:
         security: DEBUG
