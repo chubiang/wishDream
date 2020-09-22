@@ -21,7 +21,8 @@ public class KafkaEventRouter {
 				.route(RequestPredicates.GET("/kafkaAlarm")
 						.and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
 						request -> {
-								return handler.emitMessage();
+//								return handler.emitMessage();
+							return null;
 						});
 	}
 	

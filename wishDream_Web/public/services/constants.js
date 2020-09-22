@@ -25,7 +25,7 @@ const Constants = {
         },
         socket: {
             alarmList: '/topic/alarmList',
-            kafkaAlarm: '/kafkaAlarm',
+            kafkaAlarm: '/topic/kafkaAlarm',
             kafkaProducerAlarm: '/topic/kafkaProducerAlarm',
         },
         tmp: {

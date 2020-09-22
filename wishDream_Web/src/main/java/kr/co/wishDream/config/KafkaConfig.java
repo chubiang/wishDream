@@ -7,8 +7,6 @@ import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.config.EnableWebFlux;
 
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.KafkaReceiver;
@@ -54,16 +51,21 @@ public class KafkaConfig {
 		ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create(kafkaConsumerConfiguration());
 		LOG.info("## receiverOptions.groupId = "+receiverOptions.groupId());
 		return receiverOptions.subscription(Arrays.asList(topics))
-				.addAssignListener(partitions -> LOG.debug("onPartitionsAssigned {}", partitions))
-                .addRevokeListener(partitions -> LOG.debug("onPartitionsRevoked {}", partitions));
+				.withKeyDeserializer(new StringDeserializer())
+				.withValueDeserializer(new StringDeserializer())
+				.addAssignListener(consumer -> LOG.info("## Group Assigned Successfully - {}"
+						, Arrays.asList(consumer.stream().findFirst().get().topicPartition().topic(), 
+								consumer.stream().findFirst().get().topicPartition().partition())))
+				.addRevokeListener(consumer -> LOG.info("## Group Revoked Successfully - {}"
+						, Arrays.asList(consumer.stream().findFirst().get().topicPartition().topic(),
+								consumer.stream().findFirst().get().topicPartition().partition())));
 	}
 	
 	// consumer receiver
 	@Bean(value = "reactiveKafkaReceiver")
-	public Flux<?> reactiveKafkaReceiver() {
+	public KafkaReceiver<String, String> reactiveKafkaReceiver() {
 		LOG.info("## reactiveKafkaReceiver = "+this.topics);
-		return KafkaReceiver.create(receiverOptions(this.topics)).receiveAutoAck()
-				.map(r -> { return r; });
+		return KafkaReceiver.create(receiverOptions(this.topics));
 	}
 	
 	@Bean
@@ -71,7 +73,8 @@ public class KafkaConfig {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
 		config.put(ProducerConfig.CLIENT_ID_CONFIG, "wishdream-producer");
-		config.put(ProducerConfig.ACKS_CONFIG, "1");
+		config.put(ProducerConfig.ACKS_CONFIG, "all");
+		config.put(ProducerConfig.RETRIES_CONFIG, "0");
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		return config;

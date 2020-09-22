@@ -146,7 +146,7 @@ export default function Header (props) {
     }
     
     if (!ws) {
-      Promise.allSettled([onConnect()])
+      Promise.allSettled([onConnect(), onConnect2()])
              .then((res) => {
                console.log('res', res);
                if (res[0].value) setConnected(true);
@@ -154,8 +154,6 @@ export default function Header (props) {
       console.log('conn', connected);
     }
     if (!!connected) {
-      // effect
-      getAlarmList();
     }
   }, [connected])
 
@@ -189,7 +187,9 @@ export default function Header (props) {
     };
     ws.onmessage = function(event) {
       console.log('Info: received Message = '+ event.data)
-      setAlarmList(JSON.parse(event.data))
+      if (event.data) {
+        setAlarmList(JSON.parse(event.data))
+      }
     };
   
     ws.onclose = function(event) {
@@ -198,12 +198,6 @@ export default function Header (props) {
     };
     return true;
   }
-  
-   function send() {
-      if (!!ws) {
-        ws.send('alarm');
-      }
-   }
   
   function disconnect() 
   {

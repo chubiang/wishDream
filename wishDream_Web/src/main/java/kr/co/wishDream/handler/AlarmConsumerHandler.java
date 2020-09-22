@@ -1,36 +1,37 @@
 package kr.co.wishDream.handler;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+import javax.annotation.PostConstruct;
+
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.WebSocketMessage;
+import org.springframework.web.reactive.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.reactivex.Flowable;
 import kr.co.wishDream.config.KafkaConfig;
-import kr.co.wishDream.domain.NoticeMessage;
-import kr.co.wishDream.service.KafkaService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.kafka.receiver.ReceiverOffset;
+import reactor.kafka.receiver.KafkaReceiver;
+import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.receiver.ReceiverRecord;
 
-@Component("alarmConsumerHandler")
-public class AlarmConsumerHandler  {
+@Component
+public class AlarmConsumerHandler implements WebSocketHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AlarmConsumerHandler.class);
-	
-	@Autowired
-	KafkaService kafkaService;
 	
 	@Value("${kafka.topics}") 
 	String[] topics;
@@ -40,33 +41,23 @@ public class AlarmConsumerHandler  {
 
 	@Autowired
 	@Qualifier("reactiveKafkaReceiver")
-	Flux<ConsumerRecord<String, String>> reactiveKafkaReceiver;
+	KafkaReceiver<String, String> reactiveKafkaReceiver;
+	
+	@Autowired
+	ReceiverOptions<String, String> receiverOptions;
 	
 	private ObjectMapper objectMapper;
 	private SimpleDateFormat dateFormat;
 	
-	public Mono<ServerResponse> emitMessage() {
-//		try {
-//			Flux<ReceiverRecord<Integer, String>> reactiveKafkaReceiver = 
-//					KafkaReceiver.create(receiverOptions).receive();
-			
-//			String message = objectMapper.writeValueAsString(
-//					reactiveKafkaReceiver.receive()
-//						.doOnNext(onNext -> LOG.info("## KAFKA-RECEIVER ## SUBSCRIBE MESSAGE ="+onNext.value()))
-//						.doOnError(onError -> LOG.error("## KAFKA MESSAGE ## SUBSCRIBE MESSAGE = "+onError.getStackTrace()))
-//						.map(record -> { return record.value(); }).collectList().block()
-//					);
-			return ServerResponse
-					.ok()
-					.contentType(MediaType.APPLICATION_JSON)
-					.body(reactiveKafkaReceiver
-							.doOnSubscribe(onNext -> LOG.info("## KAFKA-RECEIVER ## SUBSCRIBE MESSAGE ="+onNext))
-							.doOnError(onError -> LOG.error("## KAFKA MESSAGE ## SUBSCRIBE MESSAGE = "+onError.getCause()))
-							, ConsumerRecord.class);
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
+	@PostConstruct
+	public void receiveConsumer() {
+		reactiveKafkaReceiver.receive()
+		.doOnError(onError -> LOG.error("## KAFKA MESSAGE ## ERROR MESSAGE = ", onError))
+		.subscribe(c -> {
+			System.out.println("## receive = "+c.toString());
+		});
 	}
+	
 	
 	public String emitMessageSession() {
 		int count = 20;
@@ -84,14 +75,6 @@ public class AlarmConsumerHandler  {
 //	             offset.acknowledge();
 //	             latch.countDown();
 //	         }).dispose();
-			
-//			receiver
-//				.doOnNext(onNext -> LOG.info("## KAFKA-RECEIVER ## SUBSCRIBE MESSAGE ="+onNext.value()))
-//				.doOnError(onError -> LOG.error("## KAFKA MESSAGE ## SUBSCRIBE MESSAGE = "+onError.getStackTrace()))
-//				.map(record -> {
-//					LOG.debug("## record = " + record.value() );
-//					return record.value(); 
-//				}).publish();
 
 //			return objectMapper.writeValueAsString(
 //					receiver
@@ -105,11 +88,17 @@ public class AlarmConsumerHandler  {
 //		} catch (JsonProcessingException e) {
 //			e.printStackTrace();
 //		}
+		
+		Collection<String> listTopics = receiverOptions.subscriptionTopics();
+		for (String topic : listTopics) {
+			System.out.println("topic = "+ topic);
+		}
+		
 		return "";
 	}
 
-//	@Override
-//	public Mono<Void> handle(WebSocketSession session) {
-//		return session.send((Publisher<WebSocketMessage>) Flowable.just(session.textMessage(emitMessageSession()))).then();
-//	}
+	@Override
+	public Mono<Void> handle(WebSocketSession session) {
+		return session.send((Publisher<WebSocketMessage>) Flowable.just(session.textMessage(emitMessageSession()))).then();
+	}
 }

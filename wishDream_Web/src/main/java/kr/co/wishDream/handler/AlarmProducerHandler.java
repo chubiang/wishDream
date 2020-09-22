@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import kr.co.wishDream.config.KafkaConfig;
 import kr.co.wishDream.domain.NoticeMessage;
-import kr.co.wishDream.service.KafkaService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.kafka.sender.KafkaSender;
@@ -32,11 +33,7 @@ public class AlarmProducerHandler implements WebSocketHandler{
 	private Logger LOG = LoggerFactory.getLogger(AlarmProducerHandler.class);
 
 	@Autowired
-	KafkaService kafkaService;
-	
-	@Autowired
 	KafkaSender<String, String> reactiveKafkaSender;
-	
 	@Value("${kafka.server}")
 	String kafkaServer;
 	
@@ -49,6 +46,7 @@ public class AlarmProducerHandler implements WebSocketHandler{
 	@Autowired
 	private ObjectMapper objectMapper;
 	
+	@PostConstruct
 	public void sendMessage() {
 		ArrayList<NoticeMessage> msgs = noticeMessages();
 		
@@ -68,7 +66,8 @@ public class AlarmProducerHandler implements WebSocketHandler{
 							"1", 
 							message //value??
 							), 1);
-			reactiveKafkaSender.send(Flowable.just(msg));
+			reactiveKafkaSender.send(Flowable.just(msg))
+				.doOnError(onError -> LOG.error("SEND FAILED", onError));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} finally {
@@ -101,13 +100,13 @@ public class AlarmProducerHandler implements WebSocketHandler{
 
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
-		sendMessage();
-		Flux<WebSocketMessage> messages = session.receive();
-//				.doOnNext(message -> {
-//					message.getPayloadAsText();
-//				})
-//				.doOnSubscribe(sub -> LOG.info("CONNECT // "+ session.getId()))
-//				.doFinally(sig -> LOG.info("DISCONNECT // "+ session.getId()));
+		
+		Flux<WebSocketMessage> messages = session.receive()
+				.doOnNext(message -> {
+					message.getPayloadAsText();
+					LOG.info("OnNEXT // "+ session.getId());
+				})
+				.doFinally(sig -> LOG.info("FINALLY // "+ session.getId()));
 		return session.send(messages);
 	}
 }
