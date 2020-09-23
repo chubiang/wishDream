@@ -7,7 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Import;
 
 import kr.co.wishDream.config.ApplicationWebFluxConfig;
-import kr.co.wishDream.config.KafkaConfig;
+import kr.co.wishDream.config.KafkaProducer;
 import kr.co.wishDream.config.SecurityWebFluxConfig;
 
 @SpringBootApplication

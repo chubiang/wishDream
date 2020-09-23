@@ -64,7 +64,7 @@ import kr.co.wishDream.handler.EventEmitterHandler;
 
 @Configuration
 @EnableWebFlux
-@Import(KafkaConfig.class)
+@Import({KafkaProducer.class, KafkaConsumer.class})
 @ComponentScan(basePackages = {"kr.co.wishDream"})
 public class ApplicationWebFluxConfig implements ApplicationContextAware, WebFluxConfigurer {
 

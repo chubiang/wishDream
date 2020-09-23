@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.reactivex.Flowable;
-import kr.co.wishDream.config.KafkaConfig;
+import kr.co.wishDream.config.KafkaProducer;
 import kr.co.wishDream.domain.NoticeMessage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -41,7 +41,7 @@ public class AlarmProducerHandler implements WebSocketHandler{
 	List<String> topics;
 	
 	@Autowired
-	KafkaConfig kafkaConfig;
+	KafkaProducer kafkaConfig;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -63,11 +63,14 @@ public class AlarmProducerHandler implements WebSocketHandler{
 			SenderRecord<String, String, Integer> msg = SenderRecord.create(
 					new ProducerRecord<String, String>(
 							topics.get(0), 
+							2,
 							"1", 
 							message //value??
 							), 1);
 			reactiveKafkaSender.send(Flowable.just(msg))
-				.doOnError(onError -> LOG.error("SEND FAILED", onError));
+				.doOnNext(c -> LOG.info("SEND SUCCESS", c))
+				.doOnError(onError -> LOG.error("SEND FAILED", onError))
+				.subscribe();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} finally {
@@ -100,7 +103,7 @@ public class AlarmProducerHandler implements WebSocketHandler{
 
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
-		
+		sendMessage();
 		Flux<WebSocketMessage> messages = session.receive()
 				.doOnNext(message -> {
 					message.getPayloadAsText();

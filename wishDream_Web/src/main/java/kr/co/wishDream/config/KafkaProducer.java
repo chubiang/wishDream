@@ -23,50 +23,15 @@ import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 
 @Configuration
-public class KafkaConfig {
+public class KafkaProducer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(KafkaConfig.class);
+	private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
 	
 	@Value("${kafka.server}")
 	String kafkaServers;
 	
 	@Value("${kafka.topics}") 
 	String[] topics;
-	
-	@Bean
-	public Map<String, Object> kafkaConsumerConfiguration() {
-		Map<String, Object> config = new HashMap<>();
-		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
-		config.put(ConsumerConfig.CLIENT_ID_CONFIG, "wishdream-consumer");
-		config.put(ConsumerConfig.GROUP_ID_CONFIG, "wishdream-group");
-		config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-		return config;
-	}
-	
-	@Bean
-	public ReceiverOptions<String, String> receiverOptions(@Value("${kafka.topics}") String[] topics) {
-		ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create(kafkaConsumerConfiguration());
-		LOG.info("## receiverOptions.groupId = "+receiverOptions.groupId());
-		return receiverOptions.subscription(Arrays.asList(topics))
-				.withKeyDeserializer(new StringDeserializer())
-				.withValueDeserializer(new StringDeserializer())
-				.addAssignListener(consumer -> LOG.info("## Group Assigned Successfully - {}"
-						, Arrays.asList(consumer.stream().findFirst().get().topicPartition().topic(), 
-								consumer.stream().findFirst().get().topicPartition().partition())))
-				.addRevokeListener(consumer -> LOG.info("## Group Revoked Successfully - {}"
-						, Arrays.asList(consumer.stream().findFirst().get().topicPartition().topic(),
-								consumer.stream().findFirst().get().topicPartition().partition())));
-	}
-	
-	// consumer receiver
-	@Bean(value = "reactiveKafkaReceiver")
-	public KafkaReceiver<String, String> reactiveKafkaReceiver() {
-		LOG.info("## reactiveKafkaReceiver = "+this.topics);
-		return KafkaReceiver.create(receiverOptions(this.topics));
-	}
 	
 	@Bean
 	public Map<String, Object> kafkaProducerConfiguration() {
